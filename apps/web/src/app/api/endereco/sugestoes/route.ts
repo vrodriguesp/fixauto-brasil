@@ -15,6 +15,9 @@ const cache = new Map<string, { corpo: unknown; em: number }>();
 // Kadaka tee 72a, Tartu mnt 67); filter/bias por pais piorava (Narva mnt 5 saia de Voka/Johvi).
 // O app nao manda o pais: Estonia.
 const CAPITAL: Record<string, [number, number]> = { EE: [24.745, 59.437], IT: [12.496, 41.903], PT: [-9.139, 38.722], BR: [-46.633, -23.55] };
+// Pais, regiao e condado (na Estonia, o maakond) sao largos demais para achar oficina perto:
+// pedido 100154 (20/11) escolheu "Eesti" e ficou com o centro do pais. Vald, cidade, linnaosa e rua ficam.
+const LARGO_DEMAIS = new Set(['country', 'state', 'county']);
 
 export interface SugestaoEndereco {
   rotulo: string;
@@ -63,7 +66,8 @@ export async function GET(req: NextRequest) {
       }
       if (r.ok && d) {
         // o pais do mercado primeiro, sem esconder os outros (oficina perto da fronteira, endereco no exterior)
-        const feats = [...(d.features || [])].sort((a, b) => Number(doPais(b)) - Number(doPais(a)));
+        const feats = [...(d.features || [])].filter((f) => !LARGO_DEMAIS.has(String(f.properties.result_type || '')))
+          .sort((a, b) => Number(doPais(b)) - Number(doPais(a)));
         const lista: SugestaoEndereco[] = feats.map(({ properties: p }) => ({
           rotulo: p.formatted || [p.street, p.housenumber, p.city].filter(Boolean).join(' '),
           endereco: [p.street, p.housenumber].filter(Boolean).join(' ') || p.name || '',
@@ -91,6 +95,7 @@ export async function GET(req: NextRequest) {
     const lista: SugestaoEndereco[] = [];
     for (const f of dados.features || []) {
       const p = f.properties;
+      if (LARGO_DEMAIS.has(p.type || '')) continue;
       const rua = [p.street, p.housenumber].filter(Boolean).join(' ');
       const endereco = rua || p.name || '';
       const cidade = p.city || p.town || p.village || p.county || '';

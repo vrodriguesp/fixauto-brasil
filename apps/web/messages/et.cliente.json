@@ -142,7 +142,7 @@
     "step5Title": "Asukoht ja kinnitus",
     "addressLabel": "Aadress / Piirkond",
     "placeholderAddress": "Linnaosa, linn",
-    "addressHelp": "Sellele aadressile lähimad töökojad saavad teate",
+    "addressHelp": "Kirjuta üks koht (aadress, linnaosa, vald või linn) – sellele lähimad töökojad saavad teate.",
     "summaryTitle": "Päringu kokkuvõte",
     "vehicleLabel": "Sõiduk:",
     "typeLabel": "Liik:",
@@ -151,7 +151,7 @@
     "photosCount": "{count, plural, one {# foto} other {# fotot}}",
     "servicesLabel": "Teenused:",
     "sendRequest": "Saada päring",
-    "erroLocalizacao": "Me ei leidnud seda aadressi. Vali soovitustest või luba asukoht."
+    "erroLocalizacao": "Me ei leidnud seda kohta. Kirjuta üks aadress, linnaosa, vald või linn ja vali see soovitustest – või luba asukoht."
   },
   "clienteOrcamentos": {
     "title": "Hinnapakkumised",

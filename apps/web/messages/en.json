@@ -1081,7 +1081,7 @@
     "mapaAlt": "Map: approximate location of the car",
     "localTitulo": "Where is the car, roughly?",
     "localPlaceholder": "E.g. Lasnamäe or Tallinn",
-    "localAjuda": "No exact address needed – a district (e.g. Lasnamäe) or city is enough.",
+    "localAjuda": "Enter one place: the exact address, a district (e.g. Lasnamäe), a municipality or a city. Several cities at once or just “Estonia” won’t work – we use this place to find the nearest repair shops.",
     "localUsarMinha": "Use my location",
     "localProcurando": "Finding your location...",
     "localNegado": "Couldn't use your location. Enter an address, district or city."

@@ -142,7 +142,7 @@
     "step5Title": "Posizione e conferma",
     "addressLabel": "Indirizzo / Zona",
     "placeholderAddress": "Quartiere, città",
-    "addressHelp": "Le officine vicine a questo indirizzo riceveranno una notifica",
+    "addressHelp": "Indica un solo luogo (indirizzo, quartiere, comune o città): le officine più vicine riceveranno una notifica.",
     "summaryTitle": "Riepilogo della richiesta",
     "vehicleLabel": "Veicolo:",
     "typeLabel": "Tipo:",
@@ -151,7 +151,7 @@
     "photosCount": "{count, plural, one {# foto} other {# foto}}",
     "servicesLabel": "Servizi:",
     "sendRequest": "Invia richiesta",
-    "erroLocalizacao": "Non abbiamo trovato l'indirizzo. Scegli un suggerimento o consenti la posizione."
+    "erroLocalizacao": "Non abbiamo trovato il luogo. Scrivi un solo indirizzo, quartiere, comune o città e sceglilo dai suggerimenti, oppure consenti la posizione."
   },
   "clienteOrcamentos": {
     "title": "Preventivi",

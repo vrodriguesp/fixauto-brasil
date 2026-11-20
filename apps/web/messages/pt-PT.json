@@ -1078,7 +1078,7 @@
     "mapaAlt": "Mapa: localização aproximada do carro",
     "localTitulo": "Onde está o carro, aproximadamente?",
     "localPlaceholder": "Ex.: Lasnamäe ou Tallinn",
-    "localAjuda": "Não é preciso a morada exata – basta a zona (ex.: Lasnamäe) ou a cidade.",
+    "localAjuda": "Indique um só local: morada exata, zona (ex.: Lasnamäe), concelho ou cidade. Várias cidades juntas ou só “Estónia” não servem – é por esse local que encontramos as oficinas mais próximas.",
     "localUsarMinha": "Usar a minha localização",
     "localProcurando": "A procurar a sua localização...",
     "localNegado": "Não foi possível usar a sua localização. Escreva a morada, bairro ou cidade."

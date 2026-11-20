@@ -140,6 +140,9 @@ export async function GET(req: NextRequest) {
     }
 
     const hit = results[0];
+    // so o pais, a regiao ou o condado (place_rank < 13: "Eesti", "Harjumaa") nao servem para achar
+    // oficina perto - responde como nao encontrado e o formulario pede um lugar mais preciso (100154, 20/11)
+    if (Number(hit.place_rank) < 13) return responder(chave, { error: 'Lugar amplo demais' }, 404);
     return responder(chave, {
       latitude: parseFloat(hit.lat),
       longitude: parseFloat(hit.lon),

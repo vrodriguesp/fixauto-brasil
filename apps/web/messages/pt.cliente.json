@@ -142,7 +142,7 @@
     "step5Title": "Localização e confirmação",
     "addressLabel": "Endereço / Região",
     "placeholderAddress": "Bairro, cidade - Estado",
-    "addressHelp": "Oficinas próximas a este endereço serão notificadas",
+    "addressHelp": "Informe um só lugar (endereço, bairro, município ou cidade) – as oficinas mais próximas serão notificadas.",
     "summaryTitle": "Resumo da solicitação",
     "vehicleLabel": "Veículo:",
     "typeLabel": "Tipo:",
@@ -151,7 +151,7 @@
     "photosCount": "{count} foto(s)",
     "servicesLabel": "Serviços:",
     "sendRequest": "Enviar Solicitação",
-    "erroLocalizacao": "Não encontramos esse endereço. Escolha uma das sugestões ou permita a localização."
+    "erroLocalizacao": "Não encontramos esse lugar. Escreva um só endereço, bairro, município ou cidade e escolha-o nas sugestões – ou permita a localização."
   },
   "clienteOrcamentos": {
     "title": "Orçamentos",

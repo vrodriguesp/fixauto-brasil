@@ -142,7 +142,7 @@
     "step5Title": "Localização e confirmação",
     "addressLabel": "Morada / Zona",
     "placeholderAddress": "Bairro, cidade",
-    "addressHelp": "As oficinas perto desta morada serão notificadas",
+    "addressHelp": "Indique um só local (morada, zona, concelho ou cidade) – as oficinas mais próximas serão notificadas.",
     "summaryTitle": "Resumo do pedido",
     "vehicleLabel": "Veículo:",
     "typeLabel": "Tipo:",
@@ -151,7 +151,7 @@
     "photosCount": "{count, plural, one {# fotografia} other {# fotografias}}",
     "servicesLabel": "Serviços:",
     "sendRequest": "Enviar Pedido",
-    "erroLocalizacao": "Não encontrámos esse endereço. Escolha uma das sugestões ou permita a localização."
+    "erroLocalizacao": "Não encontrámos esse local. Escreva uma só morada, zona, concelho ou cidade e escolha-a nas sugestões – ou permita a localização."
   },
   "clienteOrcamentos": {
     "title": "Orçamentos",

@@ -142,7 +142,7 @@
     "step5Title": "Location and confirmation",
     "addressLabel": "Address / Area",
     "placeholderAddress": "Neighbourhood, city",
-    "addressHelp": "Repair shops near this address will be notified",
+    "addressHelp": "Enter one place (address, district, municipality or city) – the repair shops nearest to it will be notified.",
     "summaryTitle": "Request summary",
     "vehicleLabel": "Vehicle:",
     "typeLabel": "Type:",
@@ -151,7 +151,7 @@
     "photosCount": "{count, plural, one {# photo} other {# photos}}",
     "servicesLabel": "Services:",
     "sendRequest": "Send Request",
-    "erroLocalizacao": "We couldn't find that address. Pick one of the suggestions or allow location."
+    "erroLocalizacao": "We couldn’t find that place. Enter one address, district, municipality or city and pick it from the suggestions – or allow location."
   },
   "clienteOrcamentos": {
     "title": "Quotes",

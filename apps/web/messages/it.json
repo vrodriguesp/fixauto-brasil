@@ -1079,7 +1079,7 @@
     "mapaAlt": "Mappa: posizione approssimativa dell'auto",
     "localTitulo": "Dove si trova l'auto, all'incirca?",
     "localPlaceholder": "Es. Lasnamäe o Tallinn",
-    "localAjuda": "Non serve l'indirizzo esatto – basta il quartiere (es. Lasnamäe) o la città.",
+    "localAjuda": "Indica un solo luogo: indirizzo esatto, quartiere (es. Lasnamäe), comune o città. Più città insieme o solo “Estonia” non vanno bene: da questo luogo troviamo le officine più vicine.",
     "localUsarMinha": "Usa la mia posizione",
     "localProcurando": "Ricerca della posizione...",
     "localNegado": "Impossibile usare la tua posizione. Scrivi indirizzo, quartiere o città."
