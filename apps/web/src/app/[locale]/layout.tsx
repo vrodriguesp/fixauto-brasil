@@ -67,7 +67,7 @@ const NAMESPACES_PUBLICOS = [
   'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'criarSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo', 'enderecoEstruturado', 'excluirConta', 'avisoJurisdicao',
   'contatoDuvidas',
   // chat de suporte (botao em todas as paginas) e o 'ver original' das mensagens traduzidas
-  'suporte', 'traducao',
+  'suporte', 'traducao', 'conversa',
 ];
 
 function mensagensPublicas(messages: Record<string, unknown>) {
