@@ -1214,7 +1214,7 @@
     "vazio_respondidos": "You haven't replied to any request yet.",
     "vazio_encerrados": "No closed requests yet.",
     "verRespondidos": "See replied requests",
-    "cadastroEmAnalise": "Your registration is under review. Once approved, you'll start receiving requests.",
+    "cadastroEmAnalise": "Your registration is under review. Once approved, you'll start receiving requests. We'll e-mail you when it's approved.",
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",

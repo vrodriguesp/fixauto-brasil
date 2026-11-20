@@ -1214,7 +1214,7 @@
     "vazio_respondidos": "Sa pole veel ühelegi päringule vastanud.",
     "vazio_encerrados": "Lõpetatud päringuid veel pole.",
     "verRespondidos": "Vaata vastatud päringuid",
-    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel. Pärast kinnitamist hakkad päringuid saama.",
+    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel. Pärast kinnitamist hakkad päringuid saama. Anname kinnitamisest e-postiga teada.",
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",

@@ -1214,7 +1214,7 @@
     "vazio_respondidos": "Você ainda não respondeu nenhum pedido.",
     "vazio_encerrados": "Nenhum pedido encerrado ainda.",
     "verRespondidos": "Ver pedidos respondidos",
-    "cadastroEmAnalise": "Seu cadastro está em análise. Assim que for aprovado, você começa a receber pedidos.",
+    "cadastroEmAnalise": "Seu cadastro está em análise. Assim que for aprovado, você começa a receber pedidos. Avisamos por e-mail quando for aprovado.",
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",

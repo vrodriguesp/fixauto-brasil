@@ -1214,7 +1214,7 @@
     "vazio_respondidos": "Ainda não respondeu a nenhum pedido.",
     "vazio_encerrados": "Ainda não há pedidos encerrados.",
     "verRespondidos": "Ver pedidos respondidos",
-    "cadastroEmAnalise": "O seu registo está em análise. Assim que for aprovado, começa a receber pedidos.",
+    "cadastroEmAnalise": "O seu registo está em análise. Assim que for aprovado, começa a receber pedidos. Avisamos por e-mail quando for aprovado.",
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",

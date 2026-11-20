@@ -887,6 +887,54 @@ export async function sendMensagemPecaEmail(params: {
   }
 }
 
+// 20/11 (dono): oficina aprovada (ativada) pelo admin: como entrar, onde ficam os pedidos e os guias
+export async function sendOficinaAtivadaEmail(params: { toEmail: string; toName: string; oficinaNome: string; locale?: string }) {
+  if (!podeEnviar) return { success: false, error: 'Email service not configured' };
+  const s = EMAIL_I18N.oficinaAtivada[resolveEmailLocale(params.locale)];
+  const idioma = idiomaDoSite(params.locale);
+  const loginLink = `<a href="${urlNoIdioma(params.locale, '/login')}">${s.loginRotulo}</a>`;
+  // PDF de nome fixo = sempre a versao atual (so ET e RU); os outros idiomas vao para a ajuda das oficinas
+  const guiaUrl = idioma === 'et' || idioma === 'ru'
+    ? `${SITE_URL.replace('://www.', '://')}/guias/perfil-oficina-${idioma}.pdf`
+    : urlNoIdioma(params.locale, '/docs/oficina');
+  const guiaLink = `<a href="${guiaUrl}">${s.guiaRotulo}</a>`;
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: s.subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${fmt(s.intro, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
+            <ol style="padding-left: 20px; line-height: 1.5;">
+              <li style="margin-bottom: 8px;">${fmt(s.passoLogin, { loginLink })}</li>
+              <li style="margin-bottom: 8px;">${s.passoPedidos}</li>
+              <li style="margin-bottom: 8px;">${fmt(s.passoGuias, { guiaLink })}</li>
+            </ol>
+            <p style="margin-top: 24px;">
+              <a href="${linkNeutroPecas(params.locale, '/oficina/pedidos')}"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${s.cta}
+              </a>
+            </p>
+            <p style="color: #6b7280; font-size: 13px;">${s.fim}</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de oficina ativada:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
 // M1 (16/11): loja de pecas ativada pelo admin
 export async function sendLojaAtivadaEmail(params: { toEmail: string; toName: string; lojaNome: string; locale?: string }) {
   if (!podeEnviar) return { success: false, error: 'Email service not configured' };

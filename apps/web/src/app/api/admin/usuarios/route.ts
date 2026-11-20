@@ -3,7 +3,7 @@ import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { excluirOuAnonimizarConta } from '@/lib/excluir-conta';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
-import { sendLojaAtivadaEmail } from '@/lib/notifications';
+import { sendLojaAtivadaEmail, sendOficinaAtivadaEmail } from '@/lib/notifications';
 
 
 export const dynamic = 'force-dynamic';
@@ -34,6 +34,10 @@ export async function PATCH(req: NextRequest) {
     const { data: lojasAntes } = ativo === true
       ? await supabaseAdmin.from('lojas_pecas').select('nome_fantasia, ativa').eq('profile_id', id)
       : { data: null };
+    // 20/11 (dono): oficina aprovada recebe e-mail com login, pedidos e guias
+    const { data: oficinasAntes } = ativo === true
+      ? await supabaseAdmin.from('oficinas').select('nome_fantasia, ativa').eq('profile_id', id)
+      : { data: null };
 
     const { error } = await supabaseAdmin.from('profiles').update(updates).eq('id', id);
     if (error) {
@@ -50,6 +54,14 @@ export async function PATCH(req: NextRequest) {
       const { data: perfil } = await supabaseAdmin.from('profiles').select('email, nome, idioma').eq('id', id).maybeSingle();
       if (perfil?.email) {
         await sendLojaAtivadaEmail({ toEmail: perfil.email, toName: perfil.nome || '', lojaNome: lojaAtivada.nome_fantasia, locale: perfil.idioma || undefined }).catch(() => {});
+      }
+    }
+
+    const oficinaAtivada = (oficinasAntes || []).find((o) => !o.ativa);
+    if (oficinaAtivada) {
+      const { data: perfil } = await supabaseAdmin.from('profiles').select('email, nome, idioma').eq('id', id).maybeSingle();
+      if (perfil?.email) {
+        await sendOficinaAtivadaEmail({ toEmail: perfil.email, toName: perfil.nome || '', oficinaNome: oficinaAtivada.nome_fantasia, locale: perfil.idioma || undefined }).catch(() => {});
       }
     }
 

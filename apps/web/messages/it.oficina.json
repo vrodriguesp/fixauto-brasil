@@ -1214,7 +1214,7 @@
     "vazio_respondidos": "Non hai ancora risposto a nessuna richiesta.",
     "vazio_encerrados": "Ancora nessuna richiesta chiusa.",
     "verRespondidos": "Vedi le richieste risposte",
-    "cadastroEmAnalise": "La tua registrazione è in verifica. Appena approvata, inizierai a ricevere richieste.",
+    "cadastroEmAnalise": "La tua registrazione è in verifica. Appena approvata, inizierai a ricevere richieste. Ti avviseremo via e-mail quando sarà approvata.",
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",

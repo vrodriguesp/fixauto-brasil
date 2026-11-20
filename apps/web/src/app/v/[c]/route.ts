@@ -6,7 +6,8 @@ import { SITE_URL, urlNoIdioma } from '@/lib/site-url';
 // caminho interno vai codificado (base64url) e so pode ser uma pagina logada
 // das pecas; ?o=<idioma> de quem recebe. Fica fora do middleware (matcher).
 // So redireciona: a pagina de destino exige o login de quem e parte do pedido.
-const PERMITIDOS = [/^\/loja\/(cotacoes|pedidos|conversa\/[\w-]+)(\?[\w=&%.\-~+!*'()]*)?$/, /^\/oficina\/pecas(\/conversa\/[\w-]+)?(\?[\w=&%.\-~+!*'()]*)?$/];
+// 20/11: + caixa de pedidos da oficina (e-mail "oficina aprovada")
+const PERMITIDOS = [/^\/loja\/(cotacoes|pedidos|conversa\/[\w-]+)(\?[\w=&%.\-~+!*'()]*)?$/, /^\/oficina\/pecas(\/conversa\/[\w-]+)?(\?[\w=&%.\-~+!*'()]*)?$/, /^\/oficina\/pedidos$/];
 
 export function GET(req: NextRequest, { params }: { params: { c: string } }) {
   let interno = '';
