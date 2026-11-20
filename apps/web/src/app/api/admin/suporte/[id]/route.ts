@@ -60,7 +60,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const agora = new Date().toISOString();
-  const mudancas: Record<string, unknown> = { ultima_mensagem_em: agora, nao_lidas_usuario: c.nao_lidas_usuario + 1, nao_lidas_admin: 0 };
+  // responder desarquiva (dono 20/11, migracao 112): "respondi e a conversa sumiu" nao acontece
+  const mudancas: Record<string, unknown> = { ultima_mensagem_em: agora, nao_lidas_usuario: c.nao_lidas_usuario + 1, nao_lidas_admin: 0, arquivada_em: null };
   // a pessoa nao esta com o chat aberto: manda a resposta por e-mail tambem
   const perfil = (c as any).profile as { nome?: string; email?: string } | null;
   const email = perfil?.email || c.visitante_email;
@@ -72,4 +73,41 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   }
   await supabaseAdmin.from('suporte_conversas').update(mudancas).eq('id', c.id);
   return NextResponse.json({ ok: true, traducao, porEmail, semTraducao });
+}
+
+// Arquivar / desarquivar (dono 20/11, migracao 112): some da lista "Ativas", os dados ficam.
+// Volta sozinha quando a pessoa escreve, quando o admin responde ou inicia de novo com a conta.
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+  const corpo = await req.json().catch(() => ({}));
+  if (corpo.acao !== 'arquivar' && corpo.acao !== 'desarquivar') return NextResponse.json({ error: 'Ação inválida' }, { status: 400 });
+  if (!/^[0-9a-f-]{36}$/.test(params.id)) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
+  const arquivadaEm = corpo.acao === 'arquivar' ? new Date().toISOString() : null;
+  // arquivar zera as nao lidas: nao fica contando no menu do admin
+  const mudancas: Record<string, unknown> = arquivadaEm ? { arquivada_em: arquivadaEm, nao_lidas_admin: 0 } : { arquivada_em: null };
+  const { data, error } = await supabaseAdmin.from('suporte_conversas').update(mudancas).eq('id', params.id).select('id');
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data?.length) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
+  return NextResponse.json({ ok: true, arquivadaEm });
+}
+
+// Excluir: so conversa SEM nenhuma mensagem (ex.: "Nova conversa" aberta por engano). A checagem
+// e o DELETE vao juntos no banco (suporte_excluir_vazia, com trava): uma mensagem chegando ao
+// mesmo tempo nunca e apagada. Com mensagem: 409 - use Arquivar (o historico fica sempre).
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+  if (!/^[0-9a-f-]{36}$/.test(params.id)) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
+  const { data: c } = await supabaseAdmin.from('suporte_conversas').select('id').eq('id', params.id).maybeSingle();
+  if (!c) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
+  const { data: apagou, error } = await supabaseAdmin.rpc('suporte_excluir_vazia', { p_id: params.id });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!apagou) {
+    // sumiu no meio tempo (duas abas): 404; senao tem mensagem
+    const { data: ainda } = await supabaseAdmin.from('suporte_conversas').select('id').eq('id', params.id).maybeSingle();
+    if (!ainda) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
+    return NextResponse.json({ error: 'A conversa já tem mensagens — use Arquivar', codigo: 'TEM_MENSAGENS' }, { status: 409 });
+  }
+  return NextResponse.json({ ok: true });
 }

@@ -16,8 +16,11 @@ import { Presenca } from '@/components/admin/Presenca';
 // 19/11 (dono): o admin tambem COMECA uma conversa com uma oficina/loja/cliente
 // ("Nova conversa" aqui, "Escrever a oficina" nas telas da oficina/pedido/usuarios ->
 // ?profile=<id>) e ve "online agora / visto ha X" de quem tem conta (migracao 101).
+// 20/11 (dono, recomendacao Fable): "Arquivar" tira da lista Ativas sem apagar nada (volta
+// sozinha quando a pessoa escreve ou o admin responde); "Excluir" so aparece na conversa SEM
+// nenhuma mensagem (ex.: "Nova conversa" aberta por engano). Aba "Arquivadas" (?arquivadas=1).
 
-interface Conversa { id: string; idioma: string; pagina: string | null; ultima: string; naoLidas: number; nome: string; email: string; tipo: string; profileId: string | null; codigo: number | null; vistoEm: string | null; previa: { autor: string; texto: string } | null }
+interface Conversa { id: string; idioma: string; pagina: string | null; ultima: string; naoLidas: number; nome: string; email: string; tipo: string; profileId: string | null; codigo: number | null; vistoEm: string | null; arquivadaEm: string | null; vazia: boolean; previa: { autor: string; texto: string } | null }
 interface ContaBusca { id: string; nome: string; email: string; tipo: string; codigo: number | null; idioma: string; ativo: boolean; empresa: string | null }
 interface Msg { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; traducao: string | null; origem: string | null; created_at: string }
 type Aviso = { tom: 'alerta' | 'info' | 'erro'; texto: string };
@@ -75,6 +78,10 @@ function SuporteAdmin() {
   const busca = useSearchParams();
   const router = useRouter();
   const [conversas, setConversas] = useState<Conversa[]>([]);
+  // aba Arquivadas (no endereco: sobrevive ao F5)
+  const verArquivadas = busca?.get('arquivadas') === '1';
+  const [totalArquivadas, setTotalArquivadas] = useState(0);
+  const [mexendo, setMexendo] = useState(false);
   const [carregado, setCarregado] = useState(false);
   const [traducao, setTraducao] = useState(true);
   const [modoAberto, setModoAberto] = useState(false);
@@ -85,6 +92,9 @@ function SuporteAdmin() {
   const [avisos, setAvisos] = useState<Aviso[]>([]);
   const [traduzirResposta, setTraduzirResposta] = useState(true);
   const [traduzindo, setTraduzindo] = useState<string | null>(null);
+  // aviso no topo da lista (depois de arquivar/excluir a conversa fecha)
+  const [avisoLista, setAvisoLista] = useState('');
+  useEffect(() => { if (!avisoLista) return; const t = setTimeout(() => setAvisoLista(''), 6000); return () => clearTimeout(t); }, [avisoLista]);
   const [verOriginal, setVerOriginal] = useState<Record<string, boolean>>({});
   // nova conversa comecada pelo admin (dono 19/11): caixa de busca de contas
   const [novaAberta, setNovaAberta] = useState(false);
@@ -99,12 +109,22 @@ function SuporteAdmin() {
   const fimRef = useRef<HTMLDivElement>(null);
   const campoRef = useRef<HTMLTextAreaElement>(null);
 
+  const abaRef = useRef(verArquivadas);
+  abaRef.current = verArquivadas;
   const carregarLista = useCallback(async () => {
-    const r = await fetch('/api/admin/suporte').catch(() => null);
+    const aba = verArquivadas;
+    const r = await fetch(`/api/admin/suporte${aba ? '?arquivadas=1' : ''}`).catch(() => null);
     if (!r?.ok) return;
     const d = await r.json();
-    setConversas(d.conversas || []); setTraducao(!!d.traducao); setCarregado(true);
-  }, []);
+    // resposta atrasada da outra aba: ignora
+    if (aba !== abaRef.current) return;
+    setConversas(d.conversas || []); setTraducao(!!d.traducao); setTotalArquivadas(d.totalArquivadas || 0); setCarregado(true);
+  }, [verArquivadas]);
+  const irParaAba = (arq: boolean) => {
+    if (arq === verArquivadas) return;
+    setCarregado(false); setConversas([]); setAberta(null);
+    router.replace(arq ? '/admin/suporte?arquivadas=1' : '/admin/suporte');
+  };
   const carregarConversa = useCallback(async (id: string) => {
     const r = await fetch(`/api/admin/suporte/${id}`).catch(() => null);
     if (!r?.ok) return;
@@ -122,10 +142,12 @@ function SuporteAdmin() {
     setIniciando(null);
     const d = r?.ok ? await r.json() : null;
     if (!d?.conversaId) { setAvisos([{ tom: 'erro', texto: 'Não foi possível abrir a conversa com esta conta.' }]); return; }
-    await carregarLista();
     setNovaAberta(false); setNovaBusca(''); setNovaContas(null);
+    // a conversa (nova ou desarquivada) esta em Ativas
+    if (abaRef.current) { router.replace('/admin/suporte'); setCarregado(false); setConversas([]); } else await carregarLista();
     setAberta(d.conversaId);
-  }, [carregarLista]);
+    if (d.desarquivada) setTimeout(() => setAvisos([{ tom: 'info', texto: 'Esta conversa estava arquivada e voltou para Ativas.' }]), 0);
+  }, [carregarLista, router]);
   // ?profile=<id> vindo de "Escrever a oficina" (oficina, pedido, usuarios): abre direto
   const profileParam = busca?.get('profile') || null;
   useEffect(() => {
@@ -182,6 +204,35 @@ function SuporteAdmin() {
     carregarConversa(aberta); carregarLista();
   }
 
+  // arquivar / desarquivar (dados ficam) e excluir (so conversa sem nenhuma mensagem)
+  async function arquivar(arq: boolean) {
+    if (!aberta || mexendo) return;
+    setMexendo(true); setAvisos([]);
+    const r = await fetch(`/api/admin/suporte/${aberta}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: arq ? 'arquivar' : 'desarquivar' }) }).catch(() => null);
+    setMexendo(false);
+    if (!r?.ok) { setAvisos([{ tom: 'erro', texto: arq ? 'Não foi possível arquivar.' : 'Não foi possível desarquivar.' }]); return; }
+    const id = aberta;
+    setConversas((cs) => cs.filter((c) => c.id !== id));
+    setTotalArquivadas((n) => Math.max(0, n + (arq ? 1 : -1)));
+    setAberta(null);
+    setAvisoLista(arq ? 'Conversa arquivada. Ela volta para Ativas se a pessoa escrever.' : 'Conversa de volta em Ativas.');
+    carregarLista();
+  }
+  async function excluir() {
+    if (!aberta || mexendo) return;
+    if (!window.confirm('Excluir esta conversa vazia? Não há mensagens.')) return;
+    setMexendo(true); setAvisos([]);
+    const r = await fetch(`/api/admin/suporte/${aberta}`, { method: 'DELETE' }).catch(() => null);
+    setMexendo(false);
+    if (r?.status === 409) { setAvisos([{ tom: 'alerta', texto: 'A conversa já tem mensagens — use Arquivar.' }]); carregarLista(); carregarConversa(aberta); return; }
+    if (!r?.ok && r?.status !== 404) { setAvisos([{ tom: 'erro', texto: 'Não foi possível excluir.' }]); return; }
+    const id = aberta;
+    setConversas((cs) => cs.filter((c) => c.id !== id));
+    setAberta(null);
+    setAvisoLista('Conversa vazia excluída.');
+    carregarLista();
+  }
+
   // modo manual: traduz uma mensagem recebida para o portugues (fica guardada nela)
   async function traduzirRecebida(mensagemId: string) {
     if (!aberta) return;
@@ -195,7 +246,9 @@ function SuporteAdmin() {
   const conv = conversas.find((c) => c.id === aberta);
   // outra lingua que nao o portugues: oferece traduzir a resposta (modo manual)
   const linguaOutra = !!conv && !conv.idioma.startsWith('pt');
-  const porResponder = conversas.filter((c) => c.naoLidas > 0).length;
+  const porResponder = verArquivadas ? 0 : conversas.filter((c) => c.naoLidas > 0).length;
+  // excluir: so sem nenhuma mensagem (a lista diz; a tela aberta confirma com as mensagens carregadas)
+  const podeExcluir = !!conv && conv.vazia && msgs !== null && msgs.length === 0;
 
   return (
     <div className="flex h-[calc(100dvh-5.5rem)] overflow-hidden rounded-xl border border-slate-700 bg-slate-800 sm:h-[calc(100dvh-6.5rem)] md:h-[calc(100dvh-4rem)]">
@@ -262,11 +315,24 @@ function SuporteAdmin() {
                 : 'Você toca "Traduzir" na mensagem recebida e marca quando a resposta vai traduzida.'}
             </p>
           </fieldset>
+          {/* Ativas | Arquivadas (dono 20/11) */}
+          <div className="mt-3 flex gap-1 rounded-lg bg-slate-900 p-1 text-sm" role="tablist" aria-label="Filtro das conversas">
+            <button type="button" role="tab" aria-selected={!verArquivadas} onClick={() => irParaAba(false)} data-testid="suporte-aba-ativas"
+              className={`flex-1 rounded-md px-3 py-1.5 ${!verArquivadas ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'}`}>Ativas</button>
+            <button type="button" role="tab" aria-selected={verArquivadas} onClick={() => irParaAba(true)} data-testid="suporte-aba-arquivadas"
+              className={`flex-1 rounded-md px-3 py-1.5 ${verArquivadas ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'}`}>Arquivadas{totalArquivadas > 0 ? ` (${totalArquivadas})` : ''}</button>
+          </div>
+          {avisoLista && <p role="status" className="mt-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs text-blue-300" data-testid="suporte-aviso-lista">{avisoLista}</p>}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           {!carregado ? (
             <div aria-busy="true">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="mx-3 my-2 h-16 animate-pulse rounded-lg bg-slate-700/50" />)}</div>
+          ) : conversas.length === 0 && verArquivadas ? (
+            <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center">
+              <IconeChat className="h-10 w-10 text-slate-600" />
+              <p className="text-slate-400">Nenhuma conversa arquivada.</p>
+            </div>
           ) : conversas.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center">
               <IconeChat className="h-10 w-10 text-slate-600" />
@@ -289,6 +355,7 @@ function SuporteAdmin() {
                         <span className={`${chip} ${COR[c.tipo] || COR.visitante}`}>{TIPO[c.tipo] || c.tipo}</span>
                         <span className={`${chip} bg-slate-700 uppercase text-slate-300`}>{c.idioma}</span>
                         {c.profileId && <Presenca vistoEm={c.vistoEm} curto />}
+                        {c.arquivadaEm && <span className={`${chip} bg-slate-700/60 text-slate-400`} data-testid="suporte-chip-arquivada">arquivada {timeAgo(c.arquivadaEm, 'pt')}</span>}
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <p className="line-clamp-1 flex-1 text-sm text-slate-400">{c.previa ? `${c.previa.autor === 'usuario' ? '' : 'Você: '}${c.previa.texto}` : ''}</p>
@@ -328,9 +395,24 @@ function SuporteAdmin() {
                 </p>
               )}
             </div>
+            <div className="flex shrink-0 flex-col items-end gap-1.5">
+              <div className="flex items-center gap-1.5">
+                {podeExcluir && (
+                  <button type="button" onClick={excluir} disabled={mexendo} data-testid="suporte-excluir" title="Só conversa sem nenhuma mensagem"
+                    className="rounded-md border border-red-500/40 px-2 py-1 text-xs text-red-300 hover:bg-red-500/10 disabled:opacity-50">Excluir</button>
+                )}
+                {conv.arquivadaEm ? (
+                  <button type="button" onClick={() => arquivar(false)} disabled={mexendo} data-testid="suporte-desarquivar"
+                    className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-200 hover:bg-slate-700 disabled:opacity-50">Desarquivar</button>
+                ) : (
+                  <button type="button" onClick={() => arquivar(true)} disabled={mexendo} data-testid="suporte-arquivar" title="Some da lista; o histórico fica e volta se a pessoa escrever"
+                    className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-200 hover:bg-slate-700 disabled:opacity-50">Arquivar</button>
+                )}
+              </div>
             <span className="hidden shrink-0 items-center gap-1.5 text-xs text-slate-400 sm:flex" title="Com o admin aberto você aparece online e a mensagem automática não sai.">
               <span className="h-2 w-2 rounded-full bg-green-400" aria-hidden="true" /> você está online
             </span>
+            </div>
           </header>
 
           <div className="min-h-0 flex-1 space-y-2 overflow-y-auto bg-slate-900/60 px-4 py-4">

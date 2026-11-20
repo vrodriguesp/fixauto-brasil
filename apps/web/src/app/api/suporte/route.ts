@@ -107,7 +107,8 @@ export async function POST(req: NextRequest) {
   const { data: msg, error } = await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: conversa.id, autor: 'usuario', texto }).select('id').single();
   if (error) { console.error('[suporte] enviar', error.message); return erroInterno(); }
 
-  const mudancas: Record<string, unknown> = { ultima_mensagem_em: agora, nao_lidas_admin: conversa.nao_lidas_admin + 1, idioma, usuario_visto_em: agora };
+  // a pessoa escreveu: conversa arquivada pelo admin volta para Ativas (dono 20/11, migracao 112)
+  const mudancas: Record<string, unknown> = { ultima_mensagem_em: agora, nao_lidas_admin: conversa.nao_lidas_admin + 1, idioma, usuario_visto_em: agora, arquivada_em: null };
   if (pagina) mudancas.pagina = pagina;
   let avisarAdmin = false;
   if (!cfg.adminOnline) {

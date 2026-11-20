@@ -99,6 +99,8 @@ export async function excluirOuAnonimizarConta(userId: string): Promise<{ modo?:
   if ((lojas || []).length) await supabaseAdmin.from('lojas_pecas').update({ ativa: false }).eq('profile_id', userId);
   // presenca (migracao 101): conta anonimizada nao mostra mais "visto ha X"
   await supabaseAdmin.from('presenca').delete().eq('profile_id', userId);
+  // chat de suporte (migracao 112): o historico fica para o admin, mas sai da lista "Ativas"
+  await supabaseAdmin.from('suporte_conversas').update({ arquivada_em: new Date().toISOString(), nao_lidas_admin: 0 }).eq('profile_id', userId).is('arquivada_em', null);
 
   return { modo: 'anonimizada' };
 }

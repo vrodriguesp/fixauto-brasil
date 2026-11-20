@@ -8,12 +8,19 @@ import { presencaDe } from '@/lib/presenca';
 // da traducao automatica e "admin online" (o painel do admin aberto manda um
 // sinal a cada minuto; com ele online nao sai a mensagem automatica).
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
-  const { data: conversas } = await supabaseAdmin.from('suporte_conversas')
-    .select('id, profile_id, visitante_nome, visitante_email, idioma, pagina, ultima_mensagem_em, nao_lidas_admin, usuario_visto_em, profile:profiles(nome, email, tipo, codigo)')
-    .order('ultima_mensagem_em', { ascending: false }).limit(100);
+  // Ativas (padrao) | Arquivadas (?arquivadas=1) - dono 20/11, migracao 112
+  const arquivadas = req.nextUrl.searchParams.get('arquivadas') === '1';
+  let q = supabaseAdmin.from('suporte_conversas')
+    .select('id, profile_id, visitante_nome, visitante_email, idioma, pagina, ultima_mensagem_em, nao_lidas_admin, usuario_visto_em, arquivada_em, profile:profiles(nome, email, tipo, codigo)');
+  q = arquivadas ? q.not('arquivada_em', 'is', null).order('arquivada_em', { ascending: false }) : q.is('arquivada_em', null).order('ultima_mensagem_em', { ascending: false });
+  const [{ data: conversas, error }, { count: totalArquivadas }] = await Promise.all([
+    q.limit(100),
+    supabaseAdmin.from('suporte_conversas').select('id', { count: 'exact', head: true }).not('arquivada_em', 'is', null),
+  ]);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   const ids = (conversas || []).map((c) => c.id);
   // ultima mensagem de cada conversa (para a previa da lista)
   const { data: ultimas } = ids.length
@@ -21,11 +28,20 @@ export async function GET() {
     : { data: [] as any[] };
   const previa = new Map<string, any>();
   for (const m of ultimas || []) if (!previa.has(m.conversa_id)) previa.set(m.conversa_id, m);
+  // conversa sem NENHUMA mensagem (nem automatica): so ela pode ser excluida (as 500 ultimas
+  // acima podem nao alcancar uma conversa antiga - aqui basta saber se existe alguma)
+  const comMensagem = new Set<string>(previa.keys());
+  const semPrevia = ids.filter((id) => !comMensagem.has(id));
+  if (semPrevia.length) {
+    const { data: algumas } = await supabaseAdmin.from('suporte_mensagens').select('conversa_id').in('conversa_id', semPrevia).limit(1000);
+    for (const m of algumas || []) comMensagem.add(m.conversa_id);
+  }
   const cfg = await configSuporte();
   // "online agora / visto ha X" de quem tem conta (dono 19/11, migracao 101)
   const presenca = await presencaDe((conversas || []).map((c) => c.profile_id).filter(Boolean) as string[]);
   return NextResponse.json({
     traducao: cfg.traducao,
+    totalArquivadas: totalArquivadas || 0,
     conversas: (conversas || []).map((c: any) => {
       const u = previa.get(c.id);
       return {
@@ -33,6 +49,7 @@ export async function GET() {
         nome: c.profile?.nome || c.visitante_nome || '?', email: c.profile?.email || c.visitante_email || '',
         tipo: c.profile?.tipo || 'visitante', profileId: c.profile_id || null, codigo: c.profile?.codigo ?? null,
         vistoEm: c.profile_id ? presenca[c.profile_id] || null : null,
+        arquivadaEm: c.arquivada_em || null, vazia: !comMensagem.has(c.id),
         previa: u ? { autor: u.autor, texto: (u.autor === 'usuario' && u.traducao) || u.texto } : null,
       };
     }),
@@ -55,6 +72,6 @@ export async function POST() {
   if (!auth.ok) return auth.response;
   // upsert: a linha unica pode faltar num banco novo
   await supabaseAdmin.from('plataforma_config').upsert({ id: 1, admin_visto_em: new Date().toISOString() }, { onConflict: 'id' });
-  const { data } = await supabaseAdmin.from('suporte_conversas').select('nao_lidas_admin').gt('nao_lidas_admin', 0);
+  const { data } = await supabaseAdmin.from('suporte_conversas').select('nao_lidas_admin').gt('nao_lidas_admin', 0).is('arquivada_em', null);
   return NextResponse.json({ naoLidas: (data || []).reduce((s, c) => s + c.nao_lidas_admin, 0) });
 }

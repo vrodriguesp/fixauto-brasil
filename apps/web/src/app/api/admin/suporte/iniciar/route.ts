@@ -58,8 +58,16 @@ export async function POST(req: NextRequest) {
   const { data: perfil } = await supabaseAdmin.from('profiles').select('id, tipo, idioma').eq('id', profileId).maybeSingle();
   if (!perfil) return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 });
   if (!TIPOS.includes(perfil.tipo)) return NextResponse.json({ error: 'Só oficina, loja ou cliente' }, { status: 400 });
-  const { data: existente } = await supabaseAdmin.from('suporte_conversas').select('id').eq('profile_id', profileId).maybeSingle();
-  if (existente) return NextResponse.json({ conversaId: existente.id, nova: false });
+  const { data: existente } = await supabaseAdmin.from('suporte_conversas').select('id, arquivada_em').eq('profile_id', profileId).maybeSingle();
+  if (existente) {
+    // arquivada (migracao 112): o admin quis falar com a conta de novo -> volta para Ativas
+    if (existente.arquivada_em) {
+      const { error: eDes } = await supabaseAdmin.from('suporte_conversas').update({ arquivada_em: null }).eq('id', existente.id);
+      if (eDes) return NextResponse.json({ error: eDes.message }, { status: 500 });
+      return NextResponse.json({ conversaId: existente.id, nova: false, desarquivada: true });
+    }
+    return NextResponse.json({ conversaId: existente.id, nova: false });
+  }
   // lingua da conversa = a do cadastro (a resposta e o e-mail vao nela); muda quando a pessoa escrever
   const { data: nova, error } = await supabaseAdmin.from('suporte_conversas').insert({ profile_id: profileId, idioma: linguaValida(perfil.idioma) }).select('id').single();
   if (error) {
