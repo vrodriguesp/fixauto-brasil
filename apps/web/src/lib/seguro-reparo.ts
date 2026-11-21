@@ -7,7 +7,7 @@
 //   kasko (opcional) paga o proprio carro, com franquia (omavastutus). Desde
 //   2015 quem sofreu o dano pode abrir o pedido na PROPRIA seguradora mesmo
 //   com a culpa do outro. Sem feridos e com acordo, os motoristas registram
-//   o acidente no formulario digital (avarii.lkk.ee) ou no papel.
+//   o acidente no formulario digital (https://avarii.lkf.ee) ou no papel.
 // - Brasil: seguro auto com franquia; com culpa de terceiro aciona-se o
 //   seguro dele e a vitima escolhe a oficina (CDC); oficinas referenciadas
 //   costumam dar desconto na franquia.

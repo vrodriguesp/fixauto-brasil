@@ -463,7 +463,7 @@
     "passo_emergencia_br": "Se qualcuno è ferito, chiama il 192 (SAMU) o il 193 (vigili del fuoco). Se non c'è accordo o l'altro conducente è fuggito, chiama il 190.",
     "passo_emergencia_ee": "Se qualcuno è ferito, se non c'è accordo su chi ha colpa o se l'altro conducente se n'è andato, chiama il 112.",
     "passo_registro_br": "Annota targa, nome, telefono e compagnia assicurativa dell'altro conducente. Se serve, presenta una denuncia (in molti stati anche online).",
-    "passo_registro_ee": "Insieme all'altro conducente, registrate l'incidente con il modulo digitale su avarii.lkk.ee (o con il modulo cartaceo), indicando chi ha colpa.",
+    "passo_registro_ee": "Insieme all'altro conducente, registrate l'incidente con il modulo digitale su https://avarii.lkf.ee (o con il modulo cartaceo), indicando chi ha colpa.",
     "passo_seguro": "Avvisa la compagnia il prima possibile e annota il numero di sinistro. Poi aggiungilo nella pagina dell'incidente perché l'officina lo veda.",
     "passo_oficina_seguro": "L'officina invia il preventivo alla compagnia, che lo approva prima dell'inizio della riparazione.",
     "passo_proprio": "Confronta i preventivi che arrivano e scegli l'officina.",

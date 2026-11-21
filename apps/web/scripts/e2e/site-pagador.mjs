@@ -50,7 +50,7 @@ try {
   const ctxC = await celular(); const pC = await entrar(ctxC, cli.email, cli.senha, 'it');
   await pC.goto(`${SITE}/it/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);
-  await pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ }).first().click();
+  await pC.locator('button').filter({ hasText: /\d{2}:\d{2}\s*[-–]\s*\d{2}:\d{2}|^\s*\d{2}:\d{2}\s*$/ }).first().click();
   await pC.getByRole('button', { name: /Conferma appuntamento/ }).last().click(); await pC.waitForTimeout(6000);
   const { data: auto } = await sb.from('mensagens').select('oficina_id, pagador_id').eq('solicitacao_id', solId);
   ok('aceite abre a conversa particular de quem paga', (auto || []).some((m) => m.pagador_id === pag.id && m.oficina_id === ofId), JSON.stringify(auto));

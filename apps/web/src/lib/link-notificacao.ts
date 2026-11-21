@@ -14,6 +14,8 @@ export function linkDaNotificacao(n: Pick<Notificacao, 'tipo' | 'dados'>, tipoUs
     if (d.solicitacao_id) return `/oficina/pedidos/${d.solicitacao_id}`;
     // portal de pecas (16/11): o aviso traz a tela certa (aba Vender, conversa...)
     if (d.cotacao_id) return d.link && d.link.startsWith('/oficina/pecas') ? d.link : '/oficina/pecas';
+    // aviso de acidente antigo, sem o id do pedido (antes de 21/11): a pagina do
+    // acidente manda a oficina nao escolhida para o pedido dela (B1)
     if (d.emergencia_id) return `/emergencia/acidente/${d.emergencia_id}`;
     return null;
   }

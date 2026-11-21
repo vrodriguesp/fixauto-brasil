@@ -10,12 +10,12 @@ export const HEADER_TOKEN = 'x-emergencia-token';
 /**
  * Quem pode ver/agir num acidente: quem registrou (pelo codigo secreto
  * guardado no navegador dele, ou logado como dono), o outro motorista
- * logado, oficinas avisadas e o admin. O id sozinho nao da acesso a nada.
+ * logado, a oficina escolhida (orcamento aceito) e o admin. O id sozinho nao da acesso a nada.
  */
 export async function acessoEmergencia(
   req: NextRequest,
   emergenciaId: string
-): Promise<{ papel: PapelEmergencia; userId: string | null; emergencia: any } | null> {
+): Promise<{ papel: PapelEmergencia; userId: string | null; emergencia: any; oficinaIds?: string[] } | null> {
   const { data: emergencia } = await supabaseAdmin.from('emergencias').select('*').eq('id', emergenciaId).maybeSingle();
   if (!emergencia) return null;
 
@@ -39,16 +39,51 @@ export async function acessoEmergencia(
   const { data: perfil } = await supabaseAdmin.from('profiles').select('tipo').eq('id', userId).maybeSingle();
   if (perfil?.tipo === 'admin') return { papel: 'admin', userId, emergencia };
 
-  const { data: minhas } = await supabaseAdmin.from('oficinas').select('id').eq('profile_id', userId);
-  const ids = (minhas || []).map((o) => o.id);
-  if (ids.length) {
-    const { data: avisada } = await supabaseAdmin
-      .from('emergencia_oficinas_notificadas')
-      .select('id')
-      .eq('emergencia_id', emergenciaId)
-      .in('oficina_id', ids)
-      .limit(1);
-    if (avisada?.length) return { papel: 'oficina', userId, emergencia };
+  // Oficina: so a ESCOLHIDA (orcamento aceito no pedido do acidente) - espelho de
+  // oficina_atende/pode_ver_emergencia da migracao 074. Antes bastava ter sido
+  // avisada, e a oficina avisada lia o contato do outro motorista, a conversa
+  // entre os dois e os orcamentos das concorrentes (auditoria Fable, B1). A
+  // avisada ve o pedido no painel dela (/oficina/pedidos/<id>).
+  if (emergencia.solicitacao_id) {
+    const ids = await minhasOficinas(userId);
+    if (ids.length) {
+      const { data: aceito } = await supabaseAdmin
+        .from('orcamentos')
+        .select('id')
+        .eq('solicitacao_id', emergencia.solicitacao_id)
+        .eq('status', 'aceito')
+        .in('oficina_id', ids)
+        .limit(1);
+      if (aceito?.length) return { papel: 'oficina', userId, emergencia, oficinaIds: ids };
+    }
   }
   return null;
+}
+
+// mesma regra de minhas_oficinas() no banco: dono ou funcionario ativo
+async function minhasOficinas(userId: string): Promise<string[]> {
+  const [{ data: donas }, { data: equipe }] = await Promise.all([
+    supabaseAdmin.from('oficinas').select('id').eq('profile_id', userId),
+    supabaseAdmin.from('funcionarios').select('oficina_id').eq('profile_id', userId).eq('ativo', true),
+  ]);
+  return Array.from(new Set([...(donas || []).map((o) => o.id as string), ...(equipe || []).map((f) => f.oficina_id as string)]));
+}
+
+/**
+ * Oficina logada que foi avisada do acidente (ou orcou) mas nao foi escolhida:
+ * o pedido dela, para a pagina do acidente levar ao pedido em vez de um "sem
+ * acesso" (aviso antigo do sininho, link salvo - links nunca mortos).
+ */
+export async function pedidoDaOficinaSemAcesso(req: NextRequest, emergenciaId: string): Promise<string | null> {
+  const userId = await getSessionUserId(req);
+  if (!userId) return null;
+  const { data: emergencia } = await supabaseAdmin.from('emergencias').select('id, solicitacao_id').eq('id', emergenciaId).maybeSingle();
+  if (!emergencia?.solicitacao_id) return null;
+  const ids = await minhasOficinas(userId);
+  if (!ids.length) return null;
+  const [{ data: avisada }, { data: orcou }] = await Promise.all([
+    supabaseAdmin.from('emergencia_oficinas_notificadas').select('id').eq('emergencia_id', emergenciaId).in('oficina_id', ids).limit(1),
+    supabaseAdmin.from('orcamentos').select('id').eq('solicitacao_id', emergencia.solicitacao_id).in('oficina_id', ids).limit(1),
+  ]);
+  return avisada?.length || orcou?.length ? (emergencia.solicitacao_id as string) : null;
 }

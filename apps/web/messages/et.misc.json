@@ -1232,7 +1232,7 @@
     "passo_emergencia_br": "Kui keegi sai viga, helista 192 (SAMU) või 193 (päästeamet). Kui kokkulepet ei ole või teine juht lahkus, helista 190.",
     "passo_emergencia_ee": "Kui keegi sai viga, kui süüdlases ei jõuta kokkuleppele või kui teine juht lahkus, helista 112.",
     "passo_registro_br": "Kirjuta üles teise juhi numbrimärk, nimi, telefon ja kindlustusandja. Vajadusel esita politseile teade (paljudes osariikides internetis).",
-    "passo_registro_ee": "Vormista koos teise juhiga liiklusõnnetuse teade digitaalselt aadressil avarii.lkk.ee (või paberil) ja märgi, kes oli süüdi.",
+    "passo_registro_ee": "Vormista koos teise juhiga liiklusõnnetuse teade digitaalselt aadressil https://avarii.lkf.ee (või paberil) ja märgi, kes oli süüdi.",
     "passo_seguro": "Teavita kindlustusandjat esimesel võimalusel ja pane kahjujuhtumi number kirja. Seejärel lisa see avarii lehele, et töökoda seda näeks.",
     "passo_oficina_seguro": "Töökoda saadab hinnapakkumise kindlustusandjale, kes kinnitab selle enne remondi algust.",
     "passo_proprio": "Võrdle saabuvaid hinnapakkumisi ja vali töökoda.",

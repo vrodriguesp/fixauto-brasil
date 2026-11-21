@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
       ? await supabaseAdmin.from('profiles').select('conta_teste').eq('id', clienteId).maybeSingle()
       : { data: null };
     const contaTeste = !!perfilCliente?.conta_teste;
-    const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude, 'colisao', contaTeste);
+    const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude, 'colisao', contaTeste, solicitacaoId);
     await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`, avisadas.length, contaTeste).catch((e) => console.error('[emergencia] concierge', e));
 
     // As mesmas oficinas (de colisao, perto do acidente) recebem tambem o

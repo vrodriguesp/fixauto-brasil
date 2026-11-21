@@ -1,20 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { acessoEmergencia } from '@/lib/emergencia-acesso';
+import { acessoEmergencia, pedidoDaOficinaSemAcesso } from '@/lib/emergencia-acesso';
 import { ehUuid } from '@/lib/validacao';
 
 export const dynamic = 'force-dynamic';
 
 // Dados de um acidente para a pagina de acompanhamento - so para quem tem
 // acesso (codigo secreto de quem registrou, participante logado, oficina
-// avisada ou admin). O id sozinho nao basta.
+// escolhida ou admin). O id sozinho nao basta. Oficina avisada e nao escolhida:
+// 403 com o id do pedido dela, para a pagina levar ao painel (B1).
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   if (!ehUuid(params.id)) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   const acesso = await acessoEmergencia(req, params.id);
-  if (!acesso) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+  if (!acesso) {
+    const pedido = await pedidoDaOficinaSemAcesso(req, params.id);
+    return NextResponse.json(pedido ? { error: 'Acesso negado', pedido } : { error: 'Acesso negado' }, { status: 403 });
+  }
   const e = acesso.emergencia;
+  // oficina (mesmo a escolhida): nada do outro motorista nem da conversa entre
+  // os dois motoristas, e so o orcamento dela (segunda camada do B1)
+  const ehOficina = acesso.papel === 'oficina';
 
-  const [{ data: outro }, { data: mensagens }] = await Promise.all([
+  const [{ data: outro }, { data: mensagens }] = ehOficina ? [{ data: null }, { data: [] }] : await Promise.all([
     supabaseAdmin
       .from('emergencia_outro_veiculo')
       .select('id, nome, telefone, email, placa, veiculo_descricao, observacoes, notificado')
@@ -32,18 +39,20 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   let seguro: Record<string, unknown> | null = null;
   let orcamentos: unknown[] = [];
   if (e.solicitacao_id) {
+    let qOrcs = supabaseAdmin
+      .from('orcamentos')
+      .select(
+        'id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, pais, profile:profiles!oficinas_profile_id_fkey(telefone, email))'
+      )
+      .eq('solicitacao_id', e.solicitacao_id);
+    if (ehOficina) qOrcs = qOrcs.in('oficina_id', acesso.oficinaIds || []);
     const [{ data: sol }, { data: orcs }] = await Promise.all([
       supabaseAdmin
         .from('solicitacoes')
         .select('pagamento_reparo, seguradora, sinistro_numero, franquia, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa, cor)')
         .eq('id', e.solicitacao_id)
         .maybeSingle(),
-      supabaseAdmin
-        .from('orcamentos')
-        .select(
-          'id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, pais, profile:profiles!oficinas_profile_id_fkey(telefone, email))'
-        )
-        .eq('solicitacao_id', e.solicitacao_id),
+      qOrcs,
     ]);
     veiculo = (sol as { veiculo?: unknown } | null)?.veiculo ?? null;
     // dados do seguro: nao vao para o outro motorista

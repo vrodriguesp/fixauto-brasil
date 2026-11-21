@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { headersEmergencia } from '@/lib/emergencia-token';
 import { SeguroReparoEditor, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 import { useAuth } from '@/lib/auth-context';
@@ -57,6 +57,7 @@ export default function AcidenteRegistroPage() {
   const tErros = useTranslations('erros');
   const locale = useLocale();
   const { id: emergenciaId } = useParams<{ id: string }>();
+  const router = useRouter();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'registro' | 'chat' | 'orcamentos'>('registro');
@@ -149,6 +150,13 @@ export default function AcidenteRegistroPage() {
     if (!emergenciaId) return;
     const res = await fetch(`/api/emergencia/${emergenciaId}`, { headers: headersEmergencia(emergenciaId), cache: 'no-store' });
     if (res.status === 403 || res.status === 404) {
+      // oficina avisada (nao escolhida): o acidente se acompanha pelo pedido
+      // dela no painel - aviso antigo do sininho ou link salvo nunca fica morto (B1)
+      const corpo = res.status === 403 ? await res.json().catch(() => null) : null;
+      if (corpo?.pedido) {
+        router.replace(`/oficina/pedidos/${corpo.pedido}`);
+        return;
+      }
       setSemAcesso(true);
       setLoadingOrc(false);
       return;
@@ -184,7 +192,7 @@ export default function AcidenteRegistroPage() {
     if (d.veiculo) setVeiculoProprietario(d.veiculo);
     setOrcamentos(d.orcamentos as Orcamento[]);
     setLoadingOrc(false);
-  }, [emergenciaId]);
+  }, [emergenciaId, router]);
 
   useEffect(() => { loadData(); }, [loadData]);
 

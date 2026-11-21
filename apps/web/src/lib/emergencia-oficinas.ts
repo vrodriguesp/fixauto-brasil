@@ -13,8 +13,11 @@ export type OficinaAvisada = { profile_id: string; idioma: string | null };
  * (de outro pais: acidente em Tallinn chegava a oficina de Milao; achado no
  * teste por mercados de 09/10). O admin e avisado por e-mail nesse caso.
  * Idempotente: se o acidente ja tem oficinas avisadas, nao avisa de novo.
+ * O aviso leva o id do pedido: o sininho da oficina abre o pedido dela
+ * (/oficina/pedidos/<id>), nao a pagina do acidente, que e so de quem
+ * participa e da oficina escolhida (auditoria Fable, B1).
  */
-export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null, tipo = 'colisao', clienteTeste = false): Promise<OficinaAvisada[]> {
+export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null, tipo = 'colisao', clienteTeste = false, solicitacaoId: string | null = null): Promise<OficinaAvisada[]> {
   if (latitude == null || longitude == null) return [];
   const { count } = await supabaseAdmin
     .from('emergencia_oficinas_notificadas')
@@ -54,7 +57,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
         tipo: 'emergencia',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { emergencia_id: emergenciaId, textos: emTodasAsLinguas((l) => notifEmergenciaAcidenteProximo(l)) },
+        dados: { emergencia_id: emergenciaId, ...(solicitacaoId ? { solicitacao_id: solicitacaoId } : {}), textos: emTodasAsLinguas((l) => notifEmergenciaAcidenteProximo(l)) },
       });
     }
   }
