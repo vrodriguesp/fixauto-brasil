@@ -9,7 +9,7 @@ import { diaEscolhivel, hojeLocal, somarDias, type ContextoOficina } from '@/lib
 // dias passados, dias fechados pelo perfil e dias sem nenhuma faixa (hoje ja acabou) ficam DESATIVADOS
 // (disabled + aria-disabled, fora da ordem do Tab). O proximo dia aberto vem so REALCADO (borda), nunca
 // escolhido sozinho (decisao 1: campo vazio). Sem biblioteca.
-export default function MiniCalendario({ mes, aoMudarMes, escolhido, realce, aoEscolher, ctx, pais, minMes, maxMes, testid = 'ck' }: {
+export default function MiniCalendario({ mes, aoMudarMes, escolhido, realce, aoEscolher, ctx, pais, minMes, maxMes, testid = 'ck', diasPreferidos }: {
   mes: string; // 'YYYY-MM'
   aoMudarMes: (mes: string) => void;
   escolhido: string;
@@ -19,6 +19,8 @@ export default function MiniCalendario({ mes, aoMudarMes, escolhido, realce, aoE
   pais: string | null | undefined;
   minMes: string; maxMes: string;
   testid?: string;
+  /** 114: dias da semana (0 = domingo ... 6 = sabado) que servem ao motorista: ponto azul + "serve ao motorista" no rotulo */
+  diasPreferidos?: number[];
 }) {
   const t = useTranslations('seletorCheckin');
   const locale = useLocale();
@@ -52,10 +54,11 @@ export default function MiniCalendario({ mes, aoMudarMes, escolhido, realce, aoE
           const sel = ymd === escolhido;
           const ehHoje = ymd === hoje;
           const ehRealce = !sel && pode && ymd === realce;
+          const preferido = pode && !!diasPreferidos?.length && diasPreferidos.includes(new Date(`${ymd}T12:00:00Z`).getUTCDay());
           return (
             <button key={ymd} type="button" disabled={!pode} aria-disabled={!pode || undefined} aria-pressed={sel}
-              aria-label={`${longo(ymd)}${ehHoje ? ` (${t('hoje')})` : ''}${!pode ? ` – ${t('diaIndisponivel')}` : ehRealce ? ` – ${t('proximoAberto')}` : ''}`}
-              onClick={() => aoEscolher(ymd)} data-testid={`${testid}-dia-${ymd}`} data-estado={!pode ? 'desativado' : sel ? 'escolhido' : ehRealce ? 'realce' : 'livre'}
+              aria-label={`${longo(ymd)}${ehHoje ? ` (${t('hoje')})` : ''}${!pode ? ` – ${t('diaIndisponivel')}` : ehRealce ? ` – ${t('proximoAberto')}` : ''}${preferido ? ` – ${t('diaPreferido')}` : ''}`}
+              onClick={() => aoEscolher(ymd)} data-testid={`${testid}-dia-${ymd}`} data-estado={!pode ? 'desativado' : sel ? 'escolhido' : ehRealce ? 'realce' : 'livre'} data-preferido={preferido || undefined}
               className={`relative h-11 rounded-lg text-sm tabular-nums transition-colors ${
                 sel ? 'bg-primary-600 font-semibold text-white'
                   : !pode ? 'cursor-not-allowed bg-transparent text-gray-300 line-through decoration-gray-300'
@@ -63,6 +66,7 @@ export default function MiniCalendario({ mes, aoMudarMes, escolhido, realce, aoE
                       : 'text-gray-900 hover:bg-primary-50'}`}>
               {i + 1}
               {ehHoje && <span aria-hidden="true" className={`absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${sel ? 'bg-white' : 'bg-primary-500'}`} />}
+              {preferido && !sel && <span aria-hidden="true" className="absolute right-1 top-1 h-2 w-2 rounded-full bg-sky-500" />}
             </button>
           );
         })}

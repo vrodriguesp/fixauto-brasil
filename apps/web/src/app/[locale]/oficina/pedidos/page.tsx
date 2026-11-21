@@ -327,7 +327,7 @@ export default function PedidosOficinaPage() {
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
                       {estado === 'aceito' ? <SemQuebra>{`✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!.inicio)), periodo: formatarJanela(janelaDaAgenda(agendas.get(s.id)!.inicio, agendas.get(s.id)!.ate, (oficina as any)?.pais ?? null)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: formatarJanela(janelaDoSlot(slot)) })}` : ''}`}</SemQuebra>
                         : estado === 'entregue' ? `✔ ${t('servicoEntregue')}`
-                        : estado === 'recusado' ? t('clienteRecusou')
+                        : estado === 'recusado' ? `${t('clienteRecusou')}${meu?.recusado_motivo ? ` — ${t(`recusaMotivos.${meu.recusado_motivo}`)}` : ''}`
                         : estado === 'expirado' ? t('orcamentoVenceu')
                         : estado === 'perdido' ? t('outraOficina')
                         : estado === 'dispensado' ? t('voceDispensou', { motivo: t(`motivo_${disp.motivo}`) })

@@ -785,7 +785,8 @@
     "CORRECAO_INVALIDA": "We couldn't change the email here. If you have already confirmed your account, just sign in. Otherwise, sign up again or write to support@bipfix.com.",
     "CORRECAO_EXPIRADA": "The time to fix the email (24 hours) has run out. Sign up again or write to support@bipfix.com.",
     "CORRECOES_ESGOTADAS": "The email has already been changed 3 times. Sign up again or write to support@bipfix.com.",
-    "EMAIL_IGUAL": "That's the same email. Enter the correct address."
+    "EMAIL_IGUAL": "That's the same email. Enter the correct address.",
+    "PEDIDO_FECHADO": "This request is already closed."
   },
   "sobre": {
     "metaTitle": "About BipFix",

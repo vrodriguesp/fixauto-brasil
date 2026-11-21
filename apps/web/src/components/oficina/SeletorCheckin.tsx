@@ -25,7 +25,7 @@ const mesDe = (ymd: string) => ymd.slice(0, 7);
 const tid = (h: string) => h.replace(':', '');
 
 export default function SeletorCheckin({
-  linhas, aoMudar, ctx, pais, prazoDias, max = 5, erro = false, testid = 'ck', mostrarPrevisao = true, rotuloAdicionar, aoAdicionar, extraLinha,
+  linhas, aoMudar, ctx, pais, prazoDias, max = 5, erro = false, testid = 'ck', mostrarPrevisao = true, rotuloAdicionar, aoAdicionar, extraLinha, diasPreferidos,
 }: {
   linhas: LinhaCheckin[];
   aoMudar: (linhas: LinhaCheckin[]) => void;
@@ -40,6 +40,8 @@ export default function SeletorCheckin({
   aoAdicionar?: (l: LinhaCheckin) => void;
   /** conteudo extra embaixo de cada linha (ex.: previsao de entrega editavel no 079) */
   extraLinha?: (l: LinhaCheckin, i: number) => React.ReactNode;
+  /** 114: dias da semana (0 = domingo ... 6 = sabado) que servem ao motorista - realce no calendario */
+  diasPreferidos?: number[];
 }) {
   const t = useTranslations('seletorCheckin');
   const locale = useLocale();
@@ -159,7 +161,7 @@ export default function SeletorCheckin({
               </button>
             </div>
             <p className="mb-2 text-sm font-medium text-gray-700">{t('valiPaev')}</p>
-            <MiniCalendario mes={mes} aoMudarMes={setMes} escolhido={dia} realce={realce} ctx={ctx} pais={pais} minMes={minMes} maxMes={maxMes} testid={testid}
+            <MiniCalendario mes={mes} aoMudarMes={setMes} escolhido={dia} realce={realce} ctx={ctx} pais={pais} minMes={minMes} maxMes={maxMes} testid={testid} diasPreferidos={diasPreferidos}
               aoEscolher={(d) => { setDia(d); setOutro(false); setOIni(''); setOFim(''); }} />
             <p className="mt-2 text-xs text-gray-500">
               {t('legenda')}{' '}

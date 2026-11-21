@@ -16,6 +16,7 @@ import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import { rotuloTipoMotorista } from '@/lib/utils';
+import PreferenciaHorario from '@/components/cliente/PreferenciaHorario';
 import {
   TIPOS_SERVICO, URGENCIAS, iconeTipoMotorista,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU, FOTOS_POR_PEDIDO,
@@ -53,7 +54,7 @@ export default function NovaSolicitacaoPage() {
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
   const [servicosSelecionados, setServicosSelecionados] = useValorQueVolta<string[]>('pedido-servicos', []);
   const [endereco, setEndereco] = useValorQueVolta('pedido-endereco', '');
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<string | false>(false);
   useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   const [submitError, setSubmitError] = useState('');
   // Mesmo padrao de emergencia/page.tsx: comeca com um default (SP) e so
@@ -270,8 +271,9 @@ export default function NovaSolicitacaoPage() {
 
       // area logada nao carrega o Pixel: so conta se ele ja veio de uma pagina publica
       registrarEventoMeta('Lead');
-      setSubmitted(true);
-      setTimeout(() => router.replace('/cliente/dashboard'), 2000); // replace: o voltar nao cai no formulario ja enviado
+      setSubmitted(data.id);
+      // o ecra de sucesso fica ate a pessoa responder "quando pode levar o carro" ou tocar em "Continuar" (114);
+      // o pedido JA esta gravado e as oficinas avisadas - a pergunta nunca trava nada. replace: o voltar nao cai no formulario ja enviado
     } catch (err) {
       setSubmitError((err as Error).message || t('errorUnexpectedSubmit'));
     }
@@ -279,17 +281,18 @@ export default function NovaSolicitacaoPage() {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-2xl mx-auto px-4 py-12 sm:py-20 text-center" data-testid="pedido-sucesso">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('successTitle')}</h1>
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 mb-6">
           {t('successText')}
         </p>
-        <p className="text-sm text-gray-500">{t('redirecting')}</p>
+        {/* pergunta opcional (114): "quando voce pode levar o carro?" - guardar ou continuar; nada trava o pedido */}
+        <PreferenciaHorario solicitacaoId={submitted} modo="sucesso" urgencia={urgencia} aoTerminar={() => router.replace('/cliente/dashboard')} />
       </div>
     );
   }

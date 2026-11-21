@@ -791,7 +791,8 @@
     "CORRECAO_INVALIDA": "E-posti aadressi ei õnnestunud siin parandada. Kui oled konto juba kinnitanud, logi lihtsalt sisse. Muul juhul registreeru uuesti või kirjuta aadressile support@bipfix.com.",
     "CORRECAO_EXPIRADA": "E-posti aadressi parandamise aeg (24 tundi) on läbi. Registreeru uuesti või kirjuta aadressile support@bipfix.com.",
     "CORRECOES_ESGOTADAS": "E-posti aadressi on juba 3 korda parandatud. Registreeru uuesti või kirjuta aadressile support@bipfix.com.",
-    "EMAIL_IGUAL": "See on sama e-posti aadress. Sisesta õige aadress."
+    "EMAIL_IGUAL": "See on sama e-posti aadress. Sisesta õige aadress.",
+    "PEDIDO_FECHADO": "See päring on juba suletud."
   },
   "sobre": {
     "metaTitle": "BipFixist",

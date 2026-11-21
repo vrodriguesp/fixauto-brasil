@@ -13,8 +13,13 @@ import { Link } from '@/i18n/navigation';
 // O cliente pediu novas datas (migracao 079): a oficina confirma uma sugestao dele (o orcamento
 // fica aceito e o carro agendado) ou manda de 1 a 3 datas novas (mesmo orcamento, sem revisao).
 // So aparece com pedido PENDENTE do cliente (dono 11/11: a oficina nao propoe datas sem pedido).
-type Sug = { data: string; turno: Turno };
-type Pedido = { id: string; created_at: string; sugestoes: Sug[]; mensagem: string | null };
+type Sug = { data: string; turno: Turno; janela?: { inicio: string; fim: string } };
+type Padrao = { dias: number[]; partes: string[] };
+type Pedido = { id: string; created_at: string; sugestoes: Sug[]; mensagem: string | null; motivo?: string | null; tipo?: string | null; padrao?: Padrao | null };
+// 114: a sugestao do motorista pode trazer a janela de 2 h escolhida por ele; o modo "dias da semana" chega em padrao
+const janelaSug = (s: Sug, ctx: ContextoOficina) => s.janela || janelaDaSugestao(s.data, s.turno, ctx);
+// 2026-11-02 e segunda: nomes curtos dos dias 1..6 na lingua da tela
+const nomeDia = (d: number, intl: string) => new Date(Date.UTC(2026, 10, 1 + d, 12)).toLocaleDateString(intl, { timeZone: 'UTC', weekday: 'short' }).replace(/\.$/, '');
 const MAX = 3;
 // confirmar a sugestao (aceite automatico) so com o turno comecando daqui a 2 h ou mais (igual ao servidor)
 const ANTECEDENCIA_MS = 2 * 3600e3;
@@ -52,12 +57,15 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   const [feito, setFeito] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState<string | null>(null);
+  // "nao posso" (114): um toque abre a confirmacao com recado curto opcional
+  const [naoPodeAberto, setNaoPodeAberto] = useState(false);
+  const [naoPodeTexto, setNaoPodeTexto] = useState('');
   // linhas vazias no inicio (check-in v2, decisao 1): a oficina escolhe dia + faixa
   const [linhas, setLinhas] = useValorQueVolta<LinhaCheckin[]>(`nd-checkin:${orcamentoId}`, []);
   const [semLinha, setSemLinha] = useState(false);
 
   const carregar = useCallback(async () => {
-    const { data } = await supabase.from('orcamento_pedido_datas').select('id, created_at, sugestoes, mensagem').eq('orcamento_id', orcamentoId).eq('status', 'pendente').maybeSingle();
+    const { data } = await supabase.from('orcamento_pedido_datas').select('id, created_at, sugestoes, mensagem, motivo, tipo, padrao').eq('orcamento_id', orcamentoId).eq('status', 'pendente').maybeSingle();
     setPedido((data as Pedido) || null);
   }, [orcamentoId]);
   useEffect(() => { carregar(); }, [carregar]);
@@ -89,12 +97,21 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   const mudarPrevisao = (i: number, v: string) => setLinhas((ls) => ls.map((l, j) => (j === i ? { ...l, previsao: v } : l)));
   const linhasOk = linhas.length > 0 && linhas.every((l) => janelaAindaVale(l.data, { inicio: l.hora_inicio, fim: l.hora_fim }, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data) && conflitoHorario(l.data, 'manha', horario) !== 'fechado');
   const sugs = (pedido.sugestoes || []) as Sug[];
+  const outraData = pedido.motivo === 'nao_sobe';
+  const padrao = pedido.padrao && pedido.padrao.dias?.length ? pedido.padrao : null;
+  const textoPadrao = padrao ? [padrao.dias.map((d) => nomeDia(d, intl)).join(', '), padrao.partes?.length === 1 ? t(padrao.partes[0] === 'manha' ? 'manha' : 'tarde') : t('qualquerParte')].join(' · ') : '';
+  const blocoPadrao = padrao && (
+    <div className="mt-3 rounded-lg border border-sky-200 bg-sky-50 p-2 text-sm text-sky-900" data-testid="padrao-cliente">
+      <span className="font-medium">{t('padraoTitulo')}:</span> <span data-testid="padrao-cliente-texto">{textoPadrao}</span>
+    </div>
+  );
 
   if (vencido) {
     return (
       <div className="card border-2 border-amber-300 bg-amber-50/60" data-testid="novas-datas-pedidas-vencido">
-        <h2 className="font-semibold text-gray-900">📅 {t('titulo')}</h2>
+        <h2 className="font-semibold text-gray-900">📅 {outraData ? t('tituloOutraData') : t('titulo')}</h2>
         <p className="text-xs text-gray-500">{t('pedidoEm', { data: new Date(pedido.created_at).toLocaleString(intl, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</p>
+        {blocoPadrao}
         {pedido.mensagem && (
           <p className="mt-2 rounded-lg bg-white p-2 text-sm text-gray-800 break-words"><span className="font-medium">{t('mensagemCliente')}:</span> {pedido.mensagem}</p>
         )}
@@ -102,7 +119,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
           <>
             <h3 className="mt-3 text-sm font-semibold text-gray-900">{t('sugestoesTitulo')}</h3>
             <ul className="mt-1 list-disc pl-5 text-sm text-gray-800">
-              {sugs.map((s) => <li key={`${s.data}-${s.turno}`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · <span className="whitespace-nowrap">{formatarJanela(janelaDaSugestao(s.data, s.turno, ctx))}</span></li>)}
+              {sugs.map((s) => <li key={`${s.data}-${s.janela?.inicio || s.turno}`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · <span className="whitespace-nowrap">{formatarJanela(janelaSug(s, ctx))}</span></li>)}
             </ul>
           </>
         )}
@@ -114,29 +131,31 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
 
   return (
     <div className="card border-2 border-amber-300 bg-amber-50/60" data-testid="novas-datas-pedidas">
-      <h2 className="font-semibold text-gray-900">📅 {t('titulo')}</h2>
+      <h2 className="font-semibold text-gray-900">📅 {outraData ? t('tituloOutraData') : t('titulo')}</h2>
       <p className="text-xs text-gray-500">{t('pedidoEm', { data: new Date(pedido.created_at).toLocaleString(intl, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</p>
-      <p className="mt-2 text-sm text-gray-700">{t('texto')}</p>
+      <p className="mt-2 text-sm text-gray-700">{outraData ? t('textoOutraData') : t('texto')}</p>
+      {blocoPadrao}
       {pedido.mensagem && (
         <p className="mt-2 rounded-lg bg-white p-2 text-sm text-gray-800 break-words"><span className="font-medium">{t('mensagemCliente')}:</span> {pedido.mensagem}</p>
       )}
 
-      <h3 className="mt-4 text-sm font-semibold text-gray-900">{t('sugestoesTitulo')}</h3>
-      {sugs.length === 0 ? <p className="text-sm text-gray-600">{t('semSugestoes')}</p> : (
+      {!padrao && <h3 className="mt-4 text-sm font-semibold text-gray-900">{t('sugestoesTitulo')}</h3>}
+      {padrao ? null : sugs.length === 0 ? <p className="text-sm text-gray-600">{t('semSugestoes')}</p> : (
         <ul className="mt-2 space-y-2">
           {sugs.map((s, i) => {
-            // a janela que vale ao confirmar = 1a faixa do perfil nesse turno (igual ao servidor)
-            const js = janelaDaSugestao(s.data, s.turno, ctx);
-            const vale = Date.parse(localParaIso(s.data, js.inicio, pais ?? null)) - Date.now() >= ANTECEDENCIA_MS;
+            // a janela que vale ao confirmar = a escolhida pelo motorista (114) ou a 1a faixa do perfil nesse turno (igual ao servidor)
+            const js = janelaSug(s, ctx);
+            const fechado = conflitoHorario(s.data, s.turno, horario) === 'fechado';
+            const vale = !fechado && Date.parse(localParaIso(s.data, js.inicio, pais ?? null)) - Date.now() >= ANTECEDENCIA_MS;
             return (
-              <li key={`${s.data}-${s.turno}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white p-2">
+              <li key={`${s.data}-${s.janela?.inicio || s.turno}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white p-2">
                 <span className="text-sm font-medium text-gray-900" data-testid={`sugestao-${i}-texto`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · <span className="whitespace-nowrap">{formatarJanela(js)}</span></span>
                 {vale ? (
                   <button type="button" onClick={() => enviar({ confirmar: i }, `c${i}`, t('feitoConfirmado'))} disabled={!!enviando}
                     className="btn-success !py-2 !px-3 text-sm min-h-[44px] w-full sm:w-auto disabled:opacity-60" data-testid={`confirmar-sugestao-${i}`}>
                     {enviando === `c${i}` ? t('confirmando') : t('confirmar')}
                   </button>
-                ) : <span className="text-xs text-gray-500">{t('jaPassou')}</span>}
+                ) : <span className="text-xs text-gray-500">{fechado ? t('diaFechado') : t('jaPassou')}</span>}
               </li>
             );
           })}
@@ -160,6 +179,27 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
           className="btn-primary w-full sm:w-auto min-h-[44px] disabled:opacity-60" data-testid="nd-enviar">
           {enviando === 'h' ? t('enviando') : t('enviar')}
         </button>
+      </div>
+
+      {/* "nao posso" (114): resposta educada em 1 toque + recado opcional; o motorista e avisado e a proposta original continua */}
+      <div className="mt-5 border-t border-amber-200 pt-3" data-testid="nao-posso">
+        {!naoPodeAberto ? (
+          <button type="button" onClick={() => setNaoPodeAberto(true)} disabled={!!enviando} className="btn-secondary min-h-[44px] w-full sm:w-auto" data-testid="nao-posso-abrir">{t('naoPosso')}</button>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-sm text-gray-700">{t('naoPossoTexto')}</p>
+            <label className="block text-sm">
+              <span className="font-medium text-gray-800">{t('naoPossoRecado')}</span>
+              <textarea value={naoPodeTexto} onChange={(e) => setNaoPodeTexto(e.target.value.slice(0, 300))} maxLength={300} rows={2} placeholder={t('naoPossoPlaceholder')} className="input-field mt-1 w-full" data-testid="nao-posso-texto" />
+            </label>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button type="button" onClick={() => enviar({ naoPode: true, texto: naoPodeTexto.trim() || undefined }, 'np', t('feitoNaoPosso'))} disabled={!!enviando} className="btn-primary min-h-[44px] flex-1 disabled:opacity-60" data-testid="nao-posso-enviar">
+                {enviando === 'np' ? t('enviando') : t('naoPossoConfirmar')}
+              </button>
+              <button type="button" onClick={() => setNaoPodeAberto(false)} disabled={!!enviando} className="btn-secondary min-h-[44px] flex-1">{t('naoPossoVoltar')}</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

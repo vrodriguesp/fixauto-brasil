@@ -782,7 +782,8 @@
     "CORRECAO_INVALIDA": "Não foi possível corrigir o e-mail por aqui. Se você já confirmou a conta, é só entrar. Se não, faça um novo cadastro ou escreva para support@bipfix.com.",
     "CORRECAO_EXPIRADA": "O prazo para corrigir o e-mail (24 horas) acabou. Faça um novo cadastro ou escreva para support@bipfix.com.",
     "CORRECOES_ESGOTADAS": "O e-mail já foi corrigido 3 vezes. Faça um novo cadastro ou escreva para support@bipfix.com.",
-    "EMAIL_IGUAL": "Esse é o mesmo e-mail. Digite o endereço correto."
+    "EMAIL_IGUAL": "Esse é o mesmo e-mail. Digite o endereço correto.",
+    "PEDIDO_FECHADO": "Este pedido já está fechado."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

@@ -2,7 +2,7 @@ import { supabaseAdmin } from './supabase-admin';
 import { horaLocalEmUtc, diaNaOficina, fusoDoPais } from './fuso';
 import { dataValida } from './agenda-oficina';
 import { emTodasAsLinguas, type TextoAviso } from './notif-textos';
-import { textosNovasDatas, listaDeDatas, diaETurno } from './notif-novas-datas';
+import { textosNovasDatas, listaDeDatas, diaETurno, textoPadrao, type Padrao } from './notif-novas-datas';
 import { preencher, dataJanela } from './notif-agenda';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
@@ -10,6 +10,13 @@ import { SITE_URL, idiomaDoSite } from './site-url';
 import { linkPedido } from './link-acesso';
 import { orcamentoVencido } from './orcamento-validade';
 import { conflitoHorario, janelaDoSlot, janelaDaSugestao, turnoDaJanela, minutosDe, JANELA_MIN, type Janela, type ContextoOficina } from './turnos';
+
+// 114 (dono 21/11, Documentos/Analises/Datas_preferencia_2026-11-21): "Preciso de outra data" SEMPRE visivel
+//  - o pedido e aceito com datas ainda validas (motivo 'nao_sobe'); a proposta original continua aceitavel;
+//  - dois modos: sugestoes concretas (dia + janela de 2 h, ate 3) ou padrao (dias da semana x parte do dia);
+//  - a oficina responde com 1-3 horarios (079), confirma uma sugestao (079) ou "nao posso" (novo);
+//  - sem resposta em 72 h o pendente cai e o motorista e avisado (a data original continua valendo);
+//  - cada cancelamento guarda o motivo (cancelado_motivo).
 
 // "Tenho interesse, mande novas datas" (migracao 079, dono 11/11, docs/DESENHO_079_novas_datas.md).
 //  - o motorista pede quando TODOS os horarios do orcamento ja passaram (fuso da oficina), com
@@ -34,8 +41,12 @@ export const MENSAGEM_MAX = 300;
 export const ESTADOS_ORCAMENTO = ['enviado', 'visualizado'];
 export const ESTADOS_PEDIDO = ['aberta', 'em_orcamento', 'no_show'];
 export type Turno = 'manha' | 'tarde';
-export type Sugestao = { data: string; turno: Turno };
+export type Sugestao = { data: string; turno: Turno; janela?: Janela };
 const TURNOS: Turno[] = ['manha', 'tarde'];
+export const PEDIDO_DATAS_TIMEOUT_H = 72;
+/** janela da sugestao concreta (114): de 1 h a 4 h (as fichas sao de 2 h) */
+export const JANELA_SUGESTAO_MIN = 60, JANELA_SUGESTAO_MAX = 240;
+export type MotivoCancelamento = 'sem_resposta_72h' | 'aceitou_original' | 'recusou' | 'orcamento_vencido' | 'pedido_fechado' | 'outra_oficina' | 'datas_voltaram' | 'revisao';
 
 // ---------- regras puras ----------
 // check-in v2: cada horario tem a JANELA gravada (hora_inicio/hora_fim); linha antiga = 08-12 / 13-17
@@ -48,8 +59,8 @@ export const inicioDoTurno = (data: string, turno: string, pais?: string | null,
 /** a oficina so confirma a data sugerida (aceite automatico) com a janela comecando daqui a 2 h ou mais (revisao Fable S2);
  *  a janela da sugestao e a 1a faixa do perfil/grade nesse turno (spec v2 2.13) */
 export const ANTECEDENCIA_CONFIRMAR_MS = 2 * 3600e3;
-export const podeConfirmarSugestao = (s: { data: string; turno: string }, pais?: string | null, agora = Date.now(), ctx?: ContextoOficina | null) =>
-  inicioDoTurno(s.data, s.turno, pais, ctx ? janelaDaSugestao(s.data, s.turno as Turno, ctx) : null) - agora >= ANTECEDENCIA_CONFIRMAR_MS;
+export const podeConfirmarSugestao = (s: { data: string; turno: string; janela?: Janela }, pais?: string | null, agora = Date.now(), ctx?: ContextoOficina | null) =>
+  inicioDoTurno(s.data, s.turno, pais, s.janela || (ctx ? janelaDaSugestao(s.data, s.turno as Turno, ctx) : null)) - agora >= ANTECEDENCIA_CONFIRMAR_MS;
 /** nenhum horario ainda escolhivel (sem horario conta como sem datas) */
 export const semDatasFuturas = (slots: SlotJ[], pais?: string | null, agora = Date.now()) =>
   !slots.some((s) => turnoAindaVale(s.data_checkin, s.turno, pais, agora, janelaDoSlot(s)));
@@ -69,15 +80,41 @@ export function validarSugestoes(bruto: unknown, pais?: string | null, agora = D
   const vistos = new Set<string>();
   const out: Sugestao[] = [];
   for (const s of bruto) {
-    const data = (s as any)?.data, turno = (s as any)?.turno;
-    if (!dataValida(data) || !TURNOS.includes(turno)) return null;
+    const data = (s as any)?.data;
+    let turno = (s as any)?.turno;
+    if (!dataValida(data)) return null;
     if (data <= hoje || data > limite) return null;
-    const k = `${data}|${turno}`;
+    // 114: janela de 2 h opcional ("kindel kuupaev"); o turno sai da janela
+    let janela: Janela | undefined;
+    const j = (s as any)?.janela;
+    if (j != null) {
+      if (!HORA_RE.test(String(j?.inicio)) || !HORA_RE.test(String(j?.fim))) return null;
+      janela = { inicio: String(j.inicio).slice(0, 5), fim: String(j.fim).slice(0, 5) };
+      const dur = (minutosDe(janela.fim) ?? 0) - (minutosDe(janela.inicio) ?? 0);
+      if (dur < JANELA_SUGESTAO_MIN || dur > JANELA_SUGESTAO_MAX) return null;
+      turno = turnoDaJanela(janela);
+    }
+    if (!TURNOS.includes(turno)) return null;
+    const k = janela ? `${data}|${janela.inicio}|${janela.fim}` : `${data}|${turno}`;
     if (vistos.has(k)) return null;
-    vistos.add(k); out.push({ data, turno });
+    vistos.add(k); out.push(janela ? { data, turno, janela } : { data, turno });
   }
-  return out.sort((a, b) => (a.data + a.turno).localeCompare(b.data + b.turno));
+  return out.sort((a, b) => (a.data + (a.janela?.inicio || a.turno)).localeCompare(b.data + (b.janela?.inicio || b.turno)));
 }
+
+/** 114: padrao "dias da semana x parte do dia" (1 = segunda ... 6 = sabado; partes vazias = tanto faz): null = invalido */
+export function validarPadrao(bruto: unknown): Padrao | null {
+  if (!bruto || typeof bruto !== 'object') return null;
+  const d = (bruto as any).dias, p = (bruto as any).partes ?? [];
+  if (!Array.isArray(d) || !d.length || d.length > 6 || !Array.isArray(p) || p.length > 2) return null;
+  const dias = Array.from(new Set(d.map(Number))).filter((x) => Number.isInteger(x) && x >= 1 && x <= 6).sort((a, b) => a - b);
+  if (dias.length !== d.length) return null;
+  const partes = Array.from(new Set(p.map(String))).filter((x) => TURNOS.includes(x as Turno));
+  if (partes.length !== p.length) return null;
+  return { dias, partes: partes.length === 2 ? [] : partes };
+}
+/** a janela que vale para uma sugestao: a escolhida pelo motorista (114) ou a 1a faixa do turno (079, regra 2.13) */
+export const janelaDaSugestaoPedida = (s: Sugestao, ctx: ContextoOficina | null | undefined): Janela => s.janela || janelaDaSugestao(s.data, s.turno, ctx);
 
 /** horarios novos da oficina; a previsao de entrega cai para a data + prazo do orcamento. Check-in v2: cada horario
  *  vem com a janela (hora_inicio/hora_fim, minimo 30 min) e o turno e derivado dela; sem janela (cliente antigo)
@@ -148,13 +185,18 @@ async function podeResponder(oficina: any, userId: string) {
 
 /** Cancela os pedidos pendentes (do pedido inteiro ou de um orcamento). Com `avisarExceto` (aceite de um
  *  orcamento), as OUTRAS oficinas que tinham pedido pendente recebem "o cliente fechou com outra oficina". */
-export async function cancelarPedidosDatasPendentes(p: { solicitacaoId?: string; orcamentoId?: string; avisarExceto?: string }) {
+export async function cancelarPedidosDatasPendentes(p: { solicitacaoId?: string; orcamentoId?: string; avisarExceto?: string; motivo?: MotivoCancelamento }) {
   if (!p.solicitacaoId && !p.orcamentoId) return 0;
-  let q = supabaseAdmin.from('orcamento_pedido_datas').update({ status: 'cancelado' }).eq('status', 'pendente');
+  const motivo: MotivoCancelamento = p.motivo || (p.avisarExceto ? 'outra_oficina' : 'pedido_fechado');
+  let q = supabaseAdmin.from('orcamento_pedido_datas').update({ status: 'cancelado', cancelado_motivo: motivo, cancelado_em: new Date().toISOString() }).eq('status', 'pendente');
   if (p.solicitacaoId) q = q.eq('solicitacao_id', p.solicitacaoId);
   if (p.orcamentoId) q = q.eq('orcamento_id', p.orcamentoId);
   const { data, error } = await q.select('id, oficina_id, orcamento_id, solicitacao_id');
   if (error) throw new Error(error.message);
+  // a oficina escolhida tambem tinha pendente: o motorista aceitou a proposta original dela ('aceitou_original')
+  if (p.avisarExceto && data?.some((x) => x.oficina_id === p.avisarExceto)) {
+    await supabaseAdmin.from('orcamento_pedido_datas').update({ cancelado_motivo: 'aceitou_original' }).in('id', data.filter((x) => x.oficina_id === p.avisarExceto).map((x) => x.id));
+  }
   if (p.avisarExceto) {
     for (const c of (data || []).filter((x) => x.oficina_id !== p.avisarExceto)) {
       const orc = await lerOrcamento(c.orcamento_id);
@@ -189,15 +231,19 @@ export async function pedirNovasDatas(userId: string, orcamentoId: string, corpo
   if (sol?.status === 'expirada') return res(409, { error: 'Pedido expirado', codigo: 'PEDIDO_EXPIRADO' });
   if (!ESTADOS_ORCAMENTO.includes(orc.status) || !ESTADOS_PEDIDO.includes(sol?.status)) return res(409, { error: 'Orçamento não está disponível', codigo: 'ORCAMENTO_INDISPONIVEL' });
   if (orcamentoVencido(orc.validade, of?.pais)) return res(409, { error: 'Orçamento vencido', codigo: 'ORCAMENTO_VENCIDO' });
-  if (!semDatasFuturas(orc.disponibilidade || [], of?.pais)) return res(409, { error: 'Ainda há horários', codigo: 'DATAS_AINDA_VALIDAS' });
-  const sugestoes = validarSugestoes(corpo?.sugestoes, of?.pais);
+  // 114: com datas ainda validas o pedido tambem vale ("nenhuma serve"); a proposta original continua aceitavel
+  const motivo: 'datas_passaram' | 'nao_sobe' = semDatasFuturas(orc.disponibilidade || [], of?.pais) ? 'datas_passaram' : 'nao_sobe';
+  // modo padrao (dias da semana x parte do dia) OU sugestoes concretas (dia + turno/janela), nunca os dois
+  const padrao = corpo?.padrao != null ? validarPadrao(corpo.padrao) : null;
+  if (corpo?.padrao != null && !padrao) return res(400, { error: 'Padrão inválido', codigo: 'SUGESTAO_INVALIDA' });
+  const sugestoes = padrao ? [] : validarSugestoes(corpo?.sugestoes, of?.pais);
   if (!sugestoes) return res(400, { error: 'Sugestão inválida', codigo: 'SUGESTAO_INVALIDA' });
   const mensagem = typeof corpo?.mensagem === 'string' ? corpo.mensagem.trim() : '';
   if (mensagem.length > MENSAGEM_MAX) return res(400, { error: 'Mensagem longa', codigo: 'DADOS_INVALIDOS' });
 
   const { data: ped, error } = await supabaseAdmin.from('orcamento_pedido_datas').insert({
     orcamento_id: orc.id, solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, cliente_id: userId,
-    sugestoes, mensagem: mensagem || null,
+    sugestoes, mensagem: mensagem || null, motivo, tipo: padrao ? 'padrao' : 'datas', padrao,
     // retrato do orcamento que o cliente viu (revisao Fable M1)
     valor_total_pedido: orc.valor_total, revisao_numero_pedido: orc.revisao_numero ?? 0,
   }).select('id, created_at').single();
@@ -210,24 +256,31 @@ export async function pedirNovasDatas(userId: string, orcamentoId: string, corpo
   const idiomaCli = sol?.cliente?.idioma, idiomaOf = of?.profile?.idioma;
   // linha no chat do pedido, na lingua de quem escreve (o chat traduz para quem le)
   const tCli = textosNovasDatas(idiomaCli);
-  const textoChat = [tCli.chatPedido, sugestoes.length ? preencher(tCli.chatSugestoes, { datas: listaDeDatas(sugestoes.map((s) => ({ ...s, janela: janelaDaSugestao(s.data, s.turno, ctxDaOficina(of)) })), idiomaCli) }) : '', mensagem].filter(Boolean).join('\n');
+  const ctxOf = ctxDaOficina(of);
+  const itensSug = sugestoes.map((s) => ({ ...s, janela: janelaDaSugestaoPedida(s, ctxOf) }));
+  const oQueServe = (l: string | null | undefined) => padrao ? preencher(textosNovasDatas(l).chatPadrao, { padrao: textoPadrao(padrao, l) })
+    : sugestoes.length ? preencher(textosNovasDatas(l).chatSugestoes, { datas: listaDeDatas(itensSug, l) }) : '';
+  const textoChat = [motivo === 'nao_sobe' ? tCli.chatOutraData : tCli.chatPedido, oQueServe(idiomaCli), mensagem].filter(Boolean).join('\n');
   await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: textoChat });
+  const temDesejo = !!padrao || sugestoes.length > 0;
   await notificar(of?.profile_id, 'pedido_novas_datas', idiomaOf, (l) => {
     const t = textosNovasDatas(l);
-    return { titulo: t.pedidoTitulo, mensagem: preencher(sugestoes.length ? t.pedidoMsg : t.pedidoMsgSemSugestao, { carro }) };
-  }, { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: ped.id });
+    if (motivo === 'nao_sobe') return { titulo: t.outraDataTitulo, mensagem: preencher(temDesejo ? t.outraDataMsg : t.outraDataMsgSemSugestao, { carro }) };
+    return { titulo: t.pedidoTitulo, mensagem: preencher(temDesejo ? t.pedidoMsg : t.pedidoMsgSemSugestao, { carro }) };
+  }, { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: ped.id, motivo });
   // e-mail a oficina
   const pOf = of?.profile;
   if (pOf?.email) {
     const l = idiomaDoSite(idiomaOf); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
     const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: pOf.nome || of?.nome_fantasia || '' }))}</p>
-      <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailPedidoTexto, { numero, carro: carro || '-' }))}</strong></p>
-      ${sugestoes.length ? `<p>${escapeHtml(t.emailSugestoes)}:</p>${lista(sugestoes.map((s) => diaETurno(s.data, s.turno, l, janelaDaSugestao(s.data, s.turno, ctxDaOficina(of)))))}` : ''}
+      <p style="font-size:16px;"><strong>${escapeHtml(preencher(motivo === 'nao_sobe' ? t.emailOutraDataTexto : t.emailPedidoTexto, { numero, carro: carro || '-' }))}</strong></p>
+      ${padrao ? `<p><strong>${escapeHtml(t.emailPadrao)}:</strong> ${escapeHtml(textoPadrao(padrao, l))}</p>` : ''}
+      ${sugestoes.length ? `<p>${escapeHtml(t.emailSugestoes)}:</p>${lista(itensSug.map((s) => diaETurno(s.data, s.turno, l, s.janela)))}` : ''}
       ${mensagem ? `<p style="background:#f3f4f6;padding:10px 12px;border-radius:8px;"><strong>${escapeHtml(t.emailMensagem)}:</strong> ${escapeHtml(mensagem)}</p>` : ''}
       ${botao(`${site()}/r/${numero}?o=${encodeURIComponent(l)}&p=1`, t.emailPedidoBotao)}`);
-    await enviarEmail({ para: pOf.email, assunto: preencher(t.emailPedidoAssunto, { numero }), html }).catch(() => false);
+    await enviarEmail({ para: pOf.email, assunto: preencher(motivo === 'nao_sobe' ? t.emailOutraDataAssunto : t.emailPedidoAssunto, { numero }), html }).catch(() => false);
   }
-  return res(200, { ok: true, id: ped.id, created_at: ped.created_at, sugestoes });
+  return res(200, { ok: true, id: ped.id, created_at: ped.created_at, sugestoes, padrao, motivo });
 }
 
 // ---------- oficina: confirmar sugestao ou mandar outras datas ----------
@@ -240,7 +293,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
   if (!ESTADOS_ORCAMENTO.includes(orc.status) || !ESTADOS_PEDIDO.includes(sol?.status)) return res(409, { error: 'Orçamento não está disponível', codigo: 'ORCAMENTO_INDISPONIVEL' });
   // orcamento vencido: a oficina revisa o orcamento (nova validade) em vez de mandar datas
   if (orcamentoVencido(orc.validade, of?.pais)) return res(409, { error: 'Orçamento vencido', codigo: 'ORCAMENTO_VENCIDO' });
-  const { data: pend } = await supabaseAdmin.from('orcamento_pedido_datas').select('id, sugestoes, valor_total_pedido, revisao_numero_pedido').eq('orcamento_id', orc.id).eq('status', 'pendente').maybeSingle();
+  const { data: pend } = await supabaseAdmin.from('orcamento_pedido_datas').select('id, sugestoes, valor_total_pedido, revisao_numero_pedido, motivo').eq('orcamento_id', orc.id).eq('status', 'pendente').maybeSingle();
   const carro = carroDe(sol?.veiculo);
   const idiomaCli = sol?.cliente?.idioma, idiomaOf = of?.profile?.idioma;
   const fuso = fusoDoPais(of?.pais);
@@ -248,14 +301,40 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
   if (!pend) return codigoPedidoFechado(orc.id);
   const dadosCli = { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: pend.id };
 
+  // c) 114: "nao posso" - resposta educada; o motorista e avisado e a proposta original continua valendo
+  if (corpo?.naoPode) {
+    const texto = typeof corpo?.texto === 'string' ? corpo.texto.trim().slice(0, MENSAGEM_MAX) : '';
+    const { data: trava } = await supabaseAdmin.from('orcamento_pedido_datas')
+      .update({ status: 'atendido', resposta: 'nao_pode', resposta_texto: texto || null, atendido_em: new Date().toISOString() })
+      .eq('id', pend.id).eq('status', 'pendente').select('id');
+    if (!trava?.length) return codigoPedidoFechado(orc.id);
+    await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: [textosNovasDatas(idiomaOf).chatNaoPode, texto].filter(Boolean).join('\n') });
+    await notificar(sol?.cliente_id, 'novas_datas_nao_pode', idiomaCli, (l) => {
+      const t = textosNovasDatas(l);
+      return { titulo: t.naoPodeTitulo, mensagem: preencher(t.naoPodeMsg, { oficina: of?.nome_fantasia || '' }) };
+    }, dadosCli);
+    const cli = sol?.cliente;
+    if (cli?.email) {
+      const l = idiomaDoSite(idiomaCli); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
+      const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
+        <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailNaoPodeTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
+        ${texto ? `<p style="background:#f3f4f6;padding:10px 12px;border-radius:8px;">${escapeHtml(texto)}</p>` : ''}
+        ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailNaoPodeBotao)}`);
+      await enviarEmail({ para: cli.email, assunto: preencher(t.emailNaoPodeAssunto, { oficina: of?.nome_fantasia || '', numero }), html }).catch(() => false);
+    }
+    return res(200, { ok: true, modo: 'nao_pode' });
+  }
+
   // a) confirmar a sugestao do motorista: vira horario do orcamento e o orcamento e aceito/agendado
   if (corpo?.confirmar !== undefined && corpo?.confirmar !== null) {
     const i = Number(corpo.confirmar);
     const sug = Number.isInteger(i) ? (pend.sugestoes as Sugestao[])[i] : undefined;
     if (!sug) return res(400, { error: 'Sugestão inválida', codigo: 'DADOS_INVALIDOS' });
-    // a janela que vale = 1a faixa do perfil/grade nesse turno (2.13); gravada no horario antes do aceite
-    const janelaSug = janelaDaSugestao(sug.data, sug.turno, ctxDaOficina(of));
+    // a janela que vale = a escolhida pelo motorista (114) ou a 1a faixa do perfil/grade nesse turno (2.13); gravada no horario antes do aceite
+    const janelaSug = janelaDaSugestaoPedida(sug, ctxDaOficina(of));
     if (!podeConfirmarSugestao(sug, of?.pais, Date.now(), ctxDaOficina(of))) return res(409, { error: 'Sugestão vencida', codigo: 'SUGESTAO_VENCIDA' });
+    // dia em que a oficina esta fechada pelo proprio horario: nao confirma (a tela ja avisa)
+    if (conflitoHorario(sug.data, sug.turno, of?.horario_funcionamento) === 'fechado') return res(400, { error: 'Oficina fechada neste dia', codigo: 'DIA_FECHADO' });
     // o orcamento mudou depois do pedido: o cliente nao viu este preco - so mandar outras datas
     if (pend.valor_total_pedido != null && (Number(pend.valor_total_pedido) !== Number(orc.valor_total) || (pend.revisao_numero_pedido ?? 0) !== (orc.revisao_numero ?? 0))) {
       return res(409, { error: 'Orçamento mudou', codigo: 'ORCAMENTO_MUDOU' });
@@ -345,21 +424,42 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
 
 // ---------- tarefas de hora em hora ----------
 const H = 3600e3;
-/** Lembrete de 24 h a oficina (uma vez) e limpeza dos pendentes que perderam o sentido. */
+/** Lembrete de 24 h a oficina (uma vez), 72 h sem resposta -> cai com aviso ao motorista (114), e limpeza dos
+ *  pendentes que perderam o sentido. */
 export async function tarefasPedidoDatas(agora = Date.now()) {
-  let lembretes = 0, cancelados = 0;
+  let lembretes = 0, cancelados = 0, semResposta = 0;
   // pendentes: o orcamento/pedido deixou de aceitar (recusado pelo cliente, aceito, expirado, vencido) -> cancela;
-  //    sem resposta ha 24 h -> lembrete unico
+  //    sem resposta ha 24 h -> lembrete unico; ha 72 h -> cai e o motorista e avisado
   const { data: pend } = await supabaseAdmin.from('orcamento_pedido_datas')
-    .select('id, created_at, lembrete_em, orcamento_id, solicitacao_id, sugestoes, orcamento:orcamentos(' + SEL_ORC + ')')
+    .select('id, created_at, lembrete_em, orcamento_id, solicitacao_id, sugestoes, motivo, orcamento:orcamentos(' + SEL_ORC + ')')
     .eq('status', 'pendente').limit(500);
+  const cancelar = async (id: string, motivo: MotivoCancelamento) => {
+    const { data: c } = await supabaseAdmin.from('orcamento_pedido_datas').update({ status: 'cancelado', cancelado_motivo: motivo, cancelado_em: new Date(agora).toISOString() }).eq('id', id).eq('status', 'pendente').select('id');
+    return !!c?.length;
+  };
   for (const p of (pend || []) as any[]) {
     const orc = p.orcamento; const sol = orc?.solicitacao; const of = orc?.oficina;
-    // ...ou o orcamento ganhou datas futuras por outro caminho (ex.: Modificar orcamento) - revisao Fable M1
-    if (!orc || !ESTADOS_ORCAMENTO.includes(orc.status) || !ESTADOS_PEDIDO.includes(sol?.status) || orcamentoVencido(orc.validade, of?.pais, agora)
-      || !semDatasFuturas(orc.disponibilidade || [], of?.pais, agora)) {
-      const { data: c } = await supabaseAdmin.from('orcamento_pedido_datas').update({ status: 'cancelado' }).eq('id', p.id).eq('status', 'pendente').select('id');
-      cancelados += c?.length || 0;
+    if (!orc || !ESTADOS_ORCAMENTO.includes(orc.status) || !ESTADOS_PEDIDO.includes(sol?.status)) { if (await cancelar(p.id, 'pedido_fechado')) cancelados++; continue; }
+    if (orcamentoVencido(orc.validade, of?.pais, agora)) { if (await cancelar(p.id, 'orcamento_vencido')) cancelados++; continue; }
+    // pedido por datas vencidas (079): o orcamento ganhou datas futuras por outro caminho (ex.: Modificar orcamento) - revisao Fable M1.
+    // Pedido "nenhuma serve" (114) nao cai por isso: as datas ja eram validas quando o motorista pediu.
+    if (p.motivo !== 'nao_sobe' && !semDatasFuturas(orc.disponibilidade || [], of?.pais, agora)) { if (await cancelar(p.id, 'datas_voltaram')) cancelados++; continue; }
+    // 72 h sem resposta: cai; motorista avisado (sino + e-mail), oficina avisada (sino)
+    if (agora - Date.parse(p.created_at) >= PEDIDO_DATAS_TIMEOUT_H * H) {
+      if (!(await cancelar(p.id, 'sem_resposta_72h'))) continue;
+      semResposta++;
+      const carro = carroDe(sol?.veiculo);
+      const dados = { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: p.id };
+      await notificar(sol?.cliente_id, 'novas_datas_sem_resposta', sol?.cliente?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.semRespostaTitulo, mensagem: preencher(t.semRespostaMsg, { oficina: of?.nome_fantasia || '' }) }; }, dados);
+      await notificar(of?.profile_id, 'pedido_novas_datas_cancelado', of?.profile?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.oficinaSemRespostaTitulo, mensagem: preencher(t.oficinaSemRespostaMsg, { carro: carro || '-' }) }; }, dados);
+      const cli = sol?.cliente;
+      if (cli?.email) {
+        const l = idiomaDoSite(cli.idioma); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
+        const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
+          <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailSemRespostaTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
+          ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailNaoPodeBotao)}`);
+        await enviarEmail({ para: cli.email, assunto: preencher(t.emailSemRespostaAssunto, { numero }), html }).catch(() => false);
+      }
       continue;
     }
     if (p.lembrete_em || agora - Date.parse(p.created_at) < 24 * H) continue;
@@ -370,5 +470,5 @@ export async function tarefasPedidoDatas(agora = Date.now()) {
       { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: p.id, lembrete: true });
     lembretes++;
   }
-  return { lembretes, cancelados };
+  return { lembretes, cancelados, semResposta };
 }

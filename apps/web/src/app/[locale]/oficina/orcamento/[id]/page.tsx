@@ -21,12 +21,14 @@ import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { useEstadoQueVolta, useValorQueVolta } from '@/hooks/use-estado-que-volta';
-import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, validadeSugerida, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, validadeSugerida, diaDoCalendario, formatarJanela, somarDias, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
 import SemQuebra from '@/components/ui/SemQuebra';
 import { gravarEstadoUi, veioDeTrocaDeIdioma } from '@/lib/rascunho-troca-idioma';
 import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
 import DispensarPedido from '@/components/oficina/DispensarPedido';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
+import PreferenciaMotorista from '@/components/oficina/PreferenciaMotorista';
+import { diasSemanaPreferidos, ehPreferencia, type PreferenciaHorario } from '@/lib/preferencia-horario';
 import InfoI from '@/components/ui/InfoI';
 
 interface ItemForm {
@@ -283,7 +285,7 @@ export default function EnviarOrcamentoPage() {
     setErroDiaFechado(false);
     if (ls.length) { setErroSemCheckin(false); tiraFalta('datas'); }
     // a validade so fica vermelha de novo ao enviar (decisao 4); se a correcao ja resolveu, some
-    if (erroVal && !erroValidade(validade, ls.map((s) => s.data), hojeLocal(undefined, (oficina as any)?.pais ?? null))) setErroVal(null);
+    if (erroVal && !erroValidade(validade, ls.map((s) => s.data), somarDias(hojeLocal(undefined, (oficina as any)?.pais ?? null), 1))) setErroVal(null);
     setSlots(ls);
     // P5: validade = ultima data valida + 7 dias, enquanto a oficina nao a escolheu a mao
     if (!validadeManual.current) {
@@ -374,7 +376,7 @@ ${d.observacoes}` : d.observacoes));
     const passado = datasVisiveis && slots.some((s) => !janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisSub));
     const fechado = datasVisiveis && slots.some((s) => conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
     // validade: obrigatoria; com o carro ja na oficina so "vazia" conta (as datas ficaram para tras)
-    const ev = erroValidade(validade, datasVisiveis ? slots.map((s) => s.data) : [], hojeLocal(undefined, paisSub));
+    const ev = erroValidade(validade, datasVisiveis ? slots.map((s) => s.data) : [], somarDias(hojeLocal(undefined, paisSub), 1));
     const evConta = ev && (datasVisiveis || ev === 'vazia') ? ev : null;
     const semValor = total === 0;
     setErroItemValor(semValor); setErroSemCheckin(semCheckin); setErroHorario(passado); setErroDiaFechado(fechado); setErroVal(evConta);
@@ -512,7 +514,9 @@ ${d.observacoes}` : d.observacoes));
   const hojeOf = hojeLocal(undefined, paisF);
   const ultimaData = maiorData(slots.map((s) => s.data));
   const ultimaValida = maiorData(slots.filter((s) => janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisF) && conflitoHorario(s.data, 'manha', horarioOficina) !== 'fechado').map((s) => s.data));
-  const validadeMin = ultimaData && ultimaData > hojeOf ? ultimaData : hojeOf;
+  // nunca menor que amanha (dono 21/11, item 7): o orcamento de hoje precisa valer pelo menos ate amanha
+  const amanhaOf = somarDias(hojeOf, 1);
+  const validadeMin = ultimaData && ultimaData > amanhaOf ? ultimaData : amanhaOf;
   const validadeRecomendada = validadeSugerida(ultimaValida, horarioOficina);
   const validadeRecTexto = validadeRecomendada || validadeSugerida(ultimaData, horarioOficina);
   const fmtCurta = (ymd: string) => diaDoCalendario(ymd, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
@@ -996,7 +1000,10 @@ ${d.observacoes}` : d.observacoes));
             </p>
 
             {erroHorario && <p className="text-sm text-red-700 mb-3" role="alert" data-testid="erro-horario-passado">{t('horarioPassado')}</p>}
-            <SeletorCheckin linhas={slots} aoMudar={mudarSlots} ctx={ctxOficina} pais={paisF} prazoDias={prazoDias} erro={erroSemCheckin} testid="ck" />
+            {/* "motorista prefere: ter, qui · a tarde" (114) ao lado do seletor; o calendario realca esses dias */}
+            {ehPreferencia((solicitacao as any).preferencia_horario) && <PreferenciaMotorista preferencia={(solicitacao as any).preferencia_horario} className="mb-3" />}
+            <SeletorCheckin linhas={slots} aoMudar={mudarSlots} ctx={ctxOficina} pais={paisF} prazoDias={prazoDias} erro={erroSemCheckin} testid="ck"
+              diasPreferidos={diasSemanaPreferidos(ehPreferencia((solicitacao as any).preferencia_horario) ? ((solicitacao as any).preferencia_horario as PreferenciaHorario) : null)} />
             {erroSemCheckin && <p role="alert" className="mt-2 text-sm font-medium text-red-700" data-testid="erro-sem-checkin">⛔ {t('erroSemCheckin')}</p>}
             {/* so com exatamente 1 dia: com zero o erro vermelho ja diz o que falta (QA D8) */}
             {diasOferecidos === 1 && (
@@ -1022,7 +1029,7 @@ ${d.observacoes}` : d.observacoes));
             aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
             min={validadeMin}
             value={validade}
-            onChange={(e) => { validadeManual.current = true; setValidadeAuto(false); setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) { setErroVal(null); tiraFalta('validade'); } }}
+            onChange={(e) => { validadeManual.current = true; setValidadeAuto(false); setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], amanhaOf)) { setErroVal(null); tiraFalta('validade'); } }}
           />
           {validadeAuto && validade && !erroVal && (
             <p className="mt-1 text-xs text-gray-500" data-testid="validade-auto">{t('validadeAutoDica')}</p>

@@ -788,7 +788,7 @@
     "info_checkin": "Giorno e fascia oraria in cui il cliente porta l’auto. Offri almeno 2 opzioni in giorni diversi: il cliente ne sceglie una. Le fasce vengono dal profilo (accettazione, pranzo, orario di apertura).",
     "erroSemCheckin": "Aggiungi almeno una data di check-in per inviare il preventivo.",
     "validadeAntesErro": "La validità deve essere almeno l’ultimo giorno di check-in ({ultima}). Consigliamo almeno {dias} giorni dopo l’ultimo giorno ({recomendada}).",
-    "validadePassadoErro": "La validità non può essere prima di oggi.",
+    "validadePassadoErro": "La validità deve essere almeno domani.",
     "validadeVaziaErro": "Scegli fino a quando vale il preventivo.",
     "validadeVaziaErroComData": "Scegli fino a quando vale il preventivo: almeno l’ultimo giorno di check-in ({ultima}); consigliamo almeno {dias} giorni dopo ({recomendada}).",
     "validadeUsar": "Usa {data}",
@@ -1137,7 +1137,15 @@
     "orcamentoVencidoTexto": "Questo preventivo è scaduto il {data}. Il cliente non può più accettarlo. Per continuare, modifica il preventivo con nuove date di check-in e una nuova validità.",
     "convidada": "Inviata a te da BipFix",
     "convidadaTexto": "BipFix ti ha inviato questa richiesta. Puoi inviare un preventivo anche se non è il tuo servizio abituale.",
-    "nomeAposAceite": "Nome e indirizzo del cliente compaiono dopo che accetta il tuo preventivo."
+    "nomeAposAceite": "Nome e indirizzo del cliente compaiono dopo che accetta il tuo preventivo.",
+    "recusaMotivo": "Motivo del rifiuto: {motivo}",
+    "recusaMotivos": {
+      "preco": "prezzo",
+      "data": "la data non andava bene",
+      "distancia": "troppo lontano",
+      "resolvido": "ha già risolto",
+      "outro": "altro"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",
@@ -1281,7 +1289,14 @@
     "voceDispensou": "Hai segnato \"non mi interessa\": {motivo}",
     "desfazerDispensa": "Rispondi comunque",
     "erroDispensa": "Salvataggio non riuscito. Riprova.",
-    "convidada": "Inviata a te da BipFix"
+    "convidada": "Inviata a te da BipFix",
+    "recusaMotivos": {
+      "preco": "prezzo",
+      "data": "la data non andava bene",
+      "distancia": "troppo lontano",
+      "resolvido": "ha già risolto",
+      "outro": "altro"
+    }
   },
   "oficinaHoje": {
     "titulo": "Oggi",
@@ -1477,12 +1492,26 @@
     "semMudarPreco": "Il preventivo resta uguale: stesso importo, nessuna nuova revisione.",
     "feitoConfirmado": "Data confermata. La prenotazione è fatta.",
     "feitoEnviadas": "Date inviate al cliente.",
-    "selo": "Nuove date richieste",
+    "selo": "Il cliente ha bisogno di un’altra data",
     "dicaModificar": "Il cliente ha chiesto nuove date. Per mandare solo le date usa la scheda nella richiesta: non conta come revisione. Se modifichi il preventivo, la richiesta di date viene annullata.",
     "dicaModificarLink": "Apri la richiesta",
     "erroSemData": "Aggiungi almeno una data.",
     "vencidoTexto": "Il tuo preventivo è scaduto, quindi qui non puoi confermare né inviare date. Modifica il preventivo con nuove date e una nuova validità: il cliente lo riceve e può accettare.",
-    "vencidoRevisar": "Modifica il preventivo"
+    "vencidoRevisar": "Modifica il preventivo",
+    "tituloOutraData": "Il cliente ha bisogno di un’altra data",
+    "textoOutraData": "Nessuna delle date che hai offerto va bene al cliente. Manda da 1 a 3 date nuove oppure rispondi che non puoi. Il prezzo non cambia.",
+    "padraoTitulo": "Cosa va bene al cliente",
+    "manha": "di mattina",
+    "tarde": "di pomeriggio",
+    "qualquerParte": "a qualsiasi ora",
+    "diaFechado": "L’officina è chiusa in questo giorno",
+    "naoPosso": "Non posso in quella data",
+    "naoPossoTexto": "Il cliente riceve un avviso; le date del tuo preventivo restano valide.",
+    "naoPossoRecado": "Breve messaggio al cliente (facoltativo)",
+    "naoPossoPlaceholder": "Es.: questa settimana siamo pieni",
+    "naoPossoConfirmar": "Invia risposta",
+    "naoPossoVoltar": "Indietro",
+    "feitoNaoPosso": "Risposta inviata. Il cliente è stato avvisato."
   },
   "seletorCheckin": {
     "adicionar": "+ Aggiungi data di check-in",
@@ -1512,7 +1541,8 @@
     "dicaPerfil": "Gli orari vengono dall’orario di apertura (fasce di 2 h). Se accetti auto solo in parte della giornata, indicalo nel profilo (“Accettazione auto”).",
     "hoje": "oggi",
     "diaIndisponivel": "non disponibile",
-    "proximoAberto": "prossimo giorno di apertura"
+    "proximoAberto": "prossimo giorno di apertura",
+    "diaPreferido": "va bene al cliente"
   },
   "conviteRecepcao": {
     "titulo": "Novità: orari di accettazione auto",

@@ -788,7 +788,7 @@
     "info_checkin": "Dia e faixa de horário em que o cliente traz o carro. Ofereça pelo menos 2 opções em dias diferentes — o cliente escolhe uma. As faixas vêm do perfil (recepção, almoço, horário de funcionamento).",
     "erroSemCheckin": "Adicione pelo menos uma data de check-in para enviar o orçamento.",
     "validadeAntesErro": "A validade precisa ser pelo menos o último dia de check-in ({ultima}). Recomendamos pelo menos {dias} dias depois do último dia ({recomendada}).",
-    "validadePassadoErro": "A validade não pode ser antes de hoje.",
+    "validadePassadoErro": "A validade precisa ser pelo menos amanhã.",
     "validadeVaziaErro": "Escolha até quando o orçamento vale.",
     "validadeVaziaErroComData": "Escolha até quando o orçamento vale: pelo menos o último dia de check-in ({ultima}); recomendamos pelo menos {dias} dias depois ({recomendada}).",
     "validadeUsar": "Usar {data}",
@@ -1137,7 +1137,15 @@
     "orcamentoVencidoTexto": "A validade deste orçamento terminou em {data}. O cliente não pode mais aceitá-lo. Para continuar, altere o orçamento com novas datas de check-in e uma nova validade.",
     "convidada": "Enviado para você pela BipFix",
     "convidadaTexto": "A BipFix enviou este pedido para você. Pode mandar orçamento mesmo que não seja a sua especialidade.",
-    "nomeAposAceite": "Nome e endereço do cliente aparecem depois de ele aceitar o seu orçamento."
+    "nomeAposAceite": "Nome e endereço do cliente aparecem depois de ele aceitar o seu orçamento.",
+    "recusaMotivo": "Motivo da recusa: {motivo}",
+    "recusaMotivos": {
+      "preco": "preço",
+      "data": "a data não servia",
+      "distancia": "longe demais",
+      "resolvido": "já resolveu",
+      "outro": "outro"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veículo recebido na oficina",
@@ -1281,7 +1289,14 @@
     "voceDispensou": "Você marcou sem interesse: {motivo}",
     "desfazerDispensa": "Voltar a responder",
     "erroDispensa": "Não foi possível salvar. Tente de novo.",
-    "convidada": "Enviado para você pela BipFix"
+    "convidada": "Enviado para você pela BipFix",
+    "recusaMotivos": {
+      "preco": "preço",
+      "data": "a data não servia",
+      "distancia": "longe demais",
+      "resolvido": "já resolveu",
+      "outro": "outro"
+    }
   },
   "oficinaHoje": {
     "titulo": "Hoje",
@@ -1477,12 +1492,26 @@
     "semMudarPreco": "O orçamento continua o mesmo: mesmo valor, sem nova revisão.",
     "feitoConfirmado": "Data confirmada. O agendamento está feito.",
     "feitoEnviadas": "Datas enviadas ao cliente.",
-    "selo": "Novas datas pedidas",
+    "selo": "Cliente precisa de outra data",
     "dicaModificar": "O cliente pediu novas datas. Para só mandar datas, use o cartão no pedido: não conta como revisão. Se modificar o orçamento, o pedido de datas é cancelado.",
     "dicaModificarLink": "Abrir o pedido",
     "erroSemData": "Adicione pelo menos uma data.",
     "vencidoTexto": "O seu orçamento venceu, por isso não dá para confirmar nem enviar datas aqui. Altere o orçamento com novas datas e uma nova validade: o cliente recebe e pode aceitar.",
-    "vencidoRevisar": "Alterar o orçamento"
+    "vencidoRevisar": "Alterar o orçamento",
+    "tituloOutraData": "O cliente precisa de outra data",
+    "textoOutraData": "Nenhuma das datas que você ofereceu serve para o cliente. Mande 1 a 3 datas novas ou responda que não pode. O preço não muda.",
+    "padraoTitulo": "O que serve para o cliente",
+    "manha": "de manhã",
+    "tarde": "à tarde",
+    "qualquerParte": "qualquer hora",
+    "diaFechado": "A oficina está fechada neste dia",
+    "naoPosso": "Não posso nessa data",
+    "naoPossoTexto": "O cliente recebe um aviso; as datas do seu orçamento continuam valendo.",
+    "naoPossoRecado": "Recado curto ao cliente (opcional)",
+    "naoPossoPlaceholder": "Ex.: esta semana está tudo ocupado",
+    "naoPossoConfirmar": "Enviar resposta",
+    "naoPossoVoltar": "Voltar",
+    "feitoNaoPosso": "Resposta enviada. O cliente foi avisado."
   },
   "seletorCheckin": {
     "adicionar": "+ Adicionar data de check-in",
@@ -1512,7 +1541,8 @@
     "dicaPerfil": "Os horários vêm do seu horário de funcionamento (faixas de 2 h). Se só recebe carros em parte do dia, indique no perfil (“Recepção de carros”).",
     "hoje": "hoje",
     "diaIndisponivel": "indisponível",
-    "proximoAberto": "próximo dia aberto"
+    "proximoAberto": "próximo dia aberto",
+    "diaPreferido": "serve ao motorista"
   },
   "conviteRecepcao": {
     "titulo": "Novo: horário de recepção de carros",

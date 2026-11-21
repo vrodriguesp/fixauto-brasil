@@ -788,7 +788,7 @@
     "info_checkin": "Päev ja kellavahemik, millal klient toob auto. Paku vähemalt 2 aega eri päevadel – klient valib ühe. Vahemikud tulevad profiilist (vastuvõtt, lõuna, lahtiolekuajad).",
     "erroSemCheckin": "Lisa vähemalt üks check-ini aeg, et pakkumine saata.",
     "validadeAntesErro": "Kehtivus peab olema vähemalt viimane check-ini päev ({ultima}). Soovitame vähemalt {dias} päeva pärast viimast päeva ({recomendada}).",
-    "validadePassadoErro": "Kehtivus ei saa olla enne tänast.",
+    "validadePassadoErro": "Kehtivus peab olema vähemalt homme.",
     "validadeVaziaErro": "Vali, milleni pakkumine kehtib.",
     "validadeVaziaErroComData": "Vali, milleni pakkumine kehtib: vähemalt viimane check-ini päev ({ultima}); soovitame vähemalt {dias} päeva pärast seda ({recomendada}).",
     "validadeUsar": "Kasuta {data}",
@@ -1137,7 +1137,15 @@
     "orcamentoVencidoTexto": "Selle hinnapakkumise kehtivus lõppes {data}. Klient ei saa seda enam vastu võtta. Jätkamiseks muuda hinnapakkumist: lisa uued check-ini ajad ja uus kehtivus.",
     "convidada": "Saadetud sulle BipFixi poolt",
     "convidadaTexto": "BipFix saatis selle päringu sulle. Võid pakkumise saata ka siis, kui see pole sinu põhiteenus.",
-    "nomeAposAceite": "Kliendi nimi ja aadress ilmuvad pärast seda, kui ta sinu pakkumise vastu võtab."
+    "nomeAposAceite": "Kliendi nimi ja aadress ilmuvad pärast seda, kui ta sinu pakkumise vastu võtab.",
+    "recusaMotivo": "Tagasilükkamise põhjus: {motivo}",
+    "recusaMotivos": {
+      "preco": "hind",
+      "data": "aeg ei sobinud",
+      "distancia": "liiga kaugel",
+      "resolvido": "juba lahendatud",
+      "outro": "muu"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",
@@ -1281,7 +1289,14 @@
     "voceDispensou": "Märkisid, et pole huvi: {motivo}",
     "desfazerDispensa": "Vasta siiski",
     "erroDispensa": "Salvestamine ebaõnnestus. Proovi uuesti.",
-    "convidada": "Saadetud sulle BipFixi poolt"
+    "convidada": "Saadetud sulle BipFixi poolt",
+    "recusaMotivos": {
+      "preco": "hind",
+      "data": "aeg ei sobinud",
+      "distancia": "liiga kaugel",
+      "resolvido": "juba lahendatud",
+      "outro": "muu"
+    }
   },
   "oficinaHoje": {
     "titulo": "Täna",
@@ -1477,12 +1492,26 @@
     "semMudarPreco": "Hinnapakkumine jääb samaks: sama summa ja see ei lähe muudatusena kirja.",
     "feitoConfirmado": "Aeg kinnitatud. Broneering on tehtud.",
     "feitoEnviadas": "Ajad saadeti kliendile.",
-    "selo": "Klient küsib uusi aegu",
+    "selo": "Klient vajab teist aega",
     "dicaModificar": "Klient küsis uusi aegu. Kui soovid saata ainult ajad, kasuta päringu kaarti: see ei lähe muudatusena kirja. Kui muudad hinnapakkumist, tühistatakse aegade soov.",
     "dicaModificarLink": "Ava päring",
     "erroSemData": "Lisa vähemalt üks aeg.",
     "vencidoTexto": "Sinu hinnapakkumine on aegunud, seega siin ei saa aegu kinnitada ega saata. Muuda hinnapakkumist uute aegade ja uue kehtivusega: klient saab selle ja võib vastu võtta.",
-    "vencidoRevisar": "Muuda pakkumist"
+    "vencidoRevisar": "Muuda pakkumist",
+    "tituloOutraData": "Klient vajab teist aega",
+    "textoOutraData": "Ükski sinu pakutud aeg kliendile ei sobi. Saada 1–3 uut aega või vasta, et ei saa. Hind ei muutu.",
+    "padraoTitulo": "Kliendile sobib",
+    "manha": "hommikul",
+    "tarde": "pärastlõunal",
+    "qualquerParte": "ükskõik mis kell",
+    "diaFechado": "Töökoda on sel päeval suletud",
+    "naoPosso": "Ei saa sel ajal",
+    "naoPossoTexto": "Klient saab teate; sinu hinnapakkumise ajad kehtivad edasi.",
+    "naoPossoRecado": "Lühike sõnum kliendile (valikuline)",
+    "naoPossoPlaceholder": "Nt sel nädalal oleme täis",
+    "naoPossoConfirmar": "Saada vastus",
+    "naoPossoVoltar": "Tagasi",
+    "feitoNaoPosso": "Vastus saadetud. Klient sai teate."
   },
   "seletorCheckin": {
     "adicionar": "+ Lisa check-ini aeg",
@@ -1512,7 +1541,8 @@
     "dicaPerfil": "Ajad tulevad lahtiolekuaegadest (2 h). Kui võtad autosid vastu vaid osa päevast, märgi see profiilis („Autode vastuvõtt”).",
     "hoje": "täna",
     "diaIndisponivel": "ei saa valida",
-    "proximoAberto": "järgmine lahtiolekupäev"
+    "proximoAberto": "järgmine lahtiolekupäev",
+    "diaPreferido": "sobib kliendile"
   },
   "conviteRecepcao": {
     "titulo": "Uus: autode vastuvõtu ajad",

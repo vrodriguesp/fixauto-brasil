@@ -19,7 +19,6 @@ import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
-import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
 import { slotAindaVale, formatarJanela, janelaDoSlot } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
 import FotosPedido from '@/components/cliente/FotosPedido';
@@ -27,9 +26,10 @@ import { fotosDepoisDoOrcamento } from '@/lib/fotos-depois';
 import { ehConvencionada } from '@/lib/seguradoras';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import PedirNovasDatas from '@/components/cliente/PedirNovasDatas';
+import RecusarOrcamento from '@/components/cliente/RecusarOrcamento';
+import PreferenciaHorario from '@/components/cliente/PreferenciaHorario';
 import { TelefoneDepoisDoAceite, CompartilharTelefone } from '@/components/cliente/TelefoneOficina';
 import { orcamentoVencido } from '@/lib/orcamento-validade';
-import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -73,7 +73,7 @@ export default function OrcamentoDetalhePage() {
   // aceite: trava de duplo clique e erro visivel (auditoria M14)
   const [confirmando, setConfirmando] = useState(false);
   const [erroAceite, setErroAceite] = useState('');
-  const { accept, refuse } = useOrcamentos();
+  const { accept } = useOrcamentos();
   const { avaliacoes, create: createAvaliacao, update: updateAvaliacao } = useAvaliacoes();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
   const [schedulingOrcId, setSchedulingOrcId] = useState<string | null>(null);
@@ -86,54 +86,19 @@ export default function OrcamentoDetalhePage() {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [editingReview, setEditingReview] = useState(false);
-  const [refusing, setRefusing] = useState<string | null>(null);
+  // "Preciso de outra data" aberto pela folha da recusa ("a data nao serve" -> pedir outra data) - 114
+  const [abrirOutraData, setAbrirOutraData] = useState<Record<string, number>>({});
 
-
-  const handleRefuse = async (orcamentoId: string) => {
-    const isEmAndamento = solicitacao?.status === 'em_andamento';
-    const confirmMsg = isEmAndamento
-      ? t('confirmRefuseInProgress')
-      : t('confirmRefuse');
-    if (!confirm(confirmMsg)) return;
-    setRefusing(orcamentoId);
-    const { error } = await refuse(orcamentoId);
-    if (!error) {
-      // Notify oficina when vehicle is in workshop
-      if (isEmAndamento) {
-        const orc = solicitacao?.orcamentos?.find((o) => o.id === orcamentoId);
-        if (orc?.oficina?.profile?.id) {
-          try {
-            const { supabase: sb } = await import('@/lib/supabase').then(m => ({ supabase: m.supabase }));
-            const n = notifOrcamentoRecusado((orc.oficina.profile as any)?.idioma);
-            await sb.from('notificacoes').insert({
-              profile_id: orc.oficina.profile.id,
-              tipo: 'orcamento_recusado',
-              titulo: n.titulo,
-              mensagem: n.mensagem,
-              dados: { solicitacao_id: solicitacao!.id, textos: emTodasAsLinguas((l) => notifOrcamentoRecusado(l)) },
-            });
-          } catch { /* Non-blocking */ }
-        }
-        // Do NOT cancel the solicitation — keep em_andamento so oficina can check-out
-        window.location.reload();
-        return;
-      }
-
-      // Check if all quotes are now refused — offer to cancel the solicitation
-      const otherPending = solicitacao?.orcamentos?.filter(
-        (o) => o.id !== orcamentoId && o.status === 'enviado'
-      );
-      if (!otherPending || otherPending.length === 0) {
-        if (confirm(t('confirmCancelAllRefused'))) {
-          await fetch(`/api/solicitacoes/${solicitacao!.id}/cancelar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null);
-          router.push('/cliente/dashboard');
-          return;
-        }
-      }
-      // Refresh to show updated status
-      window.location.reload();
+  // recusa com motivo (114): a API grava status + motivo, cancela o pedido de outra data pendente e, com o carro na
+  // oficina, avisa a oficina (check-out). Devolve quantos orcamentos ainda podem ser aceitos: zero -> pergunta se cancela o pedido.
+  const aposRecusa = async (outrosAtivos: number) => {
+    if (solicitacao?.status === 'em_andamento') { window.location.reload(); return; } // o pedido continua em andamento: a oficina faz o check-out
+    if (outrosAtivos === 0 && confirm(t('confirmCancelAllRefused'))) {
+      await fetch(`/api/solicitacoes/${solicitacao!.id}/cancelar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null);
+      router.push('/cliente/dashboard');
+      return;
     }
-    setRefusing(null);
+    window.location.reload();
   };
 
   if (!solicitacao) {
@@ -258,6 +223,13 @@ export default function OrcamentoDetalhePage() {
 
       {(solicitacao.status as string) === 'expirada' && (
         <PedidoExpirado solicitacaoId={solicitacao.id} dias={VALIDADE_PEDIDO_DIAS} aoReabrir={refresh} />
+      )}
+
+      {/* "Quando voce pode levar o carro?" (114): opcional, depois de o pedido ja existir; a oficina ve no pedido e no orcamento */}
+      {['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) && (
+        <div className="mb-6">
+          <PreferenciaHorario key={solicitacao.id} solicitacaoId={solicitacao.id} inicial={(solicitacao as any).preferencia_horario} urgencia={solicitacao.urgencia} modo="cartao" />
+        </div>
       )}
 
       {/* pedido cancelado: aviso claro no alto (antes parecia ativo, com datas - dono 08/11) */}
@@ -796,7 +768,7 @@ export default function OrcamentoDetalhePage() {
                 </div>
               ) : (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-700" data-testid="validade-orcamento">
                     {t('validUntil', { date: formatDate(orc.validade, locale) })}
                     {orc.revisao_numero > 0 && (
                       <span className="ml-2 text-amber-600 font-medium">
@@ -821,34 +793,29 @@ export default function OrcamentoDetalhePage() {
                   ) : !['expirada', 'cancelada'].includes(solicitacao.status as string) && semDatasFuturas(orc) && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) ? (
                     // datas vencidas: no lugar de "aceitar e agendar", o pedido de novas datas (079)
                     <div className="w-full space-y-2">
-                      <PedirNovasDatas orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento}
+                      <PedirNovasDatas orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento} abrir={abrirOutraData[orc.id]}
                         ctx={{ horario: (orc as any).oficina?.horario_funcionamento, recepcao_inicio: (orc as any).oficina?.recepcao_inicio, recepcao_fim: (orc as any).oficina?.recepcao_fim, almoco_inicio: (orc as any).oficina?.almoco_inicio, almoco_fim: (orc as any).oficina?.almoco_fim }} />
-                      <button
-                        onClick={() => handleRefuse(orc.id)}
-                        disabled={refusing === orc.id}
-                        className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors w-full sm:w-auto"
-                      >
-                        {refusing === orc.id ? t('refusing') : t('refuse')}
-                      </button>
+                      <RecusarOrcamento orcamentoId={orc.id} emAndamento={solicitacao.status === 'em_andamento'} aoRecusado={aposRecusa} />
                     </div>
                   ) : !['expirada', 'cancelada'].includes(solicitacao.status as string) && (
-                  <div className="flex gap-2 [&>button]:flex-1 sm:[&>button]:flex-none">
-                    <button
-                      onClick={() => handleRefuse(orc.id)}
-                      disabled={refusing === orc.id}
-                      className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors"
-                    >
-                      {refusing === orc.id ? t('refusing') : t('refuse')}
-                    </button>
+                  // 3 saidas sempre visiveis (114, dono 21/11): aceitar e agendar / preciso de outra data / recusar (com motivo)
+                  <div className="flex w-full flex-col gap-2 sm:max-w-sm sm:ml-auto" data-testid="acoes-orcamento">
                     <button
                       onClick={() => handleStartScheduling(orc.id)}
-                      className="btn-success !py-2 !px-4 text-sm flex items-center justify-center gap-2"
+                      className="btn-success min-h-[48px] w-full text-base flex items-center justify-center gap-2"
+                      data-testid="aceitar-agendar"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       {t('acceptAndSchedule')}
                     </button>
+                    {['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) && (
+                      <PedirNovasDatas sempre orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento} abrir={abrirOutraData[orc.id]}
+                        ctx={{ horario: (orc as any).oficina?.horario_funcionamento, recepcao_inicio: (orc as any).oficina?.recepcao_inicio, recepcao_fim: (orc as any).oficina?.recepcao_fim, almoco_inicio: (orc as any).oficina?.almoco_inicio, almoco_fim: (orc as any).oficina?.almoco_fim }} />
+                    )}
+                    <RecusarOrcamento orcamentoId={orc.id} emAndamento={solicitacao.status === 'em_andamento'} aoRecusado={aposRecusa}
+                      podePedirData={['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status)} aoPedirData={() => setAbrirOutraData((m) => ({ ...m, [orc.id]: (m[orc.id] || 0) + 1 }))} />
                   </div>
                   )}
                 </div>

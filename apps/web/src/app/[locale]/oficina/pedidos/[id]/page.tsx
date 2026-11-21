@@ -20,6 +20,7 @@ import { fotosDepoisDoOrcamento } from '@/lib/fotos-depois';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 import ResumoAgendamento from '@/components/oficina/ResumoAgendamento';
 import NovasDatasPedidas from '@/components/oficina/NovasDatasPedidas';
+import PreferenciaMotorista from '@/components/oficina/PreferenciaMotorista';
 import { orcamentoVencido } from '@/lib/orcamento-validade';
 import { usePecasBotaoPedido } from '@/hooks/use-pecas-v3';
 
@@ -181,6 +182,11 @@ export default function SolicitacaoDetalhePage() {
         </div>
       </div>
 
+      {/* "quando o motorista pode levar o carro" (114): preferencia opcional gravada depois do pedido */}
+      {['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && (sol as any).preferencia_horario && (
+        <div className="mb-6 -mt-2"><PreferenciaMotorista preferencia={(sol as any).preferencia_horario} /></div>
+      )}
+
       {!myQuote && oficina && ['aberta', 'em_orcamento'].includes(sol.status) && (
         <div className="mb-6 -mt-2">
           <DispensarPedido destaque solicitacaoId={sol.id} oficinaId={oficina.id} dispensa={dispensa} aoMudar={carregarDispensa} />
@@ -205,6 +211,12 @@ export default function SolicitacaoDetalhePage() {
                   ? <span className="badge bg-red-100 text-red-800" data-testid="orcamento-aegunud">{t('statusOrcamento.expirado')}</span>
                   : <span className="badge bg-gray-100 text-gray-700">{t(`statusOrcamento.${myQuote.status}`)}</span>}
               </div>
+              {/* motivo da recusa em palavras simples (114): so quando o motorista escolheu um */}
+              {myQuote.status === 'recusado' && (myQuote as any).recusado_motivo && (
+                <p role="status" className="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-2 text-sm text-gray-800" data-testid="recusa-motivo">
+                  {t('recusaMotivo', { motivo: t(`recusaMotivos.${(myQuote as any).recusado_motivo}`) })}
+                </p>
+              )}
               {fotosDepois.length > 0 && (
                 <div role="status" className="mb-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900" data-testid="fotos-depois-orcamento">
                   <p>{t('fotosDepoisOrcamento', { count: fotosDepois.length })}</p>
