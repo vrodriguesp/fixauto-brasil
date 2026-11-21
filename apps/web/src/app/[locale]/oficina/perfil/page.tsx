@@ -446,7 +446,7 @@ export default function PerfilOficinaPage() {
             <label htmlFor="c83a1-2" className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
             <input id="c83a1-2" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
-          <EnderecoEstruturado idBase="oficina-end" valor={end} onChange={setEnd}
+          <EnderecoEstruturado idBase="oficina-end" soDoPais valor={end} onChange={setEnd}
             perto={end.latitude != null && end.longitude != null ? { lat: end.latitude, lon: end.longitude } : null} />
           <div>
             <label htmlFor="c83a1-101" className="block text-sm font-medium text-gray-700 mb-1">

@@ -158,19 +158,29 @@ try {
     await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); localStorage.setItem('bipfix_pedido_rascunho', JSON.stringify({ em: Date.now(), etapa: 'local', tipo: 'mecanica', servicos: [], descricao: 'TESTE', fotosPuladas: true, carro: { tipo: 'cars', marca: 'Toyota', modelo: 'Corolla', ano: '', codigo: '' }, placa: '', endereco: '', coords: null, pais: null, nome: '', email: '', querSms: false, telefone: '', termos: false, pendente: null, qtdFotos: 0 })); } catch {} });
     const page = await ctx.newPage();
     const respostas = [];
-    page.on('response', async (r) => { if (r.url().includes('/api/endereco/sugestoes')) respostas.push(await r.json().catch(() => [])); });
+    const urls = [];
+    page.on('response', async (r) => { if (r.url().includes('/api/endereco/sugestoes')) { urls.push(r.url()); respostas.push(await r.json().catch(() => [])); } });
     await page.goto(SITE + URL_PEDIDO.ru, { waitUntil: 'networkidle' });
     await page.getByTestId('passo-local').waitFor();
     await page.locator('#pedido-endereco').pressSequentially('Таллинн', { delay: 60 });
     await page.locator('[role="listbox"] [role="option"]').first().waitFor({ timeout: 20000 }).catch(() => {});
     const opcoes = await page.locator('[role="listbox"] [role="option"]').allInnerTexts();
     const ultima = respostas.at(-1) || [];
+    ok('tela RU: o pedido pede as sugestoes com opt-in (&pais=EE&so=1)', urls.length > 0 && urls.every((u) => /[?&]pais=EE(&|$)/.test(u) && /[?&]so=1(&|$)/.test(u)), JSON.stringify(urls.slice(-2)));
     ok('tela RU "Таллинн": sugestoes so da Estonia (Tallinn primeiro)', opcoes.length > 0 && /tallinn/i.test(opcoes[0]) && ultima.length > 0 && ultima.every((s) => s.paisCodigo === 'EE'), JSON.stringify(opcoes));
     await page.screenshot({ path: path.join(OUT, 'sugestoes-ru-tallinn.png') }).catch(() => {});
     await ctx.close();
   }
 } finally {
   await B.close();
+}
+// opt-in so onde a pessoa/oficina esta na Estonia; o acidente (pode ser no estrangeiro) fica sem
+{
+  const fonte = (f) => fs.readFileSync(path.join(WEB, 'src', f), 'utf8');
+  ok('acidente (emergencia) nao pede so=1', !/soDoPais/.test(fonte('app/[locale]/emergencia/page.tsx')));
+  ok('pedido sem conta, nova solicitacao, cadastro e perfil da oficina pedem so=1',
+    /id="pedido-endereco" soDoPais/.test(fonte('components/pedido/PedidoSemConta.tsx')) && /id="caee7-102" soDoPais/.test(fonte('app/[locale]/cliente/nova-solicitacao/page.tsx'))
+    && /soDoPais=\{userType === 'oficina'\}/.test(fonte('app/[locale]/(auth)/cadastro/page.tsx')) && /idBase="oficina-end" soDoPais/.test(fonte('app/[locale]/oficina/perfil/page.tsx')));
 }
 
 // ---- /api/funil aceita os eventos novos (banco local) ----

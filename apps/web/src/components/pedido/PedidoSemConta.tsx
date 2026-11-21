@@ -340,7 +340,8 @@ export default function PedidoSemConta() {
     const ler = () => setComputador(!toque.matches && !algumToque.matches && !(navigator.maxTouchPoints > 0));
     ler();
     toque.addEventListener('change', ler);
-    return () => toque.removeEventListener('change', ler);
+    algumToque.addEventListener('change', ler);
+    return () => { toque.removeEventListener('change', ler); algumToque.removeEventListener('change', ler); };
   }, []);
   useEffect(() => {
     if (etapa === 'local' && computador) document.getElementById('pedido-endereco')?.focus({ preventScroll: true });
@@ -727,7 +728,7 @@ export default function PedidoSemConta() {
             <p id="pedido-endereco-ajuda" className="text-sm text-primary-900 bg-primary-50 border-l-4 border-primary-400 rounded-r-lg px-3 py-2 mb-3" data-testid="local-claro">{t('localAjuda')}</p>
             <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{t('localRotulo')}<Obrig /></label>
             {/* escreveu: a coordenada passa a ser a do texto (no envio); a de uma sugestao/do aparelho valia para o texto anterior */}
-            <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho} required
+            <EnderecoAutocomplete id="pedido-endereco" soDoPais value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho} required
               className={`input-field ${classeErro('pedido-endereco')}`} erroId={erroDe('pedido-endereco') ? 'pedido-endereco-erro' : null}
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
             <Aviso id="pedido-endereco" />

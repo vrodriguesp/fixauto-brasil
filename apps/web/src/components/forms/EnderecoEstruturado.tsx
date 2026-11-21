@@ -30,11 +30,13 @@ const CENTRO: Record<string, { lat: number; lon: number }> = {
   it: { lat: 41.9028, lon: 12.4964 }, 'pt-PT': { lat: 38.7223, lon: -9.1393 }, pt: { lat: -23.5505, lon: -46.6333 },
 };
 
-export default function EnderecoEstruturado({ valor, onChange, perto, idBase = 'end' }: {
+export default function EnderecoEstruturado({ valor, onChange, perto, idBase = 'end', soDoPais }: {
   valor: ValorEndereco;
   onChange: (v: ValorEndereco) => void;
   perto?: { lat: number; lon: number } | null;
   idBase?: string;
+  /** so sugestoes do pais do mercado (oficina: sempre na Estonia) */
+  soDoPais?: boolean;
 }) {
   const t = useTranslations('enderecoEstruturado');
   const locale = useLocale();
@@ -95,6 +97,7 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
             onChange={(v) => set('rua', v)}
             placeholder={t('ruaPlaceholder')}
             perto={pertoUsado}
+            soDoPais={soDoPais}
             onSelect={(s) => {
               const novo = {
                 ...valor,

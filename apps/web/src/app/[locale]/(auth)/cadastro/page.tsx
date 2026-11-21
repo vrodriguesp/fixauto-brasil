@@ -253,7 +253,7 @@ function CadastroPage() {
     latitude: posEnd?.lat ?? null, longitude: posEnd?.lon ?? null, pais, complemento,
   };
   const renderEnderecoFields = () => (
-    <EnderecoEstruturado idBase="cadastro-end"
+    <EnderecoEstruturado idBase="cadastro-end" soDoPais={userType === 'oficina'}
       valor={{ ...valorEndereco, ...(ruaNumero || {}) }}
       perto={geoResolved ? coords : null}
       onChange={(v) => {

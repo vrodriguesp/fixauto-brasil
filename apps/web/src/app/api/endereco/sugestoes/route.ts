@@ -22,6 +22,8 @@ const LARGO_DEMAIS = new Set(['country', 'state', 'county']);
 // da Russia (Sosnovy Bor, Sao Petersburgo, Moscou); as oficinas sao todas na Estonia. Geoapify com
 // filter=countrycode:ee (o vies da capital continua: Narva mnt 5 fica em Tallinn); Photon com o
 // retangulo do pais + descarte do que nao for EE. Outros mercados: como antes (o pais so ordena).
+// So com opt-in (&so=1, veredito Fable 21/11): o app nao manda o pais e o acidente pode ser no
+// estrangeiro (seguro LV/LT/FI) - sem o so=1 tudo fica como em producao (o pais so ordena).
 const SO_DO_PAIS = new Set(['EE']);
 const BBOX: Record<string, string> = { EE: '21.5,57.4,28.3,59.9' };
 const MAX = 6;
@@ -73,8 +75,8 @@ export async function GET(req: NextRequest) {
   const lon = Number(req.nextUrl.searchParams.get('lon'));
   const perto = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? `&lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}` : '';
   const pais = (req.nextUrl.searchParams.get('pais') || 'EE').slice(0, 2).toUpperCase();
-  const soDoPais = SO_DO_PAIS.has(pais);
-  const chave = `${q.toLowerCase()}|${perto}|${pais}`;
+  const soDoPais = SO_DO_PAIS.has(pais) && req.nextUrl.searchParams.get('so') === '1';
+  const chave = `${q.toLowerCase()}|${perto}|${pais}|${soDoPais ? 'so' : ''}`;
   const c = cache.get(chave);
   if (c && Date.now() - c.em < CACHE_MS) return NextResponse.json(c.corpo);
 

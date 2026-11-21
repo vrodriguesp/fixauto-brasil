@@ -10,7 +10,7 @@ export type { SugestaoEndereco };
 // Campo de endereco com sugestoes enquanto digita (a partir de 3 letras).
 // Continua aceitando texto livre. Teclado: setas + Enter; toque: linhas de 44 px.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required, erroId,
+  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required, erroId, soDoPais,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -22,6 +22,8 @@ export default function EnderecoAutocomplete({
   required?: boolean;
   /** id da mensagem de erro mostrada por quem usa (aria-invalid + aria-describedby) */
   erroId?: string | null;
+  /** so lugares do pais do mercado (Estonia): pedido e oficina; o acidente pode ser no estrangeiro */
+  soDoPais?: boolean;
 }) {
   const auto = useId();
   const locale = useLocale();
@@ -41,7 +43,7 @@ export default function EnderecoAutocomplete({
     const tmr = setTimeout(async () => {
       setProcurando(true);
       try {
-        const p = (perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '') + `&pais=${mercadoDe(locale).pais}`;
+        const p = (perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '') + `&pais=${mercadoDe(locale).pais}` + (soDoPais ? '&so=1' : '');
         const r = await fetch(`/api/endereco/sugestoes?q=${encodeURIComponent(q)}${p}`, { signal: ctl.signal });
         const d = r.ok ? ((await r.json()) as SugestaoEndereco[]) : [];
         setSugestoes(d);
@@ -51,7 +53,7 @@ export default function EnderecoAutocomplete({
       if (!ctl.signal.aborted) setProcurando(false);
     }, 300);
     return () => { clearTimeout(tmr); ctl.abort(); };
-  }, [value, perto, locale]);
+  }, [value, perto, locale, soDoPais]);
 
   const escolher = (s: SugestaoEndereco) => {
     escolhidos.current = [s.endereco, s.rua, s.rotulo].filter(Boolean);

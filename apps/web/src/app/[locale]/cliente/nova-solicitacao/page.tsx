@@ -629,7 +629,7 @@ export default function NovaSolicitacaoPage() {
                 <label htmlFor="caee7-102" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('addressLabel')}
                 </label>
-                <EnderecoAutocomplete id="caee7-102"
+                <EnderecoAutocomplete id="caee7-102" soDoPais
                   value={endereco}
                   onChange={setEndereco}
                   placeholder={t('placeholderAddress')}

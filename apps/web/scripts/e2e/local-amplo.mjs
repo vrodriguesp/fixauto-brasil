@@ -30,13 +30,25 @@ try {
     const r = await geocode(q);
     ok(`geocode "${q}": acha com coordenadas`, r.status === 200 && typeof r.corpo.latitude === 'number', `${r.status} ${JSON.stringify(r.corpo).slice(0, 120)}`);
   }
-  // 21/11: mercado da Estonia = so lugares da Estonia ("Таллинн" em RU trazia 5 lugares da Russia)
-  const sugestoesPais = async (q, pais) => (await fetch(`${SITE}/api/endereco/sugestoes?q=${encodeURIComponent(q)}&pais=${pais}`)).json();
+  // 21/11: pedido/oficina no mercado da Estonia (opt-in &so=1) = so lugares da Estonia ("Таллинн" em RU
+  // trazia 5 lugares da Russia). Sem o so=1 (app sem pais, formulario de acidente): como em producao.
+  const sugestoesPais = async (q, pais, extra = '') => (await fetch(`${SITE}/api/endereco/sugestoes?q=${encodeURIComponent(q)}${pais ? `&pais=${pais}` : ''}${extra}`)).json();
   for (const [q, esperado] of [['Таллинн', /tallinn|таллинн/i], ['Ласнамяэ', /lasnam|ласнам/i], ['Нарва', /narva|нарва/i], ['Lasnamäe', /lasnam/i], ['Tallinn', /tallinn/i]]) {
-    const l = await sugestoes(q);
-    ok(`sugestoes EE "${q}": todas na Estonia e acha o lugar`, Array.isArray(l) && l.length > 0 && l.every((s) => s.paisCodigo === 'EE') && l.some((s) => esperado.test(s.rotulo) || esperado.test(s.cidade)),
+    const l = await sugestoesPais(q, 'EE', '&so=1');
+    ok(`sugestoes EE &so=1 "${q}": todas na Estonia e acha o lugar`, Array.isArray(l) && l.length > 0 && l.every((s) => s.paisCodigo === 'EE') && l.some((s) => esperado.test(s.rotulo) || esperado.test(s.cidade)),
       JSON.stringify(l.map((s) => `${s.rotulo} [${s.paisCodigo}]`)));
     await sleep(300);
+  }
+  // sem opt-in nada e escondido: "Таллинн" continua trazendo lugares fora da Estonia (acidente no estrangeiro)
+  for (const [rotulo, pais, extra] of [['pais=EE sem so (acidente do site)', 'EE', ''], ['sem pais (app)', '', ''], ['pais=EE so=0', 'EE', '&so=0']]) {
+    const l = await sugestoesPais('Таллинн', pais, extra);
+    ok(`sugestoes "Таллинн" ${rotulo}: sem filtro de pais (vem lugar fora da Estonia)`, Array.isArray(l) && l.length > 0 && l.some((s) => s.paisCodigo !== 'EE'), JSON.stringify(l.map((s) => `${s.rotulo} [${s.paisCodigo}]`)));
+    await sleep(300);
+  }
+  {
+    // opt-in em outro mercado nao muda nada (so a Estonia tem a restricao)
+    const l = await sugestoesPais('Tallinn', 'IT', '&so=1');
+    ok('sugestoes IT &so=1 "Tallinn": sem filtro de pais (Tallinn EE aparece)', Array.isArray(l) && l.some((s) => s.paisCodigo === 'EE'), JSON.stringify(l.map((s) => `${s.rotulo} [${s.paisCodigo}]`)));
   }
   {
     // outro mercado continua como antes: o pais so ordena, nao esconde
