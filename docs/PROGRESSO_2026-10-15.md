@@ -1781,3 +1781,14 @@ Branch `local-gps-pc` (worktree `Documentos/_teste_local/site-gps`, base 4b7b5cc
 - **Testes do build combinado** (`next build` rc=0, `NEXT_PUBLIC_SITE_URL` :3110, `next start -p 3110`, parado no fim; `tsc` 0; `checar-traducoes` site e app completos; mig 113 já no Docker local): `pecas-botao-pedido` 38/0, `pecas-v3-lote2` 149/0, `pecas-lote5` 124/0, `acidente-privacidade` 42/0, `local-gps-pc` 224/0, `local-amplo` 31/0, `site-pedido-sem-conta` TUDO OK (154), `pedido-v2-telas` 676/0, `seguranca-rls` TUDO OK (61), `e2e-acidente` TUDO CERTO (14).
 - **App**: só os 6 locales (`seguro.passo_registro_ee`, link LKF) — precisa de OTA depois do deploy (não publicado).
 - **Plano de deploy**: `Documentos/Analises/Release_2211/Plano_deploy.md` (mig 113 com `psql -1` antes do build; rollback 46b9c36, 113 aditiva).
+
+## Deploy release-2211 (21/11/2026, ~23:26–23:32 Tallinn)
+
+- OK do dono por e-mail 21/11 ~19:29 Tallinn ("1 sim": publicar a Parte 1 às 23:30 com o site vazio).
+- Código: VM em `980bb63` (branch `release-2211`, fast-forward de `46b9c36`); sem `npm install` (lockfile igual).
+- Backup: `pg_dump` + cópia do `.env.production.local` (21:25 UTC).
+- Migração **113** aplicada antes do build: `pecas_botao_pedido_ativo = false`, `pecas_botao_min_lojas = 3`, CHECK criado.
+- Site vazio conferido (Clarity ao vivo 0; nginx: último visitante saiu 21:25:45 UTC). Build 21:26:31→21:28:26 UTC, rc=0, BUILD_ID `8Jh7…`→`OICA…`, restart no mesmo segundo. Durante o build só 1 visita (página de oficinas, 200).
+- Smoke (só leitura): páginas públicas 200; `/api/pecas-v3` anônimo 401; `/api/geocode?q=Нарва&pais=ee` → Narva (EE); sugestões `so=1` (Нарва, Таллинн, Lasnamäe, Narva mnt 5) só Estônia, 200 em ≤1,3 s (caminho Geoapify em produção OK); `avarii.lkf.ee` no build do servidor, `avarii.lkk.ee` ausente; `/admin/pecas` mostra o bloco do botão "Desligado", mínimo 3, "Lojas ativas reais por país: EE 1". 0 respostas 5xx desde o restart; log do PM2 só com o ruído "Failed to find Server Action".
+- Não testado (precisa de login de conta de teste): 403 do acidente para a oficina avisada e o botão com conta de teste (só 2 lojas de teste ativas em EE < mínimo 3).
+- OTA produção `8ead926d-ed7d-480e-9d71-662dd4964aba` (runtime 1.0.0, android+ios), só o texto `seguro.passo_registro_ee` → `https://avarii.lkf.ee`; bundles com `https://supabase.bipfix.com`, sem `placeholder`, com `avarii.lkf.ee`, sem `avarii.lkk.ee`. Rollback do app: republicar `f3b03232-2ad6-485b-9539-65037f6ca0fa`.
