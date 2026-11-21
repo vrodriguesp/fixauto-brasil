@@ -1507,6 +1507,7 @@
     "diaFechado": "A oficina está fechada neste dia",
     "naoPosso": "Não posso nessa data",
     "naoPossoTexto": "O cliente recebe um aviso; as datas do seu orçamento continuam válidas.",
+    "naoPossoTextoPassou": "O cliente recebe um aviso e pode pedir outra data ou escolher outra oficina.",
     "naoPossoRecado": "Recado curto ao cliente (opcional)",
     "naoPossoPlaceholder": "Ex.: esta semana está tudo ocupado",
     "naoPossoConfirmar": "Enviar resposta",

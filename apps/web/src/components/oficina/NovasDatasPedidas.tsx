@@ -187,7 +187,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
           <button type="button" onClick={() => setNaoPodeAberto(true)} disabled={!!enviando} className="btn-secondary min-h-[44px] w-full sm:w-auto" data-testid="nao-posso-abrir">{t('naoPosso')}</button>
         ) : (
           <div className="space-y-2">
-            <p className="text-sm text-gray-700">{t('naoPossoTexto')}</p>
+            <p className="text-sm text-gray-700">{outraData ? t('naoPossoTexto') : t('naoPossoTextoPassou')}</p>
             <label className="block text-sm">
               <span className="font-medium text-gray-800">{t('naoPossoRecado')}</span>
               <textarea value={naoPodeTexto} onChange={(e) => setNaoPodeTexto(e.target.value.slice(0, 300))} maxLength={300} rows={2} placeholder={t('naoPossoPlaceholder')} className="input-field mt-1 w-full" data-testid="nao-posso-texto" />

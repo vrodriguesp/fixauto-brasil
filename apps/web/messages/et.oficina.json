@@ -1507,6 +1507,7 @@
     "diaFechado": "Töökoda on sel päeval suletud",
     "naoPosso": "Ei saa sel ajal",
     "naoPossoTexto": "Klient saab teate; sinu hinnapakkumise ajad kehtivad edasi.",
+    "naoPossoTextoPassou": "Klient saab teate ja võib küsida teist aega või valida teise töökoja.",
     "naoPossoRecado": "Lühike sõnum kliendile (valikuline)",
     "naoPossoPlaceholder": "Nt sel nädalal oleme täis",
     "naoPossoConfirmar": "Saada vastus",

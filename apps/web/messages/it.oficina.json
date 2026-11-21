@@ -1507,6 +1507,7 @@
     "diaFechado": "L’officina è chiusa in questo giorno",
     "naoPosso": "Non posso in quella data",
     "naoPossoTexto": "Il cliente riceve un avviso; le date del tuo preventivo restano valide.",
+    "naoPossoTextoPassou": "Il cliente riceve un avviso e può chiedere un’altra data o scegliere un’altra officina.",
     "naoPossoRecado": "Breve messaggio al cliente (facoltativo)",
     "naoPossoPlaceholder": "Es.: questa settimana siamo pieni",
     "naoPossoConfirmar": "Invia risposta",

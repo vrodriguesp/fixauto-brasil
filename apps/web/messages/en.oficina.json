@@ -1507,6 +1507,7 @@
     "diaFechado": "The repair shop is closed on this day",
     "naoPosso": "I cannot make that date",
     "naoPossoTexto": "The customer is notified; the dates in your quote still stand.",
+    "naoPossoTextoPassou": "The customer is notified and can ask for another date or choose another repair shop.",
     "naoPossoRecado": "Short note to the customer (optional)",
     "naoPossoPlaceholder": "E.g. fully booked this week",
     "naoPossoConfirmar": "Send answer",
