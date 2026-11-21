@@ -79,7 +79,9 @@ const chamar = async (metodo, rota, token, corpo, extra = {}) => { const r = awa
 const post = (rota, token, corpo, extra) => chamar('POST', rota, token, corpo, extra);
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const errosJs = [];
-const contexto = async (largura, extra = {}) => {
+// LARGURA_MOTORISTA / LARGURA_OFICINA trocam 390 / 1280 (ex.: 360 para as telas finais no celular)
+const contexto = async (largura0, extra = {}) => {
+  const largura = largura0 < 500 ? Number(process.env.LARGURA_MOTORISTA || largura0) : Number(process.env.LARGURA_OFICINA || largura0);
   const c = await browser.newContext({ viewport: { width: largura, height: largura < 500 ? 844 : 800 }, deviceScaleFactor: largura < 500 ? 2 : 1, isMobile: largura < 500, hasTouch: largura < 500,
     locale: 'pt-BR', extraHTTPHeaders: { 'x-real-ip': ip() }, ...extra });
   await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
@@ -276,6 +278,7 @@ try {
     await esperarTeste(p, 'pedido-cartao'); await sleep(1500);
     const cartao = p.locator('[data-testid="pedido-cartao"]', { hasText: `Datas cotacao 2 ${tag}` });
     ok(`C: selo "${T('oficinaNovasDatas.selo')}" na lista`, (await cartao.count()) === 1 && (await cartao.getByTestId('selo-novas-datas').count()) === 1 && (await cartao.innerText()).includes(T('oficinaNovasDatas.selo')), (await cartao.count()) ? await cartao.innerText() : 'sem cartao');
+    await cartao.first().evaluate((e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); await sleep(300);
     await foto(p, 'oficina_01_lista_selo');
     await p.goto(`${SITE}/br/pt/oficina/pedidos/${B.sol.id}`, { waitUntil: 'networkidle' });
     const tem = await esperarTeste(p, 'novas-datas-pedidas');
@@ -463,6 +466,7 @@ try {
     const val = await p.locator('#cacb1-103').inputValue();
     const esperado = (() => { const d = new Date(`${esc.dia}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 7); let y = d.toISOString().slice(0, 10); while (dow(y) === 0) { const e = new Date(`${y}T12:00:00Z`); e.setUTCDate(e.getUTCDate() + 1); y = e.toISOString().slice(0, 10); } return y; })();
     ok('H: validade pre-preenchida = ultima data + 7 (dia aberto)', val === esperado && (await p.getByTestId('validade-auto').count()) === 1, `${val} vs ${esperado}`);
+    await p.locator('#cacb1-103').evaluate((e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); await sleep(300);
     await foto(p, 'oficina_07_validade_prefill');
     await p.locator('#cacb1-103').fill(dia(20));
     ok('H: a oficina muda a validade a mao', (await p.locator('#cacb1-103').inputValue()) === dia(20));
