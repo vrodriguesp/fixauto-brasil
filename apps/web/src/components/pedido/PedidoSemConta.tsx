@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useRouter as useRouterNext } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, useRouter, rota } from '@/i18n/navigation';
-import { routing, hrefNoIdioma } from '@/i18n/routing';
+import { routing, hrefNoIdioma, mercadoDe } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { exemploPlaca } from '@/lib/exemplos';
@@ -75,6 +75,11 @@ const memoria: { fotos: { file: File; preview: string }[] } = { fotos: [] };
 const FOTOS_MAX = 6;
 // tela pequena (360x640 ou mais baixa): 4 chips em vez de 6, para o passo 2 caber sem rolar
 const COMPACTO = '(max-height: 700px), (max-width: 379px)';
+// "usar minha localizacao" que falhou: motivo (GeolocationPositionError.code 1/2/3) -> aviso e evento do funil
+// (local_gps_negado continua sendo so a recusa, como antes; sem navigator.geolocation = indisponivel, sem evento)
+type FalhaLocal = 'negado' | 'indisponivel' | 'tempo';
+const EVENTO_FALHA_LOCAL: Record<FalhaLocal, string> = { negado: 'local_gps_negado', indisponivel: 'local_gps_indisponivel', tempo: 'local_gps_timeout' };
+const AVISO_FALHA_LOCAL: Record<FalhaLocal, 'localErroNegado' | 'localErroIndisponivel' | 'localErroTempo'> = { negado: 'localErroNegado', indisponivel: 'localErroIndisponivel', tempo: 'localErroTempo' };
 
 export default function PedidoSemConta() {
   const t = useTranslations('pedidoSemConta');
@@ -312,12 +317,37 @@ export default function PedidoSemConta() {
   // (Chrome). Antes (10/11) era pedido automaticamente ao abrir o passo. Recusou ou falhou: nada
   // muda, o campo continua e o botao some (nao pergunta de novo); o texto digitado - endereco,
   // linnaosa ou so "Tallinn" - vira coordenada no envio (resolverLocal).
+  // 21/11 (computador): a falha diz o motivo (GeolocationPositionError.code 1/2/3) e conta no funil
+  // separado - no PC sem Wi-Fi/com a localizacao do Windows desligada o Chrome da
+  // POSITION_UNAVAILABLE mesmo com a permissao dada; depois de qualquer falha o foco vai ao campo.
   const [localizando, setLocalizando] = useState(false);
-  const [localNegado, setLocalNegado] = useState(false);
+  const [localFalha, setLocalFalha] = useState<FalhaLocal | null>(null);
   const [posAparelho, setPosAparelho] = useState<{ lat: number; lon: number } | null>(null);
+  const falhouLocal = (tipo: FalhaLocal, contarFunil = true) => {
+    setLocalizando(false);
+    setLocalFalha(tipo);
+    if (contarFunil) contar(EVENTO_FALHA_LOCAL[tipo]);
+    // depois do render (o botao some e o aviso entra): o campo ja recebe o texto
+    setTimeout(() => document.getElementById('pedido-endereco')?.focus({ preventScroll: true }), 0);
+  };
+  // computador (sem toque): o campo vem focado e "usar minha localizacao" vira link secundario
+  // com a dica do celular. Comeca falso (como o servidor) e e lido ao montar - o passo do local
+  // nunca e o 1o render, entao nao ha troca visivel; no celular a tela fica como antes.
+  const [computador, setComputador] = useState(false);
+  useEffect(() => {
+    const toque = window.matchMedia('(pointer: coarse)');
+    const algumToque = window.matchMedia('(any-pointer: coarse)');
+    const ler = () => setComputador(!toque.matches && !algumToque.matches && !(navigator.maxTouchPoints > 0));
+    ler();
+    toque.addEventListener('change', ler);
+    return () => toque.removeEventListener('change', ler);
+  }, []);
+  useEffect(() => {
+    if (etapa === 'local' && computador) document.getElementById('pedido-endereco')?.focus({ preventScroll: true });
+  }, [etapa, computador]);
   const usarMinhaLocalizacao = () => {
-    if (localizando || localNegado) return;
-    if (!navigator.geolocation) { setLocalNegado(true); return; }
+    if (localizando || localFalha) return;
+    if (!navigator.geolocation) { falhouLocal('indisponivel', false); return; }
     setLocalizando(true);
     contar('local_gps');
     navigator.geolocation.getCurrentPosition(async (p) => {
@@ -331,7 +361,7 @@ export default function PedidoSemConta() {
       setCoords(c);
       if (d.paisCodigo) setPais(d.paisCodigo);
       setLocalizando(false);
-    }, () => { setLocalizando(false); setLocalNegado(true); contar('local_gps_negado'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
+    }, (e) => falhouLocal(e?.code === 1 ? 'negado' : e?.code === 3 ? 'tempo' : 'indisponivel'), { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
   };
   // mapa estatico com o pino (Geoapify pelo servidor, /api/mapa-estatico): so depois de haver
   // coordenada (sugestao escolhida ou "minha localizacao"); sem chave/falha a imagem some
@@ -405,7 +435,9 @@ export default function PedidoSemConta() {
   // sem posicao do aparelho: o endereco digitado vira coordenada (nunca um ponto fixo)
   const resolverLocal = async () => {
     if (coords) return { ...coords, pais };
-    const r = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+    // mercado da Estonia: so lugares da Estonia (21/11; as sugestoes tambem)
+    const soEE = mercadoDe(locale).pais === 'EE' ? '&pais=ee' : '';
+    const r = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}${soEE}`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
     const d = r?.ok ? await r.json().catch(() => ({})) : {};
     if (typeof d.latitude === 'number' && typeof d.longitude === 'number') return { lat: d.latitude, lon: d.longitude, pais: d.paisCodigo || pais };
     return null;
@@ -699,14 +731,23 @@ export default function PedidoSemConta() {
               className={`input-field ${classeErro('pedido-endereco')}`} erroId={erroDe('pedido-endereco') ? 'pedido-endereco-erro' : null}
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
             <Aviso id="pedido-endereco" />
-            {!localNegado ? (
+            {localFalha ? (
+              <p role="status" className="mt-3 text-sm text-gray-600" data-testid="localizacao-negada" data-falha={localFalha}>{t(AVISO_FALHA_LOCAL[localFalha])}</p>
+            ) : computador ? (
+              // computador: link de texto secundario + dica (no PC sem Wi-Fi/GPS a posicao costuma falhar)
+              <p className="mt-2 text-sm text-gray-500" data-testid="local-gps-secundario">
+                <button type="button" onClick={usarMinhaLocalizacao} disabled={localizando} aria-busy={localizando} aria-describedby="pedido-gps-dica" data-testid="usar-localizacao"
+                  className="text-primary-700 underline underline-offset-2 hover:text-primary-900 disabled:opacity-60">
+                  {localizando ? t('localProcurando') : t('localUsarMinha')}
+                </button>
+                <span aria-hidden="true"> · </span><span id="pedido-gps-dica">{t('localDicaCelular')}</span>
+              </p>
+            ) : (
               <button type="button" onClick={usarMinhaLocalizacao} disabled={localizando} aria-busy={localizando} data-testid="usar-localizacao"
                 className="mt-3 inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-800 hover:border-primary-400 disabled:opacity-60">
                 <svg aria-hidden="true" className="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 {localizando ? t('localProcurando') : t('localUsarMinha')}
               </button>
-            ) : (
-              <p role="status" className="mt-3 text-sm text-gray-600" data-testid="localizacao-negada">{t('localNegado')}</p>
             )}
             {coords && !mapaFalhou && (
               <div className="pedido-mapa mt-3 rounded-lg overflow-hidden border border-gray-200 bg-gray-100" data-testid="mapa-estatico">

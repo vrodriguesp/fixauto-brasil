@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
   const cepQ = searchParams.get('cep')?.trim().slice(0, 15) || '';
   const paisQ = (searchParams.get('pais') || '').trim().slice(0, 2).toLowerCase();
   const idioma = IDIOMAS_MAPA[searchParams.get('idioma') || ''] || 'en';
-  const chave = (idioma === 'en' ? '' : idioma + '|') + (rua ? `e:${rua}|${numeroCasa}|${cidadeQ}|${cepQ}|${paisQ}`.toLowerCase() : lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}`);
+  const chave = (idioma === 'en' ? '' : idioma + '|') + (rua ? `e:${rua}|${numeroCasa}|${cidadeQ}|${cepQ}|${paisQ}`.toLowerCase() : lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}${paisQ ? '|' + paisQ : ''}`);
   const guardado = cache.get(chave);
   if (guardado && Date.now() - guardado.em < CACHE_MS) return NextResponse.json(guardado.corpo, { status: guardado.status });
   if (!limitarPorIp(req, 'geocode', 60, 60 * 60 * 1000)) {
@@ -130,7 +130,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Informe "q" (endereco) ou "lat"+"lon"' }, { status: 400 });
     }
 
-    const url = `${NOMINATIM_SEARCH}?format=jsonv2&addressdetails=1&limit=1&q=${encodeURIComponent(q)}`;
+    // ?pais=ee (pedido no mercado da Estonia, 21/11): so lugares do pais - "Нарва"/"Таллинн" nunca
+    // caem na Russia. Sem pais: mundial, como antes.
+    const url = `${NOMINATIM_SEARCH}?format=jsonv2&addressdetails=1&limit=1&q=${encodeURIComponent(q)}${/^[a-z]{2}$/.test(paisQ) ? `&countrycodes=${paisQ}` : ''}`;
     const res = await nominatim(url, idioma);
     if (!res.ok) return NextResponse.json({ error: 'Falha ao consultar geocodificacao' }, { status: 502 });
 

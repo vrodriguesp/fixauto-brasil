@@ -1084,7 +1084,10 @@
     "localAjuda": "Enter one place: the exact address, a district (e.g. Lasnamäe), a municipality or a city. Several cities at once or just “Estonia” won’t work – we use this place to find the nearest repair shops.",
     "localUsarMinha": "Use my location",
     "localProcurando": "Finding your location...",
-    "localNegado": "Couldn't use your location. Enter an address, district or city."
+    "localErroNegado": "Location access is blocked in your browser. Enter an address, district or city.",
+    "localErroIndisponivel": "Your device couldn't find its location (location may be turned off). Enter an address, district or city.",
+    "localErroTempo": "Finding your location took too long. Enter an address, district or city.",
+    "localDicaCelular": "Works best on a phone."
   },
   "conversa": {
     "enviando": "sending…",

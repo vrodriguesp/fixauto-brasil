@@ -92,6 +92,9 @@ async function pedido(B, { motor, idioma, largura, marca, endereco, anoInvalido 
   await tocar(page, page.getByRole('button', { name: new RegExp(m.constants.tiposServico.mecanica) }));
   await page.locator('#pedido-descricao').fill('TESTE AUTOMATICO pidurid');
   await tocar(page, page.getByTestId('passo-detalhe').getByRole('button', { name: m.clienteNovaSolicitacao.next, exact: true }));
+  // desde 19/11 ha o passo das fotos entre o detalhe e o carro: "Jatka ilma fotota"
+  await page.getByTestId('passo-fotos').waitFor();
+  await tocar(page, page.getByTestId('passo-fotos').getByTestId('edasi'));
   const carro = page.getByTestId('passo-carro');
   await carro.waitFor();
   const edasiCarro = carro.getByRole('button', { name: m.clienteNovaSolicitacao.next, exact: true });
@@ -194,7 +197,7 @@ async function pedido(B, { motor, idioma, largura, marca, endereco, anoInvalido 
   if (gps === 'negado') {
     await tocar(page, page.getByTestId('usar-localizacao'));
     await page.getByTestId('localizacao-negada').waitFor({ timeout: 15000 }).catch(() => {});
-    ok(`${nome}: localizacao recusada -> aviso "${ps.localNegado.slice(0, 25)}..." e o botao some`, (await page.getByTestId('localizacao-negada').isVisible().catch(() => false)) && (await page.getByTestId('usar-localizacao').count()) === 0);
+    ok(`${nome}: localizacao recusada -> aviso "${ps.localErroNegado.slice(0, 25)}..." e o botao some`, (await page.getByTestId('localizacao-negada').isVisible().catch(() => false)) && (await page.getByTestId('usar-localizacao').count()) === 0);
     ok(`${nome}: 1 pedido de localizacao (so o toque)`, (await geo()) === 1, String(await geo()));
     ok(`${nome}: funil local_gps + local_gps_negado`, funil.includes('local_gps') && funil.includes('local_gps_negado'));
     if (prints) await page.screenshot({ path: `${OUT}/endereco-gps-negado-${idioma}-${largura}-${motor}.png`, fullPage: true });

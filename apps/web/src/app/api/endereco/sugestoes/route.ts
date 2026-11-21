@@ -18,6 +18,37 @@ const CAPITAL: Record<string, [number, number]> = { EE: [24.745, 59.437], IT: [1
 // Pais, regiao e condado (na Estonia, o maakond) sao largos demais para achar oficina perto:
 // pedido 100154 (20/11) escolheu "Eesti" e ficou com o centro do pais. Vald, cidade, linnaosa e rua ficam.
 const LARGO_DEMAIS = new Set(['country', 'state', 'county']);
+// Mercado da Estonia (21/11): so lugares da Estonia. "Таллинн" em RU trazia Tallinn e depois 5 lugares
+// da Russia (Sosnovy Bor, Sao Petersburgo, Moscou); as oficinas sao todas na Estonia. Geoapify com
+// filter=countrycode:ee (o vies da capital continua: Narva mnt 5 fica em Tallinn); Photon com o
+// retangulo do pais + descarte do que nao for EE. Outros mercados: como antes (o pais so ordena).
+const SO_DO_PAIS = new Set(['EE']);
+const BBOX: Record<string, string> = { EE: '21.5,57.4,28.3,59.9' };
+const MAX = 6;
+// O Photon nao conhece os nomes russos dos lugares da Estonia ("Таллинн", "Ласнамяэ" so acham a
+// Russia): no mercado EE o texto em cirilico vira latim no jeito estoniano (я depois de consoante = ä,
+// que o Photon iguala a "a"; Ярве -> Jarve ~ Järve; Йыхви -> Johvi ~ Jõhvi; Кейла -> Keila).
+const CIRILICO = /[а-яё]/i;
+const LATIM: Record<string, string> = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'jo', ж: 'z', з: 'z', и: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p',
+  р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 's', щ: 's', ъ: '', ы: 'o', ь: '', э: 'e',
+};
+const VOGAL = /[аеёиоуыэюяaeiou]/i;
+function latimEstonia(texto: string): string {
+  let out = '';
+  for (let i = 0; i < texto.length; i++) {
+    const ch = texto[i], min = ch.toLowerCase(), ant = i > 0 ? texto[i - 1].toLowerCase() : '';
+    const inicio = !ant || !/[а-яёa-z]/i.test(ant) || VOGAL.test(ant) || ant === 'ь' || ant === 'ъ';
+    let l: string;
+    if (min === 'я') l = inicio ? 'ja' : 'a';
+    else if (min === 'ю') l = inicio ? 'ju' : 'u';
+    else if (min === 'й') l = ant && VOGAL.test(ant) ? 'i' : 'j';
+    else if (min in LATIM) l = LATIM[min];
+    else { out += ch; continue; }
+    out += ch !== min && l ? l[0].toUpperCase() + l.slice(1) : l;
+  }
+  return out;
+}
 
 export interface SugestaoEndereco {
   rotulo: string;
@@ -42,6 +73,7 @@ export async function GET(req: NextRequest) {
   const lon = Number(req.nextUrl.searchParams.get('lon'));
   const perto = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? `&lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}` : '';
   const pais = (req.nextUrl.searchParams.get('pais') || 'EE').slice(0, 2).toUpperCase();
+  const soDoPais = SO_DO_PAIS.has(pais);
   const chave = `${q.toLowerCase()}|${perto}|${pais}`;
   const c = cache.get(chave);
   if (c && Date.now() - c.em < CACHE_MS) return NextResponse.json(c.corpo);
@@ -53,10 +85,18 @@ export async function GET(req: NextRequest) {
     if (chaveGeoapify) {
       const capital = CAPITAL[pais];
       const centro = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? [lon, lat] : capital;
-      const buscar = (vies: string) => fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&limit=6${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
-      let r = await buscar(centro ? `&bias=proximity:${centro[0].toFixed(3)},${centro[1].toFixed(3)}` : '');
+      const filtro = soDoPais ? `&filter=countrycode:${pais.toLowerCase()}` : '';
+      const buscar = (vies: string, texto = q) => fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(texto)}&limit=${MAX}${filtro}${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
+      const vies = centro ? `&bias=proximity:${centro[0].toFixed(3)},${centro[1].toFixed(3)}` : '';
+      let r = await buscar(vies);
       let d = r.ok ? ((await r.json()) as { features?: { properties: Record<string, any> }[] }) : null;
       const doPais = (f: { properties: Record<string, any> }) => String(f.properties.country_code || '').toUpperCase() === pais;
+      // Estonia com o filtro e nada achado em cirilico: tenta o nome em latim ("Ласнамяэ" -> Lasnamae)
+      if (soDoPais && d && !(d.features || []).length && CIRILICO.test(q)) {
+        const r2 = await buscar(vies, latimEstonia(q));
+        const d2 = r2.ok ? ((await r2.json()) as { features?: { properties: Record<string, any> }[] }) : null;
+        if (d2 && (d2.features || []).length) { r = r2; d = d2; }
+      }
       // nome da rua em russo ("Нарвское шоссе 5"): perto de Tallinn so achava a Russia; sem o
       // vies ele acha a Narva mnt - segunda busca so quando nada do pais veio
       if (d && capital && !(d.features || []).some(doPais)) {
@@ -66,7 +106,8 @@ export async function GET(req: NextRequest) {
       }
       if (r.ok && d) {
         // o pais do mercado primeiro, sem esconder os outros (oficina perto da fronteira, endereco no exterior)
-        const feats = [...(d.features || [])].filter((f) => !LARGO_DEMAIS.has(String(f.properties.result_type || '')))
+        // (Estonia: so o pais, conferido de novo aqui alem do filter)
+        const feats = [...(d.features || [])].filter((f) => !LARGO_DEMAIS.has(String(f.properties.result_type || '')) && (!soDoPais || doPais(f)))
           .sort((a, b) => Number(doPais(b)) - Number(doPais(a)));
         const lista: SugestaoEndereco[] = feats.map(({ properties: p }) => ({
           rotulo: p.formatted || [p.street, p.housenumber, p.city].filter(Boolean).join(' '),
@@ -84,7 +125,10 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(lista);
       }
     }
-    const res = await fetch(`${PHOTON}?q=${encodeURIComponent(q)}&limit=6${perto}`, {
+    // Estonia: retangulo do pais e mais resultados (o que cair fora do pais e descartado abaixo)
+    const area = soDoPais && BBOX[pais] ? `&bbox=${BBOX[pais]}` : '';
+    const qPhoton = soDoPais && CIRILICO.test(q) ? latimEstonia(q) : q;
+    const res = await fetch(`${PHOTON}?q=${encodeURIComponent(qPhoton)}&limit=${soDoPais ? MAX * 2 : MAX}${perto}${area}`, {
       headers: { 'User-Agent': USER_AGENT },
       // o Photon publico tem levado 4-7 s: com 4 s quase sempre voltava vazio
       signal: AbortSignal.timeout(9000),
@@ -96,6 +140,8 @@ export async function GET(req: NextRequest) {
     for (const f of dados.features || []) {
       const p = f.properties;
       if (LARGO_DEMAIS.has(p.type || '')) continue;
+      if (soDoPais && (p.countrycode || '').toUpperCase() !== pais) continue;
+      if (lista.length >= MAX) break;
       const rua = [p.street, p.housenumber].filter(Boolean).join(' ');
       const endereco = rua || p.name || '';
       const cidade = p.city || p.town || p.village || p.county || '';

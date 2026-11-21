@@ -1082,7 +1082,10 @@
     "localAjuda": "Indica un solo luogo: indirizzo esatto, quartiere (es. Lasnamäe), comune o città. Più città insieme o solo “Estonia” non vanno bene: da questo luogo troviamo le officine più vicine.",
     "localUsarMinha": "Usa la mia posizione",
     "localProcurando": "Ricerca della posizione...",
-    "localNegado": "Impossibile usare la tua posizione. Scrivi indirizzo, quartiere o città."
+    "localErroNegado": "L'accesso alla posizione è bloccato nel browser. Scrivi indirizzo, quartiere o città.",
+    "localErroIndisponivel": "Il dispositivo non è riuscito a trovare la posizione (potrebbe essere disattivata). Scrivi indirizzo, quartiere o città.",
+    "localErroTempo": "La ricerca della posizione ha richiesto troppo tempo. Scrivi indirizzo, quartiere o città.",
+    "localDicaCelular": "Funziona meglio sul telefono."
   },
   "conversa": {
     "enviando": "invio…",

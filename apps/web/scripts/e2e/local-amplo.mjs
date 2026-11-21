@@ -30,6 +30,24 @@ try {
     const r = await geocode(q);
     ok(`geocode "${q}": acha com coordenadas`, r.status === 200 && typeof r.corpo.latitude === 'number', `${r.status} ${JSON.stringify(r.corpo).slice(0, 120)}`);
   }
+  // 21/11: mercado da Estonia = so lugares da Estonia ("Таллинн" em RU trazia 5 lugares da Russia)
+  const sugestoesPais = async (q, pais) => (await fetch(`${SITE}/api/endereco/sugestoes?q=${encodeURIComponent(q)}&pais=${pais}`)).json();
+  for (const [q, esperado] of [['Таллинн', /tallinn|таллинн/i], ['Ласнамяэ', /lasnam|ласнам/i], ['Нарва', /narva|нарва/i], ['Lasnamäe', /lasnam/i], ['Tallinn', /tallinn/i]]) {
+    const l = await sugestoes(q);
+    ok(`sugestoes EE "${q}": todas na Estonia e acha o lugar`, Array.isArray(l) && l.length > 0 && l.every((s) => s.paisCodigo === 'EE') && l.some((s) => esperado.test(s.rotulo) || esperado.test(s.cidade)),
+      JSON.stringify(l.map((s) => `${s.rotulo} [${s.paisCodigo}]`)));
+    await sleep(300);
+  }
+  {
+    // outro mercado continua como antes: o pais so ordena, nao esconde
+    const l = await sugestoesPais('Tallinn', 'IT');
+    ok('sugestoes IT "Tallinn": outros mercados sem filtro de pais (Tallinn EE aparece)', Array.isArray(l) && l.some((s) => s.paisCodigo === 'EE'), JSON.stringify(l.map((s) => `${s.rotulo} [${s.paisCodigo}]`)));
+  }
+  for (const [q, esperado] of [['Таллинн', /tallinn/i], ['Нарва', /narva/i], ['Ласнамяэ', /lasnam/i], ['Tallinn', /tallinn/i]]) {
+    const rr = await fetch(`${SITE}/api/geocode?q=${encodeURIComponent(q)}&pais=ee&idioma=et`);
+    const c = await rr.json();
+    ok(`geocode "${q}" &pais=ee: na Estonia`, rr.status === 200 && c.paisCodigo === 'EE' && c.latitude > 57.4 && c.latitude < 59.9 && c.longitude > 21.5 && c.longitude < 28.3 && esperado.test(`${c.cidade} ${c.enderecoCompleto}`), `${rr.status} ${JSON.stringify(c).slice(0, 160)}`);
+  }
   // o caso real: varias cidades juntas continua nao encontrado
   const r = await geocode('tallinn.rakvere.tartu');
   ok('geocode "tallinn.rakvere.tartu": nao encontrado', r.status === 404, r.status);

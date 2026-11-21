@@ -1081,7 +1081,10 @@
     "localAjuda": "Indique um só local: morada exata, zona (ex.: Lasnamäe), concelho ou cidade. Várias cidades juntas ou só “Estónia” não servem – é por esse local que encontramos as oficinas mais próximas.",
     "localUsarMinha": "Usar a minha localização",
     "localProcurando": "A procurar a sua localização...",
-    "localNegado": "Não foi possível usar a sua localização. Escreva a morada, bairro ou cidade."
+    "localErroNegado": "O acesso à localização está bloqueado no navegador. Escreva a morada, bairro ou cidade.",
+    "localErroIndisponivel": "O dispositivo não conseguiu obter a localização (pode estar desligada). Escreva a morada, bairro ou cidade.",
+    "localErroTempo": "A procura da localização demorou demasiado. Escreva a morada, bairro ou cidade.",
+    "localDicaCelular": "Funciona melhor no telemóvel."
   },
   "conversa": {
     "enviando": "a enviar…",

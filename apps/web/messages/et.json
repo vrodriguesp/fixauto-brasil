@@ -1090,7 +1090,10 @@
     "localAjuda": "Kirjuta üks koht: täpne aadress, linnaosa (nt Lasnamäe), vald või linn. Mitut linna korraga või ainult „Eesti“ kirjutada ei saa – koha järgi leiame lähimad töökojad.",
     "localUsarMinha": "Kasuta minu asukohta",
     "localProcurando": "Asukoha otsimine...",
-    "localNegado": "Asukohta ei saanud kasutada. Kirjuta aadress, linnaosa või linn."
+    "localErroNegado": "Asukoha kasutamine on brauseris keelatud. Kirjuta aadress, linnaosa või linn.",
+    "localErroIndisponivel": "Seade ei leidnud asukohta (asukoht võib olla välja lülitatud). Kirjuta aadress, linnaosa või linn.",
+    "localErroTempo": "Asukoha otsimine võttis liiga kaua. Kirjuta aadress, linnaosa või linn.",
+    "localDicaCelular": "Töötab kõige paremini telefonis."
   },
   "conversa": {
     "enviando": "saadan…",

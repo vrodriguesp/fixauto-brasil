@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { exemploPlaca } from '@/lib/exemplos';
 import { useRouter } from '@/i18n/navigation';
+import { mercadoDe } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import AvaliacaoPendente, { useAvaliacaoPendente } from '@/components/cliente/AvaliacaoPendente';
 import { useVeiculos } from '@/hooks/use-veiculos';
@@ -103,7 +104,9 @@ export default function NovaSolicitacaoPage() {
   const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string } | null> => {
     if (geoResolved || !endereco) return { ...coords, pais };
     try {
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`, { signal: AbortSignal.timeout(10000) });
+      // mercado da Estonia: so lugares da Estonia (21/11, como as sugestoes)
+      const soEE = mercadoDe(locale).pais === 'EE' ? '&pais=ee' : '';
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}${soEE}`, { signal: AbortSignal.timeout(10000) });
       if (res.ok) {
         const data = await res.json();
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
