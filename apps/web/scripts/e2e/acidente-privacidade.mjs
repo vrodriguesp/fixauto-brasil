@@ -30,7 +30,7 @@ const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR
 const ip = () => `10.${crypto.randomInt(100, 250)}.${crypto.randomInt(0, 250)}.${crypto.randomInt(1, 250)}`;
 // Kuressaare (Saaremaa): longe das oficinas de teste de Tallinn
 const LAT = 58.2528, LON = 22.4869;
-const contas = []; const oficinas = []; let emId = null, solId = null;
+const contas = []; const oficinas = []; let emId = null, solId = null, emSemPedido = null;
 
 const conta = async (tipo, nome, idioma = 'et') => {
   const email = `acp-${tipo}${contas.length}-${tag}@example.test`;
@@ -53,8 +53,8 @@ const token = async (email) => {
   if (error) throw new Error(`login ${email}: ${error.message}`);
   return data.session.access_token;
 };
-const ler = async (headers) => {
-  const r = await fetch(`${SITE}/api/emergencia/${emId}`, { headers, cache: 'no-store' });
+const ler = async (headers, id = emId) => {
+  const r = await fetch(`${SITE}/api/emergencia/${id}`, { headers, cache: 'no-store' });
   return { status: r.status, d: await r.json().catch(() => ({})) };
 };
 const bearer = (t) => ({ Authorization: `Bearer ${t}` });
@@ -118,6 +118,21 @@ try {
   ok('... a resposta so leva ao pedido dela', r2.d.pedido === solId && Object.keys(r2.d).sort().join() === 'error,pedido', s2);
   ok('... sem outro motorista, conversa ou orcamentos', !/444BBB|Motorista B|5444|segredo do B|mensagem privada|ESCOLHIDA|5111/.test(s2), s2);
 
+  // ---- acidente que ficou SEM pedido (falha ao criar veiculo/pedido; veredito Fable M-1) ----
+  // a oficina avisada vai ao painel de pedidos, nunca a um link morto
+  {
+    const { data: base } = await sb.from('emergencias').select('*').eq('id', emId).single();
+    const { id: _i, solicitacao_id: _s, created_at: _c, updated_at: _u, ...resto } = base;
+    const { data: semPed, error: eSP } = await sb.from('emergencias').insert({ ...resto, solicitacao_id: null }).select('id').single();
+    if (eSP) throw new Error('acidente sem pedido: ' + eSP.message);
+    emSemPedido = semPed.id;
+    await sb.from('emergencia_oficinas_notificadas').insert({ emergencia_id: emSemPedido, oficina_id: W2 });
+    const rSP = await ler(bearer(t2), emSemPedido);
+    ok('acidente sem pedido: oficina avisada -> 403 que leva ao painel', rSP.status === 403 && rSP.d.painel === true && !rSP.d.pedido && Object.keys(rSP.d).sort().join() === 'error,painel', JSON.stringify(rSP));
+    const rSPi = await ler(bearer(t1), emSemPedido);
+    ok('... oficina NAO avisada desse acidente -> 403 sem nada', rSPi.status === 403 && !rSPi.d.painel && !rSPi.d.pedido, JSON.stringify(rSPi));
+  }
+
   // ---- oficina escolhida (dono e funcionario) ----
   for (const [quem, t] of [['dono', t1], ['funcionario ativo', tM]]) {
     const r = await ler(bearer(t)); const s = JSON.stringify(r.d);
@@ -159,6 +174,8 @@ try {
   ok('avisada abrindo a pagina do acidente cai no pedido dela', p2.url().includes(`/oficina/pedidos/${solId}`) || pedidoUrl.test(p2.url()), p2.url());
   ok('... o pedido abre (descricao do acidente) e nao mostra B nem a conversa', tela2.includes(`kokkupõrge ${tag}`) && !/444BBB|Motorista B|mensagem privada/.test(tela2), tela2.slice(0, 300));
   await p2.screenshot({ path: path.join(process.env.OUT || AQUI, `acp-avisada-pedido-${tag}.png`) }).catch(() => {});
+  await p2.goto(`${SITE}/ee/et/avarii/teade/${emSemPedido}`, { waitUntil: 'networkidle' }); await p2.waitForTimeout(3500);
+  ok('acidente sem pedido: avisada abrindo o link cai no painel de pedidos (nao em link morto)', !p2.url().includes('/avarii/') && /\/ee\/et\/[^/]+\/[^/]+\/?$/.test(new URL(p2.url()).pathname), p2.url());
   // 2) sininho: aviso novo (com o pedido) e um aviso antigo (so o acidente)
   await sb.from('notificacoes').update({ lida: true }).eq('profile_id', dono2.id);
   // titulo marcado (a tela usa dados.textos na lingua dela); o resto do aviso fica como o servidor gravou
@@ -216,6 +233,11 @@ try {
   }
   // ---- limpeza ----
   try {
+    if (emSemPedido) {
+      await sb.from('emergencia_oficinas_notificadas').delete().eq('emergencia_id', emSemPedido);
+      const { error: eSP2 } = await sb.from('emergencias').delete().eq('id', emSemPedido);
+      if (eSP2) console.log('limpeza acidente sem pedido:', eSP2.message);
+    }
     if (emId) {
       const { data: e } = await sb.from('emergencias').select('solicitacao_id').eq('id', emId).maybeSingle();
       const sid = e?.solicitacao_id || solId;

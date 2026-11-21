@@ -14,6 +14,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const acesso = await acessoEmergencia(req, params.id);
   if (!acesso) {
     const pedido = await pedidoDaOficinaSemAcesso(req, params.id);
+    // '' = oficina avisada de um acidente que ficou sem pedido: a pagina leva ao painel
+    if (pedido === '') return NextResponse.json({ error: 'Acesso negado', painel: true }, { status: 403 });
     return NextResponse.json(pedido ? { error: 'Acesso negado', pedido } : { error: 'Acesso negado' }, { status: 403 });
   }
   const e = acesso.emergencia;

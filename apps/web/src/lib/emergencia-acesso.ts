@@ -71,19 +71,24 @@ async function minhasOficinas(userId: string): Promise<string[]> {
 
 /**
  * Oficina logada que foi avisada do acidente (ou orcou) mas nao foi escolhida:
- * o pedido dela, para a pagina do acidente levar ao pedido em vez de um "sem
- * acesso" (aviso antigo do sininho, link salvo - links nunca mortos).
+ * para onde a pagina do acidente a leva em vez de um "sem acesso" (aviso antigo
+ * do sininho, link salvo - links nunca mortos). O pedido dela; ou, se o acidente
+ * ficou sem pedido (falha ao criar veiculo/pedido), o painel de pedidos ('').
+ * null = nao e oficina avisada (o 403 segue sem nada).
  */
 export async function pedidoDaOficinaSemAcesso(req: NextRequest, emergenciaId: string): Promise<string | null> {
   const userId = await getSessionUserId(req);
   if (!userId) return null;
   const { data: emergencia } = await supabaseAdmin.from('emergencias').select('id, solicitacao_id').eq('id', emergenciaId).maybeSingle();
-  if (!emergencia?.solicitacao_id) return null;
+  if (!emergencia) return null;
   const ids = await minhasOficinas(userId);
   if (!ids.length) return null;
   const [{ data: avisada }, { data: orcou }] = await Promise.all([
     supabaseAdmin.from('emergencia_oficinas_notificadas').select('id').eq('emergencia_id', emergenciaId).in('oficina_id', ids).limit(1),
-    supabaseAdmin.from('orcamentos').select('id').eq('solicitacao_id', emergencia.solicitacao_id).in('oficina_id', ids).limit(1),
+    emergencia.solicitacao_id
+      ? supabaseAdmin.from('orcamentos').select('id').eq('solicitacao_id', emergencia.solicitacao_id).in('oficina_id', ids).limit(1)
+      : Promise.resolve({ data: [] as { id: string }[] }),
   ]);
-  return avisada?.length || orcou?.length ? (emergencia.solicitacao_id as string) : null;
+  if (!avisada?.length && !orcou?.length) return null;
+  return (emergencia.solicitacao_id as string | null) || '';
 }

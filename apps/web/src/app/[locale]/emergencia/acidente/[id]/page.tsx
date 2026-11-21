@@ -157,6 +157,10 @@ export default function AcidenteRegistroPage() {
         router.replace(`/oficina/pedidos/${corpo.pedido}`);
         return;
       }
+      if (corpo?.painel) {
+        router.replace('/oficina/pedidos');
+        return;
+      }
       setSemAcesso(true);
       setLoadingOrc(false);
       return;
@@ -199,10 +203,11 @@ export default function AcidenteRegistroPage() {
   // Atualiza a cada 5 s (o chat do acidente nao usa mais o tempo real do
   // banco, que exigiria deixar a tabela aberta a quem nao tem login)
   useEffect(() => {
-    if (!emergenciaId) return;
+    // sem acesso: nada a atualizar (antes seguia consultando a cada 5 s)
+    if (!emergenciaId || semAcesso) return;
     const t = setInterval(loadData, 5000);
     return () => clearInterval(t);
-  }, [emergenciaId, loadData]);
+  }, [emergenciaId, loadData, semAcesso]);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
