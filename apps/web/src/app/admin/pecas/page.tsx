@@ -98,6 +98,30 @@ export default function AdminPecasPage() {
     else setErroPub('Não foi possível salvar. Tente de novo.');
   };
 
+  // 21/11 (migracao 113): botao "Pedir peca" no pedido do motorista - interruptor proprio + minimo de lojas
+  // ao alcance (api/admin/pecas-botao-pedido). So vale com a tela nova (v3) valendo. Com auditoria.
+  const [botao, setBotao] = useState<{ ativo: boolean; minLojas: number; lojasReaisPorPais: Record<string, number> } | null>(null);
+  const [minDigitado, setMinDigitado] = useState('');
+  const [salvandoBotao, setSalvandoBotao] = useState(false);
+  const [erroBotao, setErroBotao] = useState<string | null>(null);
+  const carregarBotao = () => fetch('/api/admin/pecas-botao-pedido', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => {
+    if (typeof j?.ativo === 'boolean') { setBotao(j); setMinDigitado(String(j.minLojas)); }
+  }).catch(() => {});
+  useEffect(() => { carregarBotao(); }, []);
+  const salvarBotao = async (mudar: { ativo?: boolean; minLojas?: number }) => {
+    setSalvandoBotao(true); setErroBotao(null);
+    const r = await fetch('/api/admin/pecas-botao-pedido', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mudar) }).catch(() => null);
+    const j = r?.ok ? await r.json().catch(() => null) : null;
+    setSalvandoBotao(false);
+    if (typeof j?.ativo === 'boolean') await carregarBotao();
+    else setErroBotao('Não foi possível salvar. Tente de novo.');
+  };
+  const salvarMinimo = () => {
+    const n = Number(minDigitado);
+    if (!Number.isInteger(n) || n < 0 || n > 50) { setErroBotao('O mínimo deve ser um número inteiro de 0 a 50.'); return; }
+    salvarBotao({ minLojas: n });
+  };
+
   // Loja nova nasce inativa: o admin confere o registro da empresa e ativa
   const [ocupado, setOcupado] = useState<string | null>(null);
   const alternarAtiva = async (f: Fornecedor) => {
@@ -159,6 +183,43 @@ export default function AdminPecasPage() {
         <button type="button" role="switch" aria-checked={v3Ativo === true} onClick={alternarV3} disabled={salvandoV3 || v3Ativo === null} data-testid="pecas-v3-interruptor"
           className={`inline-flex min-h-[44px] items-center rounded-lg px-5 text-sm font-semibold text-white disabled:opacity-50 ${v3Ativo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-600 hover:bg-slate-500'}`}>
           {salvandoV3 ? 'Salvando…' : v3Ativo ? 'Ligada — desligar' : 'Desligada — ligar'}
+        </button>
+      </div>
+
+      {/* 21/11 (113): botao "Pedir peca" no pedido do motorista */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700 p-5 flex flex-wrap items-center justify-between gap-4" data-testid="pecas-botao-pedido-bloco">
+        <div className="min-w-0">
+          <h2 className="font-semibold text-white">Botão Pedir peça no pedido do motorista</h2>
+          <p className="text-sm text-slate-400 mt-1">
+            {botao === null ? 'Carregando…' : botao.ativo
+              ? `Ligado: oficinas reais veem o botão quando a tela nova de peças vale e há pelo menos ${botao.minLojas} loja(s) ativa(s) do país dela.`
+              : 'Desligado: só as contas de teste veem o botão (com lojas de teste suficientes).'}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Conta só lojas que seriam avisadas: ativas, do mesmo país da oficina, conta ativa e do mesmo tipo (teste/real). Sem a tela nova (lote 1) o botão nunca aparece.</p>
+          {botao && (
+            <p className="text-sm text-slate-300 mt-2" data-testid="pecas-botao-lojas-por-pais">
+              Lojas ativas reais por país: {Object.keys(botao.lojasReaisPorPais).length
+                ? Object.entries(botao.lojasReaisPorPais).sort(([a], [b]) => a.localeCompare(b)).map(([p, n], i) => (
+                  <span key={p}>{i ? ', ' : ''}<span className={n >= botao.minLojas ? 'text-emerald-400' : 'text-amber-400'}>{`${p} ${n}`}</span></span>
+                ))
+                : 'nenhuma'}
+            </p>
+          )}
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            <label htmlFor="pecas-botao-min" className="text-sm text-slate-400">Mínimo de lojas (0–50)</label>
+            <input id="pecas-botao-min" type="number" inputMode="numeric" min={0} max={50} step={1} value={minDigitado}
+              onChange={(e) => setMinDigitado(e.target.value)} disabled={botao === null || salvandoBotao} data-testid="pecas-botao-min"
+              className="w-20 min-h-[44px] rounded-lg bg-slate-900 border border-slate-600 px-3 text-white" />
+            <button type="button" onClick={salvarMinimo} disabled={botao === null || salvandoBotao || minDigitado === String(botao?.minLojas)} data-testid="pecas-botao-min-salvar"
+              className="inline-flex min-h-[44px] items-center rounded-lg px-4 text-sm font-semibold text-white bg-slate-600 hover:bg-slate-500 disabled:opacity-50">
+              Salvar mínimo
+            </button>
+          </div>
+          {erroBotao && <p role="alert" className="text-sm text-red-300 mt-1">{erroBotao}</p>}
+        </div>
+        <button type="button" role="switch" aria-checked={botao?.ativo === true} onClick={() => botao && salvarBotao({ ativo: !botao.ativo })} disabled={salvandoBotao || botao === null} data-testid="pecas-botao-pedido-interruptor"
+          className={`inline-flex min-h-[44px] items-center rounded-lg px-5 text-sm font-semibold text-white disabled:opacity-50 ${botao?.ativo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-600 hover:bg-slate-500'}`}>
+          {salvandoBotao ? 'Salvando…' : botao?.ativo ? 'Ligado — desligar' : 'Desligado — ligar'}
         </button>
       </div>
 

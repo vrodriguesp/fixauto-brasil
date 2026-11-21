@@ -84,6 +84,25 @@ export function usePecasV3(): boolean | null {
   return ctx ? ctx.ativo : local;
 }
 
+// 21/11 (113): botao "Pedir peca" no pedido do motorista - GET /api/pecas-v3?botao=1 (interruptor
+// proprio + minimo de lojas, lib/pecas-botao-pedido.ts). null enquanto nao sabe (botao escondido, sem
+// piscar); erro ou mais de 8 s = false (escondido). Tambem anuncia o v3 ao menu, como o usePecasV3 fazia aqui.
+export function usePecasBotaoPedido(): boolean | null {
+  const [botao, setBotao] = useState<boolean | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    let feito = false;
+    const fim = (v: boolean) => { if (!feito) { feito = true; if (vivo) setBotao(v); } };
+    const t = setTimeout(() => fim(false), ESPERA_MAXIMA_MS + 200);
+    fetch('/api/pecas-v3?botao=1', { cache: 'no-store', signal: sinalComPrazo(ESPERA_MAXIMA_MS) })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (typeof j?.ativo === 'boolean') anunciar(j.ativo); fim(j?.botaoPedido === true); })
+      .catch(() => fim(false));
+    return () => { vivo = false; clearTimeout(t); };
+  }, []);
+  return botao;
+}
+
 // Placa das cotacoes que o FORNECEDOR ve (loja e aba "Vender"): so pela rota do servidor,
 // que decide ao vivo (enviar_placa, status, ativa, pais, paridade teste/real). 404 = sem placa.
 // Cada cotacao e pedida uma vez por pagina aberta (o tempo real recarrega a lista toda hora).
