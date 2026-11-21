@@ -161,8 +161,10 @@ try {
   // ================= A) regras da API (cliente) =================
   const A = await novoPedido(1);
   {
+    // 114 (dono 21/11): com datas ainda validas o pedido tambem vale ("preciso de outra data"), motivo nao_sobe
     let r = await post(`/api/orcamento/${A.o2.id}/pedir-datas`, A.cli.token, {});
-    ok('A: orcamento com data futura -> DATAS_AINDA_VALIDAS', r.status === 409 && r.d.codigo === 'DATAS_AINDA_VALIDAS', JSON.stringify(r));
+    ok('A: orcamento com data futura -> aceito (motivo nao_sobe; 114)', r.status === 200 && r.d.motivo === 'nao_sobe', JSON.stringify(r));
+    await admin.from('orcamento_pedido_datas').delete().eq('orcamento_id', A.o2.id);
     r = await post(`/api/orcamento/${A.o1.id}/pedir-datas`, A.cli.token, { sugestoes: [{ data: dia(-1), turno: 'manha' }] });
     ok('A: sugestao no passado -> SUGESTAO_INVALIDA', r.status === 400 && r.d.codigo === 'SUGESTAO_INVALIDA', JSON.stringify(r));
     r = await post(`/api/orcamento/${A.o1.id}/pedir-datas`, A.cli.token, { sugestoes: [{ data: dia(40), turno: 'manha' }] });
@@ -200,16 +202,20 @@ try {
     const orc1 = p.locator(`#orc-${A.o1.id}`);
     ok('B: orcamento com datas vencidas sem "Accept and schedule" (so o pedido de datas)', !(await orc1.innerText()).includes(TE('clienteOrcamentoDetalhe.acceptAndSchedule')));
     ok('B: o outro orcamento (data futura) continua com "Accept and schedule"', (await p.locator(`#orc-${A.o2.id}`).innerText()).includes(TE('clienteOrcamentoDetalhe.acceptAndSchedule')));
-    await p.getByTestId('abrir-pedir-datas').click(); await p.waitForTimeout(500);
+    // 114: a folha tem 2 modos; o de "data certa" lista os dias (dia-AAAA-MM-DD) e, por dia, janelas de 2 h (chip-AAAA-MM-DD-HHMM)
+    await p.getByTestId('pedir-novas-datas').getByTestId('abrir-pedir-datas').click(); await p.waitForTimeout(500);
+    await p.getByTestId('modo-data').click(); await p.waitForTimeout(300);
+    const diasL = p.locator('[data-testid^="dia-20"]');
+    const nChips = await diasL.count();
+    const ids = await diasL.evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+    ok('B: grade com os proximos 14 dias a partir de amanha (sem domingo)', nChips >= 10 && ids.every((id) => { const d = id.slice(4, 14); return new Date(`${d}T12:00:00Z`).getUTCDay() !== 0 && d > hojeTallinn() && d <= dia(14); }), JSON.stringify(ids.slice(0, 4)));
+    await design(p, 'B: cliente pedindo novas datas (en, 390)', '[role=dialog] button, [role=dialog] textarea');
+    await diasL.nth(0).click(); await p.waitForTimeout(300);
     const chips = p.locator('[data-testid^="chip-"]');
-    const nChips = await chips.count();
-    const ids = await chips.evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
-    ok('B: grade com os proximos 14 dias a partir de amanha (sem domingo)', nChips >= 10 && ids.every((id) => { const d = id.slice(5, 15); return new Date(`${d}T12:00:00Z`).getUTCDay() !== 0 && d > hojeTallinn() && d <= dia(14); }), JSON.stringify(ids.slice(0, 4)));
-    await design(p, 'B: cliente pedindo novas datas (en, 390)');
     // tres escolhidas: a quarta fica desativada
-    for (let i = 0; i < 3; i++) await chips.nth(i + 2).click();
-    ok('B: no maximo 3 sugestoes (as outras ficam desativadas)', await chips.nth(6).isDisabled());
-    await chips.nth(4).click(); // desmarca a terceira: ficam 2
+    for (let i = 0; i < 3; i++) await chips.nth(i).click();
+    ok('B: no maximo 3 sugestoes (as outras ficam desativadas)', (await chips.count()) < 4 || await chips.nth(3).isDisabled());
+    await chips.nth(2).click(); // desmarca a terceira: ficam 2
     await p.getByTestId('mensagem-datas').fill(`Prefer mornings ${tag}`);
     await p.screenshot({ path: path.join(OUT, 'cliente_pedir_en_390.png'), fullPage: true });
     await p.getByTestId('enviar-pedir-datas').click();
@@ -598,7 +604,7 @@ try {
     const p = await entrarSite(ctx, F.cEmail, senha, `/ee/${lg}`);
     await p.goto(`${SITE}/ee/${lg}/cliente/orcamentos/${F.sol.id}`, { waitUntil: 'networkidle' });
     await esperarTeste(p, 'pedir-novas-datas');
-    await p.getByTestId('abrir-pedir-datas').click(); await sleep(400);
+    await p.getByTestId('pedir-novas-datas').getByTestId('abrir-pedir-datas').click(); await sleep(400);
     await design(p, `F(${lg}): cliente pedindo novas datas no site (390)`);
     await p.screenshot({ path: path.join(OUT, `cliente_pedir_${lg}_390.png`), fullPage: true });
     await ctx.close();
