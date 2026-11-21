@@ -443,7 +443,7 @@
     "vencidoOutro": "See another active quote",
     "vencidoNovoPedido": "Make a new request",
     "botaoSempre": "I need another date",
-    "folhaTitulo": "When suits you?",
+    "folhaTitulo": "When works for you?",
     "folhaTexto": "The repair shop sends new dates based on what you ask. The price does not change.",
     "modoDias": "Weekdays",
     "modoData": "Exact date",
@@ -467,7 +467,9 @@
     "respostaOficina": "Repair shop’s answer: {texto}",
     "semRespostaTitulo": "The repair shop did not answer",
     "semRespostaTexto": "You can still accept the original date, ask again or choose another repair shop.",
-    "entendi": "Got it"
+    "entendi": "Got it",
+    "naoPodeTextoPassou": "You can ask for another date or choose another repair shop.",
+    "semRespostaTextoPassou": "You can ask again or choose another repair shop."
   },
   "telefoneOficina": {
     "avisoTitulo": "Add your phone number",

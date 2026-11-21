@@ -302,8 +302,8 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
     <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 sm:p-4" data-testid="pedir-novas-datas">
       <p className="font-semibold text-amber-900">📅 {t('titulo')}</p>
       <p className="mt-1 text-sm text-amber-900">{t('texto')}</p>
-      {avisoNaoPode && <p role="status" className="mt-2 text-sm text-amber-900" data-testid="novas-datas-nao-pode">{t('naoPodeTitulo')}. {t('naoPodeTexto')}</p>}
-      {avisoSemResposta && <p role="status" className="mt-2 text-sm text-amber-900" data-testid="novas-datas-sem-resposta">{t('semRespostaTitulo')}. {t('semRespostaTexto')}</p>}
+      {avisoNaoPode && <p role="status" className="mt-2 text-sm text-amber-900" data-testid="novas-datas-nao-pode">{t('naoPodeTitulo')}. {t('naoPodeTextoPassou')}</p>}
+      {avisoSemResposta && <p role="status" className="mt-2 text-sm text-amber-900" data-testid="novas-datas-sem-resposta">{t('semRespostaTitulo')}. {t('semRespostaTextoPassou')}</p>}
       <div className="mt-3">{botao}</div>
       {folhaEl}
     </div>

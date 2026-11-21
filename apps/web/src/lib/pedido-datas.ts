@@ -308,16 +308,16 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
       .update({ status: 'atendido', resposta: 'nao_pode', resposta_texto: texto || null, atendido_em: new Date().toISOString() })
       .eq('id', pend.id).eq('status', 'pendente').select('id');
     if (!trava?.length) return codigoPedidoFechado(orc.id);
-    await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: [textosNovasDatas(idiomaOf).chatNaoPode, texto].filter(Boolean).join('\n') });
+    await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: [pend.motivo === 'nao_sobe' ? textosNovasDatas(idiomaOf).chatNaoPode : textosNovasDatas(idiomaOf).chatNaoPodePassou, texto].filter(Boolean).join('\n') });
     await notificar(sol?.cliente_id, 'novas_datas_nao_pode', idiomaCli, (l) => {
       const t = textosNovasDatas(l);
-      return { titulo: t.naoPodeTitulo, mensagem: preencher(t.naoPodeMsg, { oficina: of?.nome_fantasia || '' }) };
+      return { titulo: t.naoPodeTitulo, mensagem: preencher(pend.motivo === 'nao_sobe' ? t.naoPodeMsg : t.naoPodeMsgPassou, { oficina: of?.nome_fantasia || '' }) };
     }, dadosCli);
     const cli = sol?.cliente;
     if (cli?.email) {
       const l = idiomaDoSite(idiomaCli); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
       const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
-        <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailNaoPodeTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
+        <p style="font-size:16px;"><strong>${escapeHtml(preencher(pend.motivo === 'nao_sobe' ? t.emailNaoPodeTexto : t.naoPodeMsgPassou, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
         ${texto ? `<p style="background:#f3f4f6;padding:10px 12px;border-radius:8px;">${escapeHtml(texto)}</p>` : ''}
         ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailNaoPodeBotao)}`);
       await enviarEmail({ para: cli.email, assunto: preencher(t.emailNaoPodeAssunto, { oficina: of?.nome_fantasia || '', numero }), html }).catch(() => false);
@@ -450,13 +450,13 @@ export async function tarefasPedidoDatas(agora = Date.now()) {
       semResposta++;
       const carro = carroDe(sol?.veiculo);
       const dados = { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, pedido_datas_id: p.id };
-      await notificar(sol?.cliente_id, 'novas_datas_sem_resposta', sol?.cliente?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.semRespostaTitulo, mensagem: preencher(t.semRespostaMsg, { oficina: of?.nome_fantasia || '' }) }; }, dados);
-      await notificar(of?.profile_id, 'pedido_novas_datas_cancelado', of?.profile?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.oficinaSemRespostaTitulo, mensagem: preencher(t.oficinaSemRespostaMsg, { carro: carro || '-' }) }; }, dados);
+      await notificar(sol?.cliente_id, 'novas_datas_sem_resposta', sol?.cliente?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.semRespostaTitulo, mensagem: preencher(p.motivo === 'nao_sobe' ? t.semRespostaMsg : t.semRespostaMsgPassou, { oficina: of?.nome_fantasia || '' }) }; }, dados);
+      await notificar(of?.profile_id, 'pedido_novas_datas_cancelado', of?.profile?.idioma, (l) => { const t = textosNovasDatas(l); return { titulo: t.oficinaSemRespostaTitulo, mensagem: preencher(p.motivo === 'nao_sobe' ? t.oficinaSemRespostaMsg : t.oficinaSemRespostaMsgPassou, { carro: carro || '-' }) }; }, dados);
       const cli = sol?.cliente;
       if (cli?.email) {
         const l = idiomaDoSite(cli.idioma); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
         const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
-          <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailSemRespostaTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
+          <p style="font-size:16px;"><strong>${escapeHtml(preencher(p.motivo === 'nao_sobe' ? t.emailSemRespostaTexto : t.semRespostaMsgPassou, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
           ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailNaoPodeBotao)}`);
         await enviarEmail({ para: cli.email, assunto: preencher(t.emailSemRespostaAssunto, { numero }), html }).catch(() => false);
       }

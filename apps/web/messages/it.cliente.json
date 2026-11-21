@@ -467,7 +467,9 @@
     "respostaOficina": "Risposta dell’officina: {texto}",
     "semRespostaTitulo": "L’officina non ha risposto",
     "semRespostaTexto": "Puoi ancora accettare la data originale, chiedere di nuovo o scegliere un’altra officina.",
-    "entendi": "Ho capito"
+    "entendi": "Ho capito",
+    "naoPodeTextoPassou": "Puoi chiedere un’altra data o scegliere un’altra officina.",
+    "semRespostaTextoPassou": "Puoi chiedere di nuovo o scegliere un’altra officina."
   },
   "telefoneOficina": {
     "avisoTitulo": "Aggiungi il tuo numero di telefono",

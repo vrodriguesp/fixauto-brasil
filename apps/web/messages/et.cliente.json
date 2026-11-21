@@ -467,7 +467,9 @@
     "respostaOficina": "Töökoja vastus: {texto}",
     "semRespostaTitulo": "Töökoda ei vastanud",
     "semRespostaTexto": "Võid endiselt valida algse aja, küsida uuesti või valida teise töökoja.",
-    "entendi": "Selge"
+    "entendi": "Selge",
+    "naoPodeTextoPassou": "Võid küsida teist aega või valida teise töökoja.",
+    "semRespostaTextoPassou": "Võid uuesti küsida või valida teise töökoja."
   },
   "telefoneOficina": {
     "avisoTitulo": "Lisa oma telefoninumber",
