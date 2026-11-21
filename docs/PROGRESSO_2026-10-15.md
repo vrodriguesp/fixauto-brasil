@@ -1792,3 +1792,9 @@ Branch `local-gps-pc` (worktree `Documentos/_teste_local/site-gps`, base 4b7b5cc
 - i18n 6 línguas (`novasDatas.*`, `recusaMotivo`, `preferencia`, `oficinaNovasDatas.*`, `recusaMotivos`, `seletorCheckin.diaPreferido`, `erros.PEDIDO_FECHADO`), `notif-novas-datas.ts` com os textos novos; `checar-traducoes` completo; `tsc` 0.
 - Testes: `e2e/datas-cotacao.mjs` novo **149/0**; `novas-datas.mjs` adaptado; `seguranca-rls` 61 ok; regressão contra :3107 dev: acidente-privacidade 42/0, local-gps-pc 224/0, local-amplo 31 ok, site-pedido-sem-conta 154 ok; pedido-v2-telas interrompido por memória, e2e-acidente/novas-datas (079, locator ajustado)/pecas-* (precisam de build) por correr — ver relatório §3.1. Sem next build (memória).
 - App: nada quebra; OTA pendente para ter as 3 saídas, motivo e pergunta (ver relatório §4).
+
+### 22/11 (madrugada) - datas-cotacao pronta para proposta de deploy (NAO deployado)
+
+- Correcoes: textos do 'nao posso' / 72 h no pedido de datas vencidas (079) nao dizem mais que as datas continuam valendo (motorista: sino, e-mail, chat, cartao; oficina: confirmacao) - b0058de9, 181e0325; pt 'Quando fica bom para voce?'.
+- Testes no build de producao local (:3107): datas-cotacao 149/0 a 360 px (motorista e oficina), novas-datas 151/0, pedido-v2-telas 676/0, e2e-acidente 14/0, pecas-botao-pedido 38/0, pecas-v3-lote2 149/0, pecas-lote5 124/0; tsc 0; traducoes completas; mig 114 3x no Docker.
+- Plano: Documentos/Analises/Datas_preferencia_2026-11-21/Pronto_para_deploy.md (sem OTA; prints PT em telas_final/).
