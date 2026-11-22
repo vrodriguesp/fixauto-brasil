@@ -1798,3 +1798,13 @@ Branch `local-gps-pc` (worktree `Documentos/_teste_local/site-gps`, base 4b7b5cc
 - Correcoes: textos do 'nao posso' / 72 h no pedido de datas vencidas (079) nao dizem mais que as datas continuam valendo (motorista: sino, e-mail, chat, cartao; oficina: confirmacao) - b0058de9, 181e0325; pt 'Quando fica bom para voce?'.
 - Testes no build de producao local (:3107): datas-cotacao 149/0 a 360 px (motorista e oficina), novas-datas 151/0, pedido-v2-telas 676/0, e2e-acidente 14/0, pecas-botao-pedido 38/0, pecas-v3-lote2 149/0, pecas-lote5 124/0; tsc 0; traducoes completas; mig 114 3x no Docker.
 - Plano: Documentos/Analises/Datas_preferencia_2026-11-21/Pronto_para_deploy.md (sem OTA; prints PT em telas_final/).
+
+## 22/11 — Deploy datas-cotacao (mig 114) — NO AR 09:41 Tallinn
+
+- Dono (e-mail 22/11 08:13): 1 publicar SIM, 2 linha de privacidade SIM, 4 OTA do app depois SIM; 3 (trocar "Você receberá orçamentos em breve") NÃO aprovado ainda — explicação simples enviada 08:34 com a frase sugerida pela auditoria; a frase antiga continua.
+- Auditoria de textos com o Claude (Fable): `Documentos/Analises/Datas_preferencia_2026-11-21/Auditoria_textos.md`; 12 ajustes aplicados (rótulos iguais na tela da oficina ET/RU, "Pedido de data enviado", "Toque em «Dias da semana»", motorista→cliente, Salvar no pt-BR, verbo RU, erro da validade, etc.).
+- Privacidade: nova subseção 3.13 (pt-PT/et/ru/en/it) e `list2_10` (pt-BR, página atualizada), data 22/11 nas 6 línguas.
+- Commit `9dde9834` (em cima de `d8a40e25`). Testes locais com build de produção: `checar-traducoes` completo, `datas-cotacao.mjs` 149/0 a 360 px.
+- Produção: VM em `datas-cotacao` @ 9dde983; backup `/root/pgdump-20261122-0739.dump` + env; mig 114 aplicada (10 colunas, `..._resposta_v2_check`, `orcamentos_recusado_motivo_check`, constraint antiga removida); 0 pedidos de data pendentes (o cron de 72 h não avisa ninguém); site vazio (Clarity 0 ao vivo, nginx sem visitas humanas); build 07:39:54→07:41:49 UTC, BUILD_ID `izy9xUar2dXG3Z9kbAw7M`, restart 07:41:50 UTC. Script `/root/deploy-datas-2211.sh`.
+- Smoke só leitura: páginas 200, chunks JS 200, 0 5xx, PATCH preferência e POST recusar anônimos → 401, privacidade ET mostra 3.13. Não testado logado em produção (precisa de login com conta de teste). Sem OTA (app não mudou).
+- Rollback: VM de volta para `980bb63` + build + restart; a 114 é aditiva e pode ficar.
