@@ -80,7 +80,7 @@ export default function AdminPecasPage() {
   };
 
   // Lote 4 de pecas (18/11): interruptor proprio da pagina publica das lojas (api/admin/lojas-pagina-publica).
-  // Separado do lote 1: a pagina mostra avaliacoes a visitantes (precisa do texto legal novo + aviso de 30 dias).
+  // Separado do lote 1: a pagina mostra avaliacoes a visitantes (precisa do texto legal novo dos termos/privacidade).
   const [pubAtivo, setPubAtivo] = useState<boolean | null>(null);
   const [salvandoPub, setSalvandoPub] = useState(false);
   const [erroPub, setErroPub] = useState<string | null>(null);
@@ -89,7 +89,7 @@ export default function AdminPecasPage() {
   }, []);
   const alternarPub = async () => {
     if (pubAtivo === null) return;
-    if (!pubAtivo && !confirm('Ligar a página pública das lojas para TODAS? Visitantes passam a ver as lojas que ligaram a página e as avaliações delas (a partir de 3). Só depois do texto legal novo e do aviso de 30 dias.')) return;
+    if (!pubAtivo && !confirm('Ligar a página pública das lojas para TODAS? Visitantes passam a ver as lojas que ligaram a página e as avaliações delas (a partir de 3). Só depois do texto legal novo dos termos/privacidade.')) return;
     setSalvandoPub(true); setErroPub(null);
     const r = await fetch('/api/admin/lojas-pagina-publica', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ativo: !pubAtivo }) }).catch(() => null);
     const j = r?.ok ? await r.json().catch(() => null) : null;
@@ -232,7 +232,7 @@ export default function AdminPecasPage() {
               ? 'Ligada: lojas que ligaram a página aparecem para visitantes (e no Google quando o perfil está completo).'
               : 'Desligada: só lojas de conta de teste têm página (sempre fora do Google).'}
           </p>
-          <p className="text-xs text-slate-500 mt-1">Ligar só depois do texto novo dos termos/privacidade e de 30 dias do aviso aos parceiros.</p>
+          <p className="text-xs text-slate-500 mt-1">Ligar só depois do texto novo dos termos/privacidade.</p>
           {erroPub && <p role="alert" className="text-sm text-red-300 mt-1">{erroPub}</p>}
         </div>
         <button type="button" role="switch" aria-checked={pubAtivo === true} onClick={alternarPub} disabled={salvandoPub || pubAtivo === null} data-testid="lojas-pagina-publica-interruptor"
