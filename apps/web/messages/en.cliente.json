@@ -107,7 +107,7 @@
     "errorUnexpectedNoId": "Unexpected error: the request didn't return any data",
     "errorUnexpectedSubmit": "Unexpected error creating the request",
     "successTitle": "Request sent!",
-    "successText": "Nearby repair shops have been notified. You'll start receiving quotes soon.",
+    "successText": "Nearby repair shops have been notified. When one answers, you will get an e-mail. To see the quotes later, log in at bipfix.com with your e-mail and tap “Quotes” in the menu.",
     "redirecting": "Going to your home page...",
     "pageTitle": "New Request",
     "pageSubtitle": "Describe your vehicle's problem to receive quotes",

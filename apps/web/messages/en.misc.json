@@ -439,7 +439,7 @@
     "ogTitle": "Just Crashed Your Car? Report It Now",
     "ogDescription": "Take photos of the damage and ask nearby repair shops for a price.",
     "successTitle": "Emergency logged!",
-    "successText": "Nearby repair shops have been notified and will send quotes shortly.",
+    "successText": "Nearby repair shops have been notified. When one answers, you will get an e-mail. To see the quotes later, log in at bipfix.com with your e-mail and tap “Quotes” in the menu.",
     "nextStepTitle": "Next step",
     "nextStepText": "If another driver was involved, add their details (name, contact, number plate). You can do it now or later.",
     "registerOtherVehicleBtn": "Add the OTHER driver’s details",

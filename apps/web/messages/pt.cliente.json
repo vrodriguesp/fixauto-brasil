@@ -107,7 +107,7 @@
     "errorUnexpectedNoId": "Erro inesperado: solicitação não retornou dados",
     "errorUnexpectedSubmit": "Erro inesperado ao criar solicitação",
     "successTitle": "Solicitação enviada!",
-    "successText": "Oficinas próximas a você foram notificadas. Você receberá orçamentos em breve.",
+    "successText": "Oficinas próximas a você foram avisadas. Quando uma responder, você recebe um e-mail. Para ver os orçamentos depois, entre em bipfix.com com o seu e-mail e toque em «Orçamentos» no menu.",
     "redirecting": "Indo para o início...",
     "pageTitle": "Nova Solicitação",
     "pageSubtitle": "Descreva o problema do seu veículo para receber orçamentos",

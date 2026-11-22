@@ -439,7 +439,7 @@
     "ogTitle": "Autoavarii? Teata sellest kohe",
     "ogDescription": "Tee kahjustusest pildid ja küsi lähedal asuvatelt töökodadelt hinda.",
     "successTitle": "Avarii registreeritud!",
-    "successText": "Lähedal asuvaid töökodasid teavitati ja nad saadavad peagi hinnapakkumised.",
+    "successText": "Lähedal asuvad töökojad said teate. Kui mõni vastab, saad e-kirja. Hinnapakkumisi näed hiljem, kui logid bipfix.com-is oma e-postiga sisse ja valid menüüst „Hinnapakkumised“.",
     "nextStepTitle": "Järgmine samm",
     "nextStepText": "Kui õnnetuses osales teine juht, lisa tema andmed (nimi, kontakt, numbrimärk). Saad seda teha kohe või hiljem.",
     "registerOtherVehicleBtn": "Lisa TEISE juhi andmed",

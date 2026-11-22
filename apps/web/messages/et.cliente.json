@@ -107,7 +107,7 @@
     "errorUnexpectedNoId": "Ootamatu viga: päring ei tagastanud andmeid",
     "errorUnexpectedSubmit": "Ootamatu viga päringu loomisel",
     "successTitle": "Päring saadetud!",
-    "successText": "Lähedal asuvad töökojad on saanud teate. Peagi hakkad saama hinnapakkumisi.",
+    "successText": "Lähedal asuvad töökojad said teate. Kui mõni vastab, saad e-kirja. Hinnapakkumisi näed hiljem, kui logid bipfix.com-is oma e-postiga sisse ja valid menüüst „Hinnapakkumised“.",
     "redirecting": "Suunan avalehele...",
     "pageTitle": "Uus päring",
     "pageSubtitle": "Kirjelda oma sõiduki probleemi, et saada hinnapakkumisi",

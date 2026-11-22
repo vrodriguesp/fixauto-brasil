@@ -107,7 +107,7 @@
     "errorUnexpectedNoId": "Errore imprevisto: la richiesta non ha restituito dati",
     "errorUnexpectedSubmit": "Errore imprevisto durante la creazione della richiesta",
     "successTitle": "Richiesta inviata!",
-    "successText": "Le officine vicine sono state avvisate. Riceverai presto i preventivi.",
+    "successText": "Le officine vicine sono state avvisate. Quando una risponde, ricevi un’e-mail. Per vedere i preventivi più tardi, accedi a bipfix.com con la tua e-mail e tocca «Preventivi» nel menu.",
     "redirecting": "Torno alla home...",
     "pageTitle": "Nuova richiesta",
     "pageSubtitle": "Descrivi il problema del tuo veicolo per ricevere preventivi",
