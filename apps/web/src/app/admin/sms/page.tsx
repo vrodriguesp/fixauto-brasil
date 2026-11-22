@@ -7,7 +7,7 @@ import { timeAgo } from '@/lib/utils';
 // orcamento", enviar manualmente pelo numero do pedido e ver o registro.
 // Desligar quando o app estiver na loja: quem tem o app recebe o push.
 
-interface Envio { id: string; tipo: 'orcamento_auto' | 'manual'; status: 'enviando' | 'enviado' | 'recusado' | 'pulado'; motivo: string | null; final: string | null; quando: string; numero: number | null; cliente: string | null }
+interface Envio { id: string; tipo: 'orcamento_auto' | 'manual' | 'oficina_manual' | 'lembrete_cliente'; status: 'enviando' | 'enviado' | 'recusado' | 'pulado'; motivo: string | null; final: string | null; quando: string; numero: number | null; cliente: string | null }
 interface Dados { ativo: boolean; configurado: boolean; saldo: { saldo: string; moeda: string } | null; envios: Envio[] }
 
 const MOTIVO: Record<string, string> = {
@@ -119,7 +119,7 @@ export default function AdminSmsPage() {
                   <li key={e.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 text-sm">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS[e.status]}`}>{e.status}</span>
                     <span className="text-gray-900">Pedido {e.numero ?? '—'}{e.cliente ? ` · ${e.cliente}` : ''}{e.final ? ` · …${e.final}` : ''}</span>
-                    <span className="text-gray-500">{e.tipo === 'manual' ? 'manual' : 'automático'}</span>
+                    <span className="text-gray-500">{e.tipo === 'manual' ? 'manual' : e.tipo === 'lembrete_cliente' ? 'lembrete' : 'automático'}</span>
                     {e.motivo && <span className="text-gray-500">· {MOTIVO[e.motivo] || e.motivo}</span>}
                     <span className="ml-auto text-gray-400">{timeAgo(e.quando)}</span>
                   </li>

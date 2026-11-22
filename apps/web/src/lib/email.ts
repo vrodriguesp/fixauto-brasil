@@ -13,7 +13,8 @@ export interface AnexoEmail { nome: string; conteudo: string; tipo: string }
 
 // responderPara: e-mail que recebe a resposta (Resend replyTo). Os e-mails saem de
 // noreply@; convite e lembrete as oficinas pedem resposta e mandam para o admin.
-export async function enviarEmail(p: { para: string; assunto: string; html: string; anexos?: AnexoEmail[]; responderPara?: string }): Promise<boolean> {
+// cabecalhos: so os lembretes opcionais ao motorista (115) levam List-Unsubscribe / List-Unsubscribe-Post.
+export async function enviarEmail(p: { para: string; assunto: string; html: string; anexos?: AnexoEmail[]; responderPara?: string; cabecalhos?: Record<string, string> }): Promise<boolean> {
   // logo, cores e rodape da BipFix em todo e-mail (lib/email-marca.ts)
   const html = aplicarIdentidade(p.html);
   if (!resend) {
@@ -25,7 +26,8 @@ export async function enviarEmail(p: { para: string; assunto: string; html: stri
       await fs.mkdir(process.env.EMAIL_PASTA_TESTE, { recursive: true });
       const anexos = p.anexos?.length ? ` | anexos: ${p.anexos.map((a) => a.nome).join(', ')}` : '';
       const responder = p.responderPara ? ` | responder: ${p.responderPara}` : '';
-      await fs.writeFile(`${process.env.EMAIL_PASTA_TESTE}/${nome}`, `<!-- para: ${p.para} | assunto: ${p.assunto}${anexos}${responder} -->\n${html}`);
+      const cab = p.cabecalhos ? Object.entries(p.cabecalhos).map(([k, v]) => ` | ${k}: ${v}`).join('') : '';
+      await fs.writeFile(`${process.env.EMAIL_PASTA_TESTE}/${nome}`, `<!-- para: ${p.para} | assunto: ${p.assunto}${anexos}${responder}${cab} -->\n${html}`);
       // anexos ao lado, com o mesmo prefixo (os testes abrem o .ics)
       for (const a of p.anexos || []) await fs.writeFile(`${process.env.EMAIL_PASTA_TESTE}/${nome.replace(/\.html$/, '')}__${a.nome}`, a.conteudo);
       return true;
@@ -42,6 +44,7 @@ export async function enviarEmail(p: { para: string; assunto: string; html: stri
   const { error } = await resend.emails.send({
     from: FROM_EMAIL, to: p.para, subject: p.assunto, html,
     ...(p.responderPara ? { replyTo: p.responderPara } : {}),
+    ...(p.cabecalhos ? { headers: p.cabecalhos } : {}),
     ...(p.anexos?.length ? { attachments: p.anexos.map((a) => ({ filename: a.nome, content: Buffer.from(a.conteudo, 'utf8'), contentType: a.tipo })) } : {}),
   });
   if (error) {

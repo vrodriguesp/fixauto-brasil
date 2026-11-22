@@ -133,6 +133,11 @@ export const PATHNAMES = {
     pt: '/peca-nao-tenho', 'pt-PT': '/peca-nao-tenho', en: '/part-not-available',
     et: '/varuosa-puudub', it: '/ricambio-non-disponibile', ru: '/zapchasti-net',
   },
+  // pagina do link "parar lembretes" dos e-mails de lembrete ao motorista (/r/<numero>?s=...; 115)
+  '/lembretes': {
+    pt: '/lembretes', 'pt-PT': '/lembretes', en: '/reminders',
+    et: '/meeldetuletused', it: '/promemoria', ru: '/napominaniya',
+  },
 } as const;
 
 export const routing = defineRouting({

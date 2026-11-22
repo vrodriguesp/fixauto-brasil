@@ -1655,5 +1655,19 @@
     "encerrar": "Termina",
     "apagar": "Elimina",
     "confirmarApagar": "Eliminare l'offerta \"{titulo}\"?"
+  },
+  "lembretesCliente": {
+    "titulo": "Promemoria della richiesta {numero}",
+    "tituloSemNumero": "Promemoria della richiesta",
+    "pergunta": "Vuoi fermare i promemoria via e-mail per questa richiesta?",
+    "explica": "Continuerai a ricevere l’avviso quando arriva un nuovo preventivo e la conferma quando prenoti l’orario.",
+    "pausar": "Ferma i promemoria",
+    "pausado": "Fatto: non invieremo altri promemoria per questa richiesta.",
+    "ligado": "I promemoria di questa richiesta sono di nuovo attivi.",
+    "retomar": "Riattiva i promemoria",
+    "verPedido": "Vedi la richiesta",
+    "inicio": "Vai a BipFix",
+    "invalido": "Questo link non funziona più. Puoi aprire la tua richiesta da qui:",
+    "erro": "Non è stato possibile salvare. Riprova."
   }
 }

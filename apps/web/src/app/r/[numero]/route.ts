@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { SITE_URL, urlNoIdioma } from '@/lib/site-url';
 import { TOKEN_ACESSO } from '@/lib/link-acesso';
+import { TOKEN_LEMBRETE, pausaPorToken } from '@/lib/lembrar-clientes';
+import { limitarPorIp } from '@/lib/rate-limit';
 
 // Link curto do SMS (dono 04/11): bipfix.com/r/100133 -> pagina dos orcamentos
 // do pedido no idioma do cliente. Fica fora do middleware de idioma (matcher).
@@ -19,6 +21,14 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
   if (!sol) return NextResponse.redirect(SITE_URL, 302);
   const oficina = req.nextUrl.searchParams.get('o');
   const k = req.nextUrl.searchParams.get('k');
+  // ?s=<token>: "parar lembretes" dos e-mails de lembrete ao motorista (115) -> pagina sem login no idioma do
+  // e-mail, token no FRAGMENTO (nao vai ao log). Abrir NAO pausa (leitores de e-mail abrem links): so o toque
+  // no botao da pagina (ou o POST one-click do leitor de e-mail, abaixo) grava.
+  const s = req.nextUrl.searchParams.get('s');
+  if (s && TOKEN_LEMBRETE.test(s)) {
+    const l = req.nextUrl.searchParams.get('l') || ((sol as any).cliente?.idioma ?? 'et');
+    return NextResponse.redirect(`${urlNoIdioma(l, '/lembretes')}#k=${s}&n=${numero}`, 302);
+  }
   // ?o=<idioma>&k=<token>: link de acesso da oficina (089, lib/link-acesso.ts) -> pagina "ver pedido"
   // em modo oficina, que nao entra sozinha ao abrir; &d=1 abre ja no "nao tenho interesse" (sem gravar).
   // Na pagina, o=1 so escolhe o esqueleto inicial: quem decide o modo e a API (finalidade do link).
@@ -38,4 +48,16 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
     return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${orc?.oficina_id ? `?oficina=${orc.oficina_id}` : ''}`), 302);
   }
   return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/orcamentos/${sol.id}`), 302);
+}
+
+// List-Unsubscribe-Post (RFC 8058): o leitor de e-mail (Gmail, Apple Mail...) faz POST no link de pausa
+// com o corpo "List-Unsubscribe=One-Click" -> pausa os lembretes deste pedido, sem login e sem pagina.
+export async function POST(req: NextRequest, { params }: { params: { numero: string } }) {
+  if (!limitarPorIp(req, 'lembretes-one-click', 30, 60 * 60 * 1000)) return new NextResponse(null, { status: 429 });
+  const numero = String(params.numero || '').replace(/\D/g, '').slice(0, 12);
+  const s = req.nextUrl.searchParams.get('s') || '';
+  const corpo = await req.text().catch(() => '');
+  if (!numero || !TOKEN_LEMBRETE.test(s) || !/List-Unsubscribe=One-Click/i.test(corpo)) return new NextResponse(null, { status: 400 });
+  const r = await pausaPorToken(s, 'pausar', numero);
+  return new NextResponse(null, { status: r.ok ? 200 : 404 });
 }

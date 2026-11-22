@@ -1655,5 +1655,19 @@
     "encerrar": "End",
     "apagar": "Delete",
     "confirmarApagar": "Delete the offer \"{titulo}\"?"
+  },
+  "lembretesCliente": {
+    "titulo": "Reminders for request {numero}",
+    "tituloSemNumero": "Request reminders",
+    "pergunta": "Do you want to stop the e-mail reminders for this request?",
+    "explica": "You will still get the notice when a new quote arrives and the confirmation when you book a time.",
+    "pausar": "Stop reminders",
+    "pausado": "Done: we won’t send more reminders for this request.",
+    "ligado": "Reminders for this request are on again.",
+    "retomar": "Turn reminders back on",
+    "verPedido": "View the request",
+    "inicio": "Go to BipFix",
+    "invalido": "This link no longer works. You can open your request here:",
+    "erro": "Could not save. Please try again."
   }
 }

@@ -1353,5 +1353,19 @@
     "encerrar": "Encerrar",
     "apagar": "Apagar",
     "confirmarApagar": "Apagar a promoção \"{titulo}\"?"
+  },
+  "lembretesCliente": {
+    "titulo": "Lembretes do pedido {numero}",
+    "tituloSemNumero": "Lembretes do pedido",
+    "pergunta": "Quer parar os lembretes por e-mail deste pedido?",
+    "explica": "Você continua recebendo o aviso de orçamento novo e a confirmação quando marcar o horário.",
+    "pausar": "Parar lembretes",
+    "pausado": "Pronto: não vamos mandar mais lembretes deste pedido.",
+    "ligado": "Os lembretes deste pedido estão ligados de novo.",
+    "retomar": "Voltar a receber lembretes",
+    "verPedido": "Ver o pedido",
+    "inicio": "Ir para a BipFix",
+    "invalido": "Este link não funciona mais. Você pode abrir o seu pedido por aqui:",
+    "erro": "Não foi possível salvar. Tente de novo."
   }
 }

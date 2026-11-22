@@ -1655,5 +1655,19 @@
     "encerrar": "Lõpeta",
     "apagar": "Kustuta",
     "confirmarApagar": "Kustutada pakkumine „{titulo}\"?"
+  },
+  "lembretesCliente": {
+    "titulo": "Päringu {numero} meeldetuletused",
+    "tituloSemNumero": "Päringu meeldetuletused",
+    "pergunta": "Kas soovid selle päringu e-posti meeldetuletused peatada?",
+    "explica": "Teate uue hinnapakkumise kohta ja kinnituse aja broneerimisel saad ikka.",
+    "pausar": "Peata meeldetuletused",
+    "pausado": "Valmis: me ei saada selle päringu kohta rohkem meeldetuletusi.",
+    "ligado": "Selle päringu meeldetuletused on jälle sees.",
+    "retomar": "Lülita meeldetuletused uuesti sisse",
+    "verPedido": "Vaata päringut",
+    "inicio": "Mine BipFixi",
+    "invalido": "See link enam ei tööta. Oma päringu saad avada siit:",
+    "erro": "Salvestamine ei õnnestunud. Proovi uuesti."
   }
 }
