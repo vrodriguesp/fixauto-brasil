@@ -185,7 +185,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 18, 2026",
+    "updatedDate": "November 22, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -311,6 +311,17 @@
           "<strong>Purpose:</strong> building trust between Partners and improving the quality of parts deliveries: Repair Shops can see other Partners' experience when choosing a supplier, and suppliers can reply to ratings and ask for them to be reviewed.",
           "<strong>Who sees it:</strong> active Partners (Repair Shops and parts stores) logged in to the Platform; Customers and website visitors do not. Hidden ratings are seen only by the supplier, the Repair Shop that gave the rating and BipFix.",
           "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)), as rating the supplier is part of the conditions for parts orders (section 9.1 of the <a href=\"/termos\">Terms of Use</a>); showing ratings to other Partners together with the business name of the Repair Shop that gave them is based on our legitimate interest, and that of other Partners, in reliable information about parts suppliers (Art. 6(1)(f)). You can object to this processing (section 7) or ask for a rating to be reviewed; we will then assess whether your interests override those of other Partners."
+        ]
+      },
+      {
+        "titulo": "3.13 Preferred time, request for another date and reason for declining",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> after sending a request, you may say, if you wish, when you can bring the car (days of the week, morning or afternoon, \"any weekday\" or \"as soon as possible\"); if you ask a Repair Shop for another date, the days or the dates and times you chose and the short note you wrote; if you decline a quote, the reason you chose from five options (price, date, distance, already solved, other).",
+          "<strong>Purpose:</strong> letting Repair Shops offer dates that suit you and understand why a quote was declined.",
+          "<strong>Who sees it:</strong> only the Repair Shops that received that request. This data is optional and linked to the request.",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)).",
+          "<strong>Retention and your choices:</strong> you can change or delete your preferred time on the request page at any time; the reason for declining is kept with the declined quote for the same period as the other request data (section 6)."
         ]
       },
       {

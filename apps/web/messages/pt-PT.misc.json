@@ -185,7 +185,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "18 de novembro de 2026",
+    "updatedDate": "22 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -311,6 +311,17 @@
           "<strong>Finalidade:</strong> criar confiança entre os Parceiros e melhorar a qualidade das entregas de peças: as Oficinas veem a experiência de outros Parceiros ao escolher um fornecedor, e os fornecedores podem responder às avaliações e pedir a sua revisão.",
           "<strong>Quem vê:</strong> os Parceiros ativos (Oficinas e lojas de peças) com sessão iniciada na Plataforma; os Clientes e os visitantes do site não. As avaliações ocultadas só são vistas pelo fornecedor, pela Oficina que fez a avaliação e pela BipFix.",
           "<strong>Fundamento jurídico:</strong> execução de um contrato (art. 6.º, n.º 1, alínea b)), uma vez que avaliar o fornecedor faz parte das condições das encomendas de peças (ponto 9.1 dos <a href=\"/termos\">Termos de Utilização</a>); a apresentação das avaliações aos outros Parceiros com o nome comercial da Oficina que as fez baseia-se no nosso interesse legítimo, e no dos outros Parceiros, em informação fiável sobre fornecedores de peças (art. 6.º, n.º 1, alínea f)). Pode opor-se a este tratamento (ponto 7) ou pedir a revisão de uma avaliação; avaliaremos então se os seus interesses prevalecem sobre os dos outros Parceiros."
+        ]
+      },
+      {
+        "titulo": "3.13 Preferência de horário, pedido de outra data e motivo da recusa",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dados:</strong> depois de enviar um pedido, pode indicar, se quiser, quando pode levar o carro (dias da semana, manhã ou tarde, «qualquer dia útil» ou «o mais cedo possível»); se pedir outra data a uma Oficina, os dias ou as datas e horas que escolheu e o recado curto que escreveu; se recusar um orçamento, o motivo que escolheu entre cinco opções (preço, data, distância, já resolvi, outro).",
+          "<strong>Finalidade:</strong> permitir que as Oficinas proponham datas que lhe convêm e percebam porque um orçamento foi recusado.",
+          "<strong>Quem vê:</strong> apenas as Oficinas que receberam esse pedido. Estes dados são opcionais e ficam ligados ao pedido.",
+          "<strong>Fundamento jurídico:</strong> execução de um contrato (art. 6.º, n.º 1, alínea b)).",
+          "<strong>Prazo e escolhas:</strong> pode alterar ou apagar a preferência na página do pedido a qualquer momento; o motivo da recusa fica guardado com o orçamento recusado, pelo mesmo prazo dos restantes dados do pedido (secção 6)."
         ]
       },
       {

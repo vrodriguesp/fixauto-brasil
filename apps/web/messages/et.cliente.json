@@ -455,7 +455,7 @@
     "escolhidas": "Valitud: {n}/3",
     "remover": "Eemalda",
     "ate3": "Kuni 3 valikut. Näidatud on ainult töökoja lahtiolekuajad.",
-    "semDias": "Lähipäevadel vabu aegu pole. Vali nädalapäevad.",
+    "semDias": "Lähipäevadel vabu aegu pole. Vali „Nädalapäevad“ ja märgi sobivad päevad.",
     "faltaDia": "Vali vähemalt üks päev.",
     "faltaJanela": "Vali vähemalt üks aeg.",
     "enviarSempre": "Saada soov",
@@ -516,7 +516,7 @@
     "tarde": "Pärastlõunal",
     "manhaCurto": "hommikul",
     "tardeCurto": "pärastlõunal",
-    "qualquer": "Ükskõik, tööpäeval",
+    "qualquer": "Ükskõik mis tööpäev",
     "urgente": "Võimalikult kiiresti",
     "guardar": "Salvesta",
     "guardando": "Salvestan…",
@@ -525,6 +525,6 @@
     "guardado": "Salvestatud ✓",
     "suaPreferencia": "Millal saad auto tuua: {texto}",
     "mudar": "Muuda",
-    "motoristaPrefere": "Kliendile sobib: {texto}"
+    "motoristaPrefere": "Kliendi eelistus: {texto}"
   }
 }

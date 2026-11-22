@@ -185,7 +185,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "18. november 2026",
+    "updatedDate": "22. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -311,6 +311,17 @@
           "<strong>Eesmärk:</strong> partnerite omavahelise usalduse ja varuosatarnete kvaliteedi suurendamine: töökojad näevad tarnijat valides teiste partnerite kogemusi ning tarnijad saavad hinnangutele vastata ja paluda nende ülevaatamist.",
           "<strong>Kes näeb:</strong> platvormile sisse loginud aktiivsed partnerid (töökojad ja varuosapoed); kliendid ja veebilehe külastajad neid ei näe. Peidetud hinnanguid näevad ainult tarnija, hinnanud töökoda ja BipFix.",
           "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b), sest tarnija hindamine on osa varuosatellimuste tingimustest (<a href=\"/termos\">kasutustingimuste</a> punkt 9.1); hinnangute näitamine teistele partneritele koos hinnanud töökoja ärinimega põhineb meie ja teiste partnerite õigustatud huvil saada varuosatarnijate kohta usaldusväärset teavet (art 6 lg 1 p f). Võid selle töötlemise vastu esitada vastuväite (punkt 7) või paluda hinnangu ülevaatamist; siis hindame, kas sinu huvid kaaluvad üles teiste partnerite huvi."
+        ]
+      },
+      {
+        "titulo": "3.13 Sobiv aeg, teise aja küsimine ja tagasilükkamise põhjus",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> pärast päringu saatmist võid soovi korral öelda, millal sul sobib auto tuua (nädalapäevad, hommikul või pärastlõunal, „ükskõik, tööpäeval“ või „võimalikult kiiresti“); kui küsid töökojalt teist aega, sinu valitud päevad või kuupäevad ja kellaajad ning lühike sõnum; kui lükkad hinnapakkumise tagasi, viie variandi seast valitud põhjus (hind, aeg, kaugus, juba lahendatud, muu).",
+          "<strong>Eesmärk:</strong> et töökojad saaksid pakkuda sulle sobivaid aegu ja mõista, miks hinnapakkumine tagasi lükati.",
+          "<strong>Kes näeb:</strong> ainult töökojad, kes selle päringu said. Need andmed on vabatahtlikud ja seotud päringuga.",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b).",
+          "<strong>Säilitamine ja valikud:</strong> sobivat aega saad päringu lehel igal ajal muuta või kustutada; tagasilükkamise põhjus säilib koos tagasilükatud hinnapakkumisega sama kaua kui päringu muud andmed (punkt 6)."
         ]
       },
       {

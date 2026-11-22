@@ -455,12 +455,12 @@
     "escolhidas": "Escolhidos: {n}/3",
     "remover": "Remover",
     "ate3": "Até 3 escolhas. Só aparecem os horários em que a oficina abre.",
-    "semDias": "Não há horários livres nos próximos dias. Escolha os dias da semana.",
+    "semDias": "Não há horários livres nos próximos dias. Toque em «Dias da semana» e escolha os dias.",
     "faltaDia": "Escolha pelo menos um dia.",
     "faltaJanela": "Escolha pelo menos um horário.",
     "enviarSempre": "Enviar pedido de data",
     "enquantoResponde": "Enquanto a oficina responde, o orçamento de antes continua valendo.",
-    "enviadoTitulo": "Pedido enviado à oficina",
+    "enviadoTitulo": "Pedido de data enviado à oficina",
     "originalContinua": "A data original continua valendo: você ainda pode escolhê-la.",
     "naoPodeTitulo": "A oficina não pode na data pedida",
     "naoPodeTexto": "As datas do orçamento continuam valendo. Você pode aceitar uma delas, pedir outra data ou escolher outra oficina.",
@@ -493,8 +493,8 @@
   "recusaMotivo": {
     "botao": "Recusar",
     "titulo": "Por que este orçamento não serve?",
-    "texto": "Opcional: ajuda a oficina a oferecer melhor.",
-    "textoEmAndamento": "O carro está na oficina. Depois de recusar, ele precisa ser retirado; a oficina recebe um aviso.",
+    "texto": "Opcional. Ajuda a oficina a fazer propostas melhores.",
+    "textoEmAndamento": "O carro está na oficina. Se recusar, você precisa buscar o carro. A oficina recebe um aviso.",
     "preco": "Preço",
     "data": "A data não serve",
     "distancia": "Longe demais",
@@ -518,13 +518,13 @@
     "tardeCurto": "à tarde",
     "qualquer": "Qualquer dia útil",
     "urgente": "O quanto antes",
-    "guardar": "Guardar",
-    "guardando": "Guardando…",
+    "guardar": "Salvar",
+    "guardando": "Salvando…",
     "continuar": "Continuar",
     "agoraNao": "Agora não",
-    "guardado": "Guardado ✓",
+    "guardado": "Salvo ✓",
     "suaPreferencia": "Quando você pode levar o carro: {texto}",
     "mudar": "Mudar",
-    "motoristaPrefere": "Motorista prefere: {texto}"
+    "motoristaPrefere": "Preferência do cliente: {texto}"
   }
 }

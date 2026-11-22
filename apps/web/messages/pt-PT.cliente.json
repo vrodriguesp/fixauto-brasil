@@ -455,12 +455,12 @@
     "escolhidas": "Escolhidos: {n}/3",
     "remover": "Remover",
     "ate3": "Até 3 escolhas. Só aparecem os horários em que a oficina abre.",
-    "semDias": "Não há horários livres nos próximos dias. Escolha os dias da semana.",
+    "semDias": "Não há horários livres nos próximos dias. Toque em «Dias da semana» e escolha os dias.",
     "faltaDia": "Escolha pelo menos um dia.",
     "faltaJanela": "Escolha pelo menos um horário.",
     "enviarSempre": "Enviar pedido de data",
     "enquantoResponde": "Enquanto a oficina responde, o orçamento anterior continua válido.",
-    "enviadoTitulo": "Pedido enviado à oficina",
+    "enviadoTitulo": "Pedido de data enviado à oficina",
     "originalContinua": "A data original continua válida: ainda a pode escolher.",
     "naoPodeTitulo": "A oficina não pode na data pedida",
     "naoPodeTexto": "As datas do orçamento continuam válidas. Pode aceitar uma delas, pedir outra data ou escolher outra oficina.",
@@ -493,8 +493,8 @@
   "recusaMotivo": {
     "botao": "Recusar",
     "titulo": "Porque é que este orçamento não serve?",
-    "texto": "Opcional: ajuda a oficina a propor melhor.",
-    "textoEmAndamento": "O carro está na oficina. Depois de recusar, tem de ser levantado; a oficina recebe um aviso.",
+    "texto": "Opcional. Ajuda a oficina a fazer propostas melhores.",
+    "textoEmAndamento": "O carro está na oficina. Se recusar, tem de ir buscar o carro. A oficina recebe um aviso.",
     "preco": "Preço",
     "data": "A data não serve",
     "distancia": "Demasiado longe",
@@ -525,6 +525,6 @@
     "guardado": "Guardado ✓",
     "suaPreferencia": "Quando pode levar o carro: {texto}",
     "mudar": "Mudar",
-    "motoristaPrefere": "O condutor prefere: {texto}"
+    "motoristaPrefere": "Preferência do cliente: {texto}"
   }
 }

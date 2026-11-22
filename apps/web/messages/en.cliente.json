@@ -443,7 +443,7 @@
     "vencidoOutro": "See another active quote",
     "vencidoNovoPedido": "Make a new request",
     "botaoSempre": "I need another date",
-    "folhaTitulo": "When works for you?",
+    "folhaTitulo": "When suits you?",
     "folhaTexto": "The repair shop sends new dates based on what you ask. The price does not change.",
     "modoDias": "Weekdays",
     "modoData": "Exact date",
@@ -455,12 +455,12 @@
     "escolhidas": "Chosen: {n}/3",
     "remover": "Remove",
     "ate3": "Up to 3 choices. Only the repair shop’s opening hours are shown.",
-    "semDias": "No free times in the next days. Choose weekdays instead.",
+    "semDias": "No free times in the next days. Tap “Weekdays” and pick the days.",
     "faltaDia": "Choose at least one day.",
     "faltaJanela": "Choose at least one time.",
     "enviarSempre": "Send date request",
     "enquantoResponde": "While the repair shop answers, the quote you already have still stands.",
-    "enviadoTitulo": "Request sent to the repair shop",
+    "enviadoTitulo": "Date request sent to the repair shop",
     "originalContinua": "The original date still stands: you can still choose it.",
     "naoPodeTitulo": "The repair shop cannot make the requested date",
     "naoPodeTexto": "The dates in the quote still stand. You can accept one of them, ask for another date or choose another repair shop.",
@@ -525,6 +525,6 @@
     "guardado": "Saved ✓",
     "suaPreferencia": "When you can bring the car: {texto}",
     "mudar": "Change",
-    "motoristaPrefere": "Driver prefers: {texto}"
+    "motoristaPrefere": "Customer’s preference: {texto}"
   }
 }

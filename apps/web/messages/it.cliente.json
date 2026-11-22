@@ -455,12 +455,12 @@
     "escolhidas": "Scelti: {n}/3",
     "remover": "Togli",
     "ate3": "Fino a 3 scelte. Compaiono solo gli orari di apertura dell’officina.",
-    "semDias": "Nessun orario libero nei prossimi giorni. Scegli i giorni della settimana.",
+    "semDias": "Nessun orario libero nei prossimi giorni. Tocca «Giorni della settimana» e scegli i giorni.",
     "faltaDia": "Scegli almeno un giorno.",
     "faltaJanela": "Scegli almeno un orario.",
     "enviarSempre": "Invia richiesta di data",
     "enquantoResponde": "Mentre l’officina risponde, il preventivo di prima resta valido.",
-    "enviadoTitulo": "Richiesta inviata all’officina",
+    "enviadoTitulo": "Richiesta di data inviata all’officina",
     "originalContinua": "La data originale resta valida: puoi ancora sceglierla.",
     "naoPodeTitulo": "L’officina non può nella data richiesta",
     "naoPodeTexto": "Le date del preventivo restano valide. Puoi accettarne una, chiedere un’altra data o scegliere un’altra officina.",
@@ -525,6 +525,6 @@
     "guardado": "Salvato ✓",
     "suaPreferencia": "Quando puoi portare l’auto: {texto}",
     "mudar": "Cambia",
-    "motoristaPrefere": "Il cliente preferisce: {texto}"
+    "motoristaPrefere": "Preferenza del cliente: {texto}"
   }
 }

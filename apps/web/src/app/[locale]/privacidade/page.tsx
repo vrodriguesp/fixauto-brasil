@@ -69,6 +69,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
             <li>{t.rich('list2_8', { strong })}</li>
             {/* pecas (lote 3): avaliacao de fornecedor entre Parceiros */}
             <li>{t.rich('list2_9', { strong })}</li>
+            {/* 114: preferencia de horario, pedido de outra data e motivo da recusa */}
+            <li>{t.rich('list2_10', { strong })}</li>
           </ul>
         </section>
 

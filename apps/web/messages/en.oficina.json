@@ -788,7 +788,7 @@
     "info_checkin": "Day and time range when the customer brings the car. Offer at least 2 options on different days — the customer picks one. Ranges come from your profile (reception, lunch, opening hours).",
     "erroSemCheckin": "Add at least one check-in date to send the quote.",
     "validadeAntesErro": "The validity must be at least the last check-in day ({ultima}). We recommend at least {dias} days after the last day ({recomendada}).",
-    "validadePassadoErro": "The validity must be at least tomorrow.",
+    "validadePassadoErro": "The quote must stay valid at least until tomorrow.",
     "validadeVaziaErro": "Choose until when the quote is valid.",
     "validadeVaziaErroComData": "Choose until when the quote is valid: at least the last check-in day ({ultima}); we recommend at least {dias} days after it ({recomendada}).",
     "validadeUsar": "Use {data}",
@@ -1500,7 +1500,7 @@
     "vencidoRevisar": "Change the quote",
     "tituloOutraData": "The customer needs another date",
     "textoOutraData": "None of the dates you offered suits the customer. Send 1 to 3 new dates or answer that you cannot. The price does not change.",
-    "padraoTitulo": "What suits the customer",
+    "padraoTitulo": "The customer asks for",
     "manha": "in the morning",
     "tarde": "in the afternoon",
     "qualquerParte": "any time",
@@ -1543,7 +1543,7 @@
     "hoje": "today",
     "diaIndisponivel": "not available",
     "proximoAberto": "next open day",
-    "diaPreferido": "suits the driver"
+    "diaPreferido": "suits the customer"
   },
   "conviteRecepcao": {
     "titulo": "New: car reception hours",

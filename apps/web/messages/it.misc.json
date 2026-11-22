@@ -185,7 +185,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "18 novembre 2026",
+    "updatedDate": "22 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -311,6 +311,17 @@
           "<strong>Finalità:</strong> creare fiducia tra i Partner e migliorare la qualità delle consegne di ricambi: le Officine vedono l'esperienza degli altri Partner quando scelgono un fornitore, e i fornitori possono rispondere alle valutazioni e chiederne la revisione.",
           "<strong>Chi le vede:</strong> i Partner attivi (Officine e negozi di ricambi) che hanno effettuato l'accesso alla Piattaforma; i Clienti e i visitatori del sito no. Le valutazioni nascoste sono visibili solo al fornitore, all'Officina che ha dato la valutazione e a BipFix.",
           "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b), poiché valutare il fornitore fa parte delle condizioni degli ordini di ricambi (punto 9.1 dei <a href=\"/termos\">Termini di utilizzo</a>); mostrare le valutazioni agli altri Partner insieme alla denominazione commerciale dell'Officina che le ha date si basa sul nostro legittimo interesse, e su quello degli altri Partner, a informazioni affidabili sui fornitori di ricambi (art. 6, par. 1, lett. f). Puoi opporti a questo trattamento (punto 7) o chiedere la revisione di una valutazione; valuteremo allora se i tuoi interessi prevalgono su quelli degli altri Partner."
+        ]
+      },
+      {
+        "titulo": "3.13 Orario preferito, richiesta di un'altra data e motivo del rifiuto",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> dopo aver inviato una richiesta puoi indicare, se vuoi, quando puoi portare l'auto (giorni della settimana, mattina o pomeriggio, «qualsiasi giorno feriale» o «il prima possibile»); se chiedi un'altra data a un'Officina, i giorni o le date e gli orari che hai scelto e il breve messaggio che hai scritto; se rifiuti un preventivo, il motivo scelto tra cinque opzioni (prezzo, data, distanza, già risolto, altro).",
+          "<strong>Finalità:</strong> permettere alle Officine di proporre date adatte a te e di capire perché un preventivo è stato rifiutato.",
+          "<strong>Chi li vede:</strong> solo le Officine che hanno ricevuto quella richiesta. Questi dati sono facoltativi e collegati alla richiesta.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b).",
+          "<strong>Conservazione e scelte:</strong> puoi modificare o cancellare l'orario preferito nella pagina della richiesta in qualsiasi momento; il motivo del rifiuto resta conservato con il preventivo rifiutato per lo stesso periodo degli altri dati della richiesta (sezione 6)."
         ]
       },
       {

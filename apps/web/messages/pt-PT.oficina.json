@@ -788,7 +788,7 @@
     "info_checkin": "Dia e intervalo de horário em que o cliente traz o carro. Ofereça pelo menos 2 opções em dias diferentes — o cliente escolhe uma. Os intervalos vêm do perfil (receção, almoço, horário de funcionamento).",
     "erroSemCheckin": "Adicione pelo menos uma data de check-in para enviar o orçamento.",
     "validadeAntesErro": "A validade tem de ser pelo menos o último dia de check-in ({ultima}). Recomendamos pelo menos {dias} dias depois do último dia ({recomendada}).",
-    "validadePassadoErro": "A validade tem de ser pelo menos amanhã.",
+    "validadePassadoErro": "A validade tem de ir pelo menos até amanhã.",
     "validadeVaziaErro": "Escolha até quando o orçamento é válido.",
     "validadeVaziaErroComData": "Escolha até quando o orçamento é válido: pelo menos o último dia de check-in ({ultima}); recomendamos pelo menos {dias} dias depois ({recomendada}).",
     "validadeUsar": "Usar {data}",
@@ -1500,7 +1500,7 @@
     "vencidoRevisar": "Alterar o orçamento",
     "tituloOutraData": "O cliente precisa de outra data",
     "textoOutraData": "Nenhuma das datas que ofereceu convém ao cliente. Envie 1 a 3 datas novas ou responda que não pode. O preço não muda.",
-    "padraoTitulo": "O que convém ao cliente",
+    "padraoTitulo": "O cliente pede",
     "manha": "de manhã",
     "tarde": "à tarde",
     "qualquerParte": "qualquer hora",
@@ -1543,7 +1543,7 @@
     "hoje": "hoje",
     "diaIndisponivel": "indisponível",
     "proximoAberto": "próximo dia aberto",
-    "diaPreferido": "convém ao condutor"
+    "diaPreferido": "convém ao cliente"
   },
   "conviteRecepcao": {
     "titulo": "Novo: horário de receção de carros",
