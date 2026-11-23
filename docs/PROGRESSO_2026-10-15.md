@@ -1820,3 +1820,12 @@ Branch `local-gps-pc` (worktree `Documentos/_teste_local/site-gps`, base 4b7b5cc
 - Extra: admin/pecas sem "e de 30 dias do aviso aos parceiros" (`6e445be5`); admin/sms mostra "lembrete".
 - Commits: `6e445be5`, `38ca8070`. tsc 0; `checar-traducoes` completo; `scripts/teste-lembretes-clientes.ts` 137/0 (regras com relógio falso + 24 e-mails desenhados em `Documentos/Analises/Lembretes_2026-11-23/emails/`).
 - PENDENTE: build de produção + e2e com banco/cron/pausa/SMS + `datas-cotacao.mjs` + prints PT. Ao trocar o `node_modules` desta worktree por junções (como `site-datas`), um `Move-Item` seguiu as junções `@fixauto/*` e tirou os arquivos de `_teste_local/site/apps/web`, `apps/mobile` e `packages/shared` para `_teste_local/_lixo_nm_lembretes_raiz/@fixauto/{web,mobile,shared}` (nada apagado; 860 arquivos versionados a faltar na worktree `site`). Precisa ser devolvido antes de qualquer build local. Ver `Documentos/Analises/Lembretes_2026-11-23/Pronto_para_deploy.md`.
+
+## 23/11 — Lembretes ao motorista: decisões do dono + testes completos — PRONTO para deploy (NÃO deployado)
+
+- Dono (chat 23/11): a pausa NÃO cala a véspera do check-in (sai sempre, sem link de pausa nem List-Unsubscribe); texto da página de pausa nos 6 idiomas diz isso; privacidade com uma linha nova (3.14 pt-PT/en/et/it/ru, `list2_11` pt-BR, data 23/11).
+- Correções do Fable: comentário do `sms_avisos`; `reservar` retoma linha presa em `enviando` > 30 min (compare-and-set); `scripts/e2e/lembretes-clientes.mjs` criado.
+- **Bug achado pelo e2e:** embed `orcamento_disponibilidade` ambíguo (PGRST201, 2 FKs) — o pedido nunca era lido e nenhum lembrete de decisão sairia; FK explícita + erro de consulta conta em `resumo.falhas`.
+- Testes no build de produção local (:3108): tsc 0; build OK; checar-traducoes completo; teste-lembretes-clientes 137/0; e2e lembretes-clientes 54/0; datas-cotacao 149/0; conta-teste-sem-envio 14/0; checkin-v2 122/0 (teste atualizado: calendário para trás + folha da 114 — `c3b3ca3c`); mig 115 2× no Docker.
+- Commits: `8a084df6`, `c3b3ca3c` (+ este). Plano: `Documentos/Analises/Lembretes_2026-11-23/Pronto_para_deploy.md`; prints em `telas/`. Primeira hora em produção: 0 e-mails/SMS (`lembretes_cliente_desde`).
+- O `_teste_local/site` foi devolvido pelo coordenador (23/11).
