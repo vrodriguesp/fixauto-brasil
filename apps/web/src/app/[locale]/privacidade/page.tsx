@@ -71,6 +71,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
             <li>{t.rich('list2_9', { strong })}</li>
             {/* 114: preferencia de horario, pedido de outra data e motivo da recusa */}
             <li>{t.rich('list2_10', { strong })}</li>
+            {/* 115: lembretes do pedido ao motorista (parar com 1 clique; vespera do check-in faz parte da marcacao) */}
+            <li>{t.rich('list2_11', { strong })}</li>
           </ul>
         </section>
 

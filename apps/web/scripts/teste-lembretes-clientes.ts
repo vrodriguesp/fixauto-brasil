@@ -4,7 +4,7 @@
 // desenha os e-mails nos 6 idiomas (HTML) para conferir a olho.
 //
 //   npx tsx scripts/teste-lembretes-clientes.ts [pasta-dos-html]
-// (o fluxo com banco, cron, pausa pelo link e o SMS: scripts/e2e/lembretes-clientes.mjs)
+// (o fluxo com banco, cron, pausa pelo link e o SMS: scripts/e2e/lembretes-clientes.mjs, contra o site local)
 import fs from 'node:fs';
 import path from 'node:path';
 import {
@@ -98,14 +98,15 @@ confere('resolvidos: enviado/pulado/enviando contam; falhou < 3 nao', Array.from
 
 // ---------- vespera do check-in ----------
 {
-  const c = { agora: T0, desde: DESDE, status: 'agendado', dataInicio: '2026-12-08T07:00:00Z', criadoEm: iso(T0 - 50 * H), pais: 'EE', pausado: false, statusPedido: 'aceita', registros: [] as RegistroLembrete[] };
+  const c = { agora: T0, desde: DESDE, status: 'agendado', dataInicio: '2026-12-08T07:00:00Z', criadoEm: iso(T0 - 50 * H), pais: 'EE', statusPedido: 'aceita', registros: [] as RegistroLembrete[] };
   confere('checkin: amanha 09:00, marcado ha 2 dias -> envia', decidirCheckin(c).enviar, true);
   confere('checkin: marcado hoje para amanha -> nao (o e-mail da marcacao acabou de chegar)', decidirCheckin({ ...c, criadoEm: iso(T0 - 2 * H) }).motivo, 'agendado_hoje');
   confere('checkin: depois de amanha -> ainda nao', decidirCheckin({ ...c, dataInicio: '2026-12-09T07:00:00Z' }).motivo, 'nao_e_vespera');
   confere('checkin: hoje (passou da vespera) -> nao', decidirCheckin({ ...c, dataInicio: '2026-12-07T13:00:00Z' }).motivo, 'nao_e_vespera');
   confere('checkin: ja enviado -> nao repete', decidirCheckin({ ...c, registros: [reg('checkin', 'enviado', 2)] }).motivo, 'ja_enviado');
   confere('checkin: agenda cancelada -> nao', decidirCheckin({ ...c, status: 'cancelado' }).motivo, 'agenda_inativa');
-  confere('checkin: pausado -> nao', decidirCheckin({ ...c, pausado: true }).motivo, 'pausado');
+  // a pausa nao entra na decisao da vespera (aviso da marcacao, dono 23/11)
+  confere('checkin: pedido cancelado -> nao', decidirCheckin({ ...c, statusPedido: 'cancelada' }).motivo, 'pedido_fechado');
   confere('checkin: agendado antes do deploy -> nao', decidirCheckin({ ...c, desde: T0 - 10 * H }).motivo, 'antigo');
 }
 
@@ -144,14 +145,15 @@ for (const l of Object.keys(TEXTOS_LEMBRETE)) {
     nao_decidiu: montarEmailLembrete({ ...comum, tipo: 'nao_decidiu', orcamentos: [of1, of2] }),
     vencem: montarEmailLembrete({ ...comum, tipo: 'vencem', orcamentos: [of1, of2] }),
     venceram: montarEmailLembrete({ ...comum, tipo: 'venceram', orcamentos: [of1, of2] }),
-    checkin: montarEmailLembrete({ ...comum, tipo: 'checkin', orcamentos: [], checkin: { oficina: of1.oficina, inicio: '2026-12-08T07:00:00Z', fim: '2026-12-08T09:00:00Z', pais: 'EE', endereco: 'Tartu mnt 50, Tallinn' } }),
+    checkin: montarEmailLembrete({ ...comum, linkPausa: null, tipo: 'checkin', orcamentos: [], checkin: { oficina: of1.oficina, inicio: '2026-12-08T07:00:00Z', fim: '2026-12-08T09:00:00Z', pais: 'EE', endereco: 'Tartu mnt 50, Tallinn' } }),
   };
   for (const [tipo, e] of Object.entries(casos)) {
     const html = aplicarIdentidade(e.html);
     fs.writeFileSync(path.join(PASTA, `${tipo}_${l}.html`), `<!doctype html><html lang="${l}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${e.assunto.replace(/</g, '&lt;')}</title></head><body style="margin:0">\n<!-- assunto: ${e.assunto} -->\n<p style="font-family:Arial,sans-serif;font-size:13px;color:#374151;max-width:600px;margin:12px auto 0;padding:0 12px;"><b>Assunto:</b> ${e.assunto.replace(/</g, '&lt;')}</p>\n${html}\n</body></html>`);
     const restos = (html.match(/\{[a-z]+\}|\?\?|undefined|NaN|Invalid Date/g) || []);
     confere(`e-mail ${tipo} ${l}: sem chave crua nem data invalida`, restos, []);
-    confere(`e-mail ${tipo} ${l}: botao do pedido + link de pausa`, html.includes('data-botao="pedido"') && html.includes('data-link="pausar"') && html.includes('/r/100123?s='), true);
+    if (tipo === 'checkin') confere(`e-mail ${tipo} ${l}: botao do pedido, SEM link de pausa (aviso da marcacao)`, html.includes('data-botao="pedido"') && !html.includes('data-link="pausar"'), true);
+    else confere(`e-mail ${tipo} ${l}: botao do pedido + link de pausa`, html.includes('data-botao="pedido"') && html.includes('data-link="pausar"') && html.includes('/r/100123?s='), true);
     if (tipo !== 'checkin') confere(`e-mail ${tipo} ${l}: os 2 orcamentos no mesmo e-mail`, (html.match(/data-orcamento="1"/g) || []).length, 2);
   }
 }

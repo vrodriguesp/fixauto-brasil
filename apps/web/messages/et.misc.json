@@ -185,7 +185,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "22. november 2026",
+    "updatedDate": "23. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -322,6 +322,13 @@
           "<strong>Kes näeb:</strong> ainult töökojad, kes selle päringu said. Need andmed on vabatahtlikud ja seotud päringuga.",
           "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b).",
           "<strong>Säilitamine ja valikud:</strong> sobivat aega saad päringu lehel igal ajal muuta või kustutada; tagasilükkamise põhjus säilib koos tagasilükatud hinnapakkumisega sama kaua kui päringu muud andmed (punkt 6)."
+        ]
+      },
+      {
+        "titulo": "3.14 Meeldetuletused sinu päringu kohta",
+        "subsecao": true,
+        "itens": [
+          "Kuni sinu päring on avatud, saadame selle ja saadud hinnapakkumiste kohta mõne meeldetuletuse e-postiga (näiteks kui hinnapakkumine hakkab aeguma) ja, kui valisid SMS-teated, kõige rohkem ühe SMS-i. Igas e-kirjas on link, millega saad need meeldetuletused ühe klikiga peatada. Teade auto toomise eelmisel päeval on osa broneeringust ja seda saadame ikka. <strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b)."
         ]
       },
       {
@@ -1660,7 +1667,7 @@
     "titulo": "Päringu {numero} meeldetuletused",
     "tituloSemNumero": "Päringu meeldetuletused",
     "pergunta": "Kas soovid selle päringu e-posti meeldetuletused peatada?",
-    "explica": "Teate uue hinnapakkumise kohta ja kinnituse aja broneerimisel saad ikka.",
+    "explica": "Uue hinnapakkumise teate, broneeringu kinnituse ja teate auto toomise eelmisel päeval saad endiselt.",
     "pausar": "Peata meeldetuletused",
     "pausado": "Valmis: me ei saada selle päringu kohta rohkem meeldetuletusi.",
     "ligado": "Selle päringu meeldetuletused on jälle sees.",

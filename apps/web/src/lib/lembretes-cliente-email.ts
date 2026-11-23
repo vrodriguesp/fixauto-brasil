@@ -43,7 +43,9 @@ const linha = (texto: string, estilo = 'margin:4px 0 0;color:#374151;') => `<p s
 
 export function montarEmailLembrete(p: {
   tipo: TipoLembrete; idioma: string | null | undefined; nome: string | null; numero: string | number;
-  orcamentos: OrcEmail[]; checkin?: CheckinEmail | null; agora: number; link: string; linkPausa: string;
+  orcamentos: OrcEmail[]; checkin?: CheckinEmail | null; agora: number; link: string;
+  /** link "parar lembretes"; sem ele (vespera do check-in, que a pausa nao cala) o rodape nao o mostra */
+  linkPausa?: string | null;
 }): { assunto: string; html: string } {
   const l = resolveEmailLocale(p.idioma);
   const t = TEXTOS_LEMBRETE[l];
@@ -105,7 +107,7 @@ export function montarEmailLembrete(p: {
         <p style="margin:20px 0 0;"><a href="${p.link}" data-botao="pedido" style="display:inline-block;background:#1e40af;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${escapeHtml(botao)}</a></p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0 12px;">
         <p style="margin:0;font-size:12px;color:#6b7280;">${escapeHtml(fmt(t.rodape, v))}</p>
-        <p style="margin:4px 0 0;font-size:12px;color:#6b7280;">${escapeHtml(t.pausa)} <a href="${p.linkPausa}" data-link="pausar" style="color:#4b5563;">${escapeHtml(t.pausaLink)}</a></p>
+        ${p.linkPausa ? `<p style="margin:4px 0 0;font-size:12px;color:#6b7280;">${escapeHtml(t.pausa)} <a href="${p.linkPausa}" data-link="pausar" style="color:#4b5563;">${escapeHtml(t.pausaLink)}</a></p>` : ''}
       </div>
     </div>`;
   return { assunto, html };

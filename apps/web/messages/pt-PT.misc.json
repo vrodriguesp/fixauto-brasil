@@ -185,7 +185,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "22 de novembro de 2026",
+    "updatedDate": "23 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -322,6 +322,13 @@
           "<strong>Quem vê:</strong> apenas as Oficinas que receberam esse pedido. Estes dados são opcionais e ficam ligados ao pedido.",
           "<strong>Fundamento jurídico:</strong> execução de um contrato (art. 6.º, n.º 1, alínea b)).",
           "<strong>Prazo e escolhas:</strong> pode alterar ou apagar a preferência na página do pedido a qualquer momento; o motivo da recusa fica guardado com o orçamento recusado, pelo mesmo prazo dos restantes dados do pedido (secção 6)."
+        ]
+      },
+      {
+        "titulo": "3.14 Lembretes sobre o seu pedido",
+        "subsecao": true,
+        "itens": [
+          "Enquanto o seu pedido estiver aberto, enviamos alguns lembretes por e-mail sobre ele e os orçamentos recebidos (por exemplo, quando um orçamento está perto de expirar) e, se escolheu receber SMS, no máximo um SMS. Cada e-mail tem um link para parar estes lembretes com um clique. O aviso na véspera do dia de levar o carro faz parte da marcação e continua a ser enviado. <strong>Fundamento jurídico:</strong> execução de um contrato (art. 6.º, n.º 1, alínea b))."
         ]
       },
       {
@@ -1660,7 +1667,7 @@
     "titulo": "Lembretes do pedido {numero}",
     "tituloSemNumero": "Lembretes do pedido",
     "pergunta": "Quer parar os lembretes por e-mail deste pedido?",
-    "explica": "Continua a receber o aviso de orçamento novo e a confirmação quando marcar a hora.",
+    "explica": "Continua a receber o aviso de orçamento novo, a confirmação quando marcar a hora e o aviso na véspera do dia de levar o carro.",
     "pausar": "Parar lembretes",
     "pausado": "Pronto: não vamos enviar mais lembretes deste pedido.",
     "ligado": "Os lembretes deste pedido estão ligados de novo.",

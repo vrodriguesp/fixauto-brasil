@@ -185,7 +185,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "22 novembre 2026",
+    "updatedDate": "23 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -322,6 +322,13 @@
           "<strong>Chi li vede:</strong> solo le Officine che hanno ricevuto quella richiesta. Questi dati sono facoltativi e collegati alla richiesta.",
           "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b).",
           "<strong>Conservazione e scelte:</strong> puoi modificare o cancellare l'orario preferito nella pagina della richiesta in qualsiasi momento; il motivo del rifiuto resta conservato con il preventivo rifiutato per lo stesso periodo degli altri dati della richiesta (sezione 6)."
+        ]
+      },
+      {
+        "titulo": "3.14 Promemoria sulla tua richiesta",
+        "subsecao": true,
+        "itens": [
+          "Finché la tua richiesta è aperta, inviamo alcuni promemoria via e-mail su di essa e sui preventivi ricevuti (per esempio, quando un preventivo sta per scadere) e, se hai scelto di ricevere SMS, al massimo un SMS. Ogni e-mail contiene un link per fermare questi promemoria con un clic. L’avviso il giorno prima di portare l’auto fa parte della prenotazione e viene comunque inviato. <strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b)."
         ]
       },
       {
@@ -1660,7 +1667,7 @@
     "titulo": "Promemoria della richiesta {numero}",
     "tituloSemNumero": "Promemoria della richiesta",
     "pergunta": "Vuoi fermare i promemoria via e-mail per questa richiesta?",
-    "explica": "Continuerai a ricevere l’avviso quando arriva un nuovo preventivo e la conferma quando prenoti l’orario.",
+    "explica": "Continuerai a ricevere l’avviso quando arriva un nuovo preventivo, la conferma quando prenoti l’orario e l’avviso il giorno prima di portare l’auto.",
     "pausar": "Ferma i promemoria",
     "pausado": "Fatto: non invieremo altri promemoria per questa richiesta.",
     "ligado": "I promemoria di questa richiesta sono di nuovo attivi.",

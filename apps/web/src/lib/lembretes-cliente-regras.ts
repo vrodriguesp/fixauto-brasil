@@ -8,9 +8,9 @@ import { orcamentoVencido } from './orcamento-validade';
 //  - nao_decidiu: D+1 do 1.o orcamento sem nenhuma acao do motorista;
 //  - vencem: ~48 h antes de o 1.o orcamento pendente deixar de poder ser aceito (validade ou ultimo horario);
 //  - venceram: nenhum orcamento pendente pode mais ser aceito, pedido ainda aberto;
-//  - checkin: vespera do check-in agendado;
+//  - checkin: vespera do check-in agendado - aviso da MARCACAO: a pausa pelo link NAO o cala (dono 23/11);
 //  - para quando o motorista age (aceita, recusa todos, pede outra data, escreve a oficina), o pedido fecha
-//    ou o motorista pausa pelo link; janela 09:00-20:00 no fuso do pedido (Tallinn); fora dela SEGURA (a
+//    ou o motorista pausa pelo link (a pausa so vale para nao_decidiu/vencem/venceram e o SMS); janela 09:00-20:00 no fuso do pedido (Tallinn); fora dela SEGURA (a
 //    passada seguinte dentro da janela manda), nunca descarta;
 //  - no maximo UM SMS de lembrete por pedido (no "vencem", so quem marcou "quero SMS" e ainda nao abriu).
 
@@ -135,16 +135,16 @@ export function decidirPedido(p: {
   return nada('nada');
 }
 
-/** Vespera do check-in: o dia do check-in (fuso da oficina) e amanha; agendado num dia anterior a hoje. */
+/** Vespera do check-in: o dia do check-in (fuso da oficina) e amanha; agendado num dia anterior a hoje.
+ *  Faz parte da marcacao: vai mesmo com os lembretes pausados (dono 23/11). */
 export function decidirCheckin(p: {
   agora: number; desde: number; status: string | null; dataInicio: string; criadoEm: string; pais: string | null;
-  pausado: boolean; statusPedido: string | null; registros: RegistroLembrete[];
+  statusPedido: string | null; registros: RegistroLembrete[];
 }): { enviar: boolean; motivo: string } {
   if (tiposResolvidos(p.registros).has('checkin')) return { enviar: false, motivo: 'ja_enviado' };
   if (p.status !== 'agendado') return { enviar: false, motivo: 'agenda_inativa' };
   if (['cancelada', 'expirada', 'concluida', 'no_show'].includes(String(p.statusPedido))) return { enviar: false, motivo: 'pedido_fechado' };
   if (!(Date.parse(p.criadoEm) >= p.desde)) return { enviar: false, motivo: 'antigo' };
-  if (p.pausado) return { enviar: false, motivo: 'pausado' };
   const hoje = diaNaOficina(new Date(p.agora), p.pais);
   if (diaNaOficina(p.dataInicio, p.pais) !== somarDia(hoje)) return { enviar: false, motivo: 'nao_e_vespera' };
   // marcado hoje para amanha: o e-mail da marcacao acabou de chegar
@@ -157,7 +157,8 @@ export function decidirSmsLembrete(p: {
   smsPedido: boolean | null; telefone: string | null; smsAtivo: boolean; temApp: boolean; abriu: boolean; jaTemSms: boolean;
 }): { enviar: boolean; motivo: string } {
   if (p.jaTemSms) return { enviar: false, motivo: 'ja_enviado' };
-  // so quem marcou "quero SMS" NESTE pedido (086); pedido antigo sem a caixa (null) nao recebe lembrete por SMS
+  // so quem deixou marcado "quero SMS" NESTE pedido (086; coluna NOT NULL DEFAULT true, a caixa vem marcada no formulario).
+  // Qualquer valor que nao seja true (por seguranca, tambem null) = sem SMS de lembrete.
   if (p.smsPedido !== true) return { enviar: false, motivo: 'sem_sms_no_pedido' };
   if (!p.telefone || !p.telefone.replace(/\D/g, '')) return { enviar: false, motivo: 'sem_telefone' };
   if (!p.smsAtivo) return { enviar: false, motivo: 'sms_desligado' };

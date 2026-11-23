@@ -185,7 +185,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 22, 2026",
+    "updatedDate": "November 23, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -322,6 +322,13 @@
           "<strong>Who sees it:</strong> only the Repair Shops that received that request. This data is optional and linked to the request.",
           "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)).",
           "<strong>Retention and your choices:</strong> you can change or delete your preferred time on the request page at any time; the reason for declining is kept with the declined quote for the same period as the other request data (section 6)."
+        ]
+      },
+      {
+        "titulo": "3.14 Reminders about your request",
+        "subsecao": true,
+        "itens": [
+          "While your request is open, we send a few e-mail reminders about it and the quotes you received (for example, when a quote is about to expire) and, if you chose to receive SMS, at most one SMS. Each e-mail has a link to stop these reminders with one click. The notice on the day before you take your car in is part of the booking and is still sent. <strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b))."
         ]
       },
       {
@@ -1660,7 +1667,7 @@
     "titulo": "Reminders for request {numero}",
     "tituloSemNumero": "Request reminders",
     "pergunta": "Do you want to stop the e-mail reminders for this request?",
-    "explica": "You will still get the notice when a new quote arrives and the confirmation when you book a time.",
+    "explica": "You will still get the notice when a new quote arrives, the confirmation when you book a time and the notice the day before you take your car in.",
     "pausar": "Stop reminders",
     "pausado": "Done: we won’t send more reminders for this request.",
     "ligado": "Reminders for this request are on again.",
