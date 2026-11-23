@@ -108,8 +108,13 @@ const orcamentoNoBanco = async (solId, validade, slots) => {
   return o.id;
 };
 // mini calendario: vai ate o mes do dia e toca nele
+// (23/11: anda para tras tambem - a semana do teste pode cruzar o fim do mes, ex. SAB em dezembro e SEG em novembro)
 const irAoDia = async (p, pre, ymd) => {
-  for (let i = 0; i < 4 && !(await p.getByTestId(`${pre}-dia-${ymd}`).count()); i++) { await p.getByTestId(`${pre}-mes-seguinte`).click(); await sleep(150); }
+  for (let i = 0; i < 4 && !(await p.getByTestId(`${pre}-dia-${ymd}`).count()); i++) {
+    const tras = await p.getByTestId(`${pre}-mes-anterior`).isEnabled().catch(() => false);
+    const mesTela = await p.locator(`[data-testid^="${pre}-dia-"]`).first().getAttribute('data-testid').then((t) => String(t).slice(-10, -3)).catch(() => '');
+    await p.getByTestId(tras && mesTela > ymd.slice(0, 7) ? `${pre}-mes-anterior` : `${pre}-mes-seguinte`).click(); await sleep(150);
+  }
 };
 const escolher = async (p, pre, ymd, faixa) => {
   await p.getByTestId(`${pre}-adicionar`).click(); await sleep(300);
@@ -449,12 +454,15 @@ try {
   const o2 = await orcamentoNoBanco(sol2.id, SEG2, [{ data_checkin: ONTEM, turno: 'manha', hora_inicio: '08:00', hora_fim: '10:00' }]);
   await pc.goto(`${SITE}/ee/et/cliente/orcamentos/${sol2.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
   ok('N: datas vencidas -> "pedir novas datas"', await visivel(pc, 'pedir-novas-datas'));
+  // folha de 114 (22/11): modo "data" -> dia -> janelas de 2 h da oficina (chip-<dia>-<HHMM>)
   await pc.getByTestId('abrir-pedir-datas').click(); await sleep(500);
-  const chipT = await texto(pc, `chip-${TER}-tarde`);
-  const chipM = await texto(pc, `chip-${TER}-manha`);
-  ok('N: cada turno mostra a faixa da oficina (almoco pulado)', chipT.includes('13:00–15:00') && chipM.includes('08:00–10:00'), `${chipM} | ${chipT}`);
-  ok('N: sabado fechado nao aparece', (await pc.getByTestId(`chip-${SAB}-manha`).count()) === 0);
-  await pc.getByTestId(`chip-${TER}-tarde`).click(); await pc.getByTestId(`chip-${TER}-manha`).click();
+  await pc.getByTestId('modo-data').click(); await sleep(200);
+  ok('N: sabado fechado nao aparece', (await pc.getByTestId(`dia-${SAB}`).count()) === 0);
+  await pc.getByTestId(`dia-${TER}`).click(); await sleep(300);
+  const chipT = await texto(pc, `chip-${TER}-1300`);
+  const chipM = await texto(pc, `chip-${TER}-0800`);
+  ok('N: cada janela mostra a faixa da oficina (almoco pulado)', chipT.includes('13:00–15:00') && chipM.includes('08:00–10:00'), `${chipM} | ${chipT}`);
+  await pc.getByTestId(`chip-${TER}-0800`).click(); await pc.getByTestId(`chip-${TER}-1300`).click();
   await pc.getByTestId('enviar-pedir-datas').click(); await sleep(2500);
   await p.goto(`${SITE}/ee/et/oficina/pedidos/${sol2.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
   ok('N: oficina ve as sugestoes com a faixa que vai valer', (await texto(p, 'sugestao-0-texto')).includes('08:00–10:00') && (await texto(p, 'sugestao-1-texto')).includes('13:00–15:00'), `${await texto(p, 'sugestao-0-texto')} | ${await texto(p, 'sugestao-1-texto')}`);
