@@ -171,6 +171,17 @@ export async function PATCH(req: NextRequest) {
     // So o dono da oficina pode editar/resetar senha/mudar cargo de um
     // funcionario dela - sem isso, o id (por si so) bastava pra
     // sequestrar a conta de qualquer funcionario de qualquer oficina.
+    // Excecao: o proprio funcionario, depois de definir a senha no 1.o login
+    // (/definir-senha), so pode marcar primeiro_login=false no seu registro.
+    // Sem isso a marca nunca saia e a home o mandava de volta a definir-senha.
+    const soFimPrimeiroLogin = func.profile_id === callerId
+      && Object.keys(funcUpdates).length === 1 && funcUpdates.primeiro_login === false
+      && nome === undefined && telefone === undefined && !resetSenha && !concederAcesso;
+    if (soFimPrimeiroLogin) {
+      const { error } = await supabaseAdmin.from('funcionarios').update({ primeiro_login: false }).eq('id', id);
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ ok: true });
+    }
     if ((func as any).oficina?.profile_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
