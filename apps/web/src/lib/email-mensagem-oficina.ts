@@ -81,8 +81,14 @@ export async function emailMensagemDaOficina(p: { mensagemId: string; remetenteI
     const link = sol!.cliente_id === p.destinoId
       ? await linkPedido(sol!.numero, p.destinoId, sol!.id, consultaChatOficina(msg.oficina_id))
       : linkPagadorMensagem(site(), sol!.numero, msg.oficina_id, idioma);
-    const { assunto, html } = montarEmailMensagemOficina({ idioma: perfil!.idioma, nome: perfil!.nome, oficina: of?.nome_fantasia, numero: sol!.numero, link });
-    const ok = await enviarEmail({ para: String(perfil!.email).trim(), assunto, html });
+    let ok = false;
+    try {
+      const { assunto, html } = montarEmailMensagemOficina({ idioma: perfil!.idioma, nome: perfil!.nome, oficina: of?.nome_fantasia, numero: sol!.numero, link });
+      ok = await enviarEmail({ para: String(perfil!.email).trim(), assunto, html });
+    } catch (e) {
+      // envio que lancou (rede, pasta de teste...) tambem solta a trava
+      console.error('[email-mensagem] envio lancou:', (e as Error)?.message);
+    }
     if (!ok) {
       await soltarEnvio(chave, reservado);
       console.error('[email-mensagem] envio falhou', { mensagemId: p.mensagemId });
