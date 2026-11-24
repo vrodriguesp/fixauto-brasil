@@ -43,9 +43,11 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
   const idioma = req.nextUrl.searchParams.get('l') || ((sol as any).cliente?.idioma ?? 'et');
   if (k && TOKEN_ACESSO.test(k)) return NextResponse.redirect(`${urlNoIdioma(idioma, '/ver-pedido')}?k=${k}${req.nextUrl.searchParams.get('c') ? '&c=1' : ''}`, 302);
   // ?c=1: botao "conversar com a oficina" do e-mail de agendamento -> chat com a oficina escolhida
+  // &g=1: e-mail "a oficina te escreveu" (24/11) a quem paga o reparo (acidente) -> o chat DELE com a oficina aceita
   if (req.nextUrl.searchParams.get('c')) {
     const { data: orc } = await supabaseAdmin.from('orcamentos').select('oficina_id').eq('solicitacao_id', sol.id).eq('status', 'aceito').maybeSingle();
-    return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${orc?.oficina_id ? `?oficina=${orc.oficina_id}` : ''}`), 302);
+    const pagador = req.nextUrl.searchParams.get('g') === '1' && orc?.oficina_id ? '&pagador=1' : '';
+    return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${orc?.oficina_id ? `?oficina=${orc.oficina_id}${pagador}` : ''}`), 302);
   }
   return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/orcamentos/${sol.id}`), 302);
 }

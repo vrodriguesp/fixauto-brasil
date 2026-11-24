@@ -5,11 +5,14 @@ import { dentroDoLimite } from '@/lib/rate-limit';
 import { notifNovaMensagem } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { emailMensagemDaOficina } from '@/lib/email-mensagem-oficina';
 
-// Aviso de "nova mensagem" para o outro lado da conversa (usado pelo app; o
-// site grava o aviso direto). So quem enviou a mensagem pode pedir o aviso
+// Aviso de "nova mensagem" para o outro lado da conversa (chamado pelo chat do
+// app e do site depois de gravar a mensagem). So quem enviou a mensagem pode pedir o aviso
 // dela, e o destinatario sai da propria conversa - nunca do corpo:
 // oficina -> cliente (ou quem paga o reparo); cliente/quem paga -> oficina.
+// Oficina -> motorista tambem manda e-mail (dono 24/11; lib/email-mensagem-oficina.ts): sem o texto,
+// no maximo 1 por conversa a cada 3 h; erro no e-mail nunca chega a quem escreveu.
 export async function POST(req: NextRequest) {
   const userId = await getSessionUserId(req);
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
@@ -48,5 +51,7 @@ export async function POST(req: NextRequest) {
       textos: emTodasAsLinguas((l) => { const x = notifNovaMensagem(l); return audio ? { titulo: x.tituloAudio, mensagem: x.mensagemAudio } : { titulo: x.titulo, mensagem: String(msg.texto || '').slice(0, 100) }; }),
     },
   });
+  // nunca lanca (erro vai ao log); o sino acima ja foi gravado
+  if (daOficina) await emailMensagemDaOficina({ mensagemId, remetenteId: userId, daOficina, destinoId: destino });
   return NextResponse.json({ ok: true });
 }

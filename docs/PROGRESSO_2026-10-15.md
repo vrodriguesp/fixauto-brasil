@@ -1829,3 +1829,14 @@ Branch `local-gps-pc` (worktree `Documentos/_teste_local/site-gps`, base 4b7b5cc
 - Testes no build de produção local (:3108): tsc 0; build OK; checar-traducoes completo; teste-lembretes-clientes 137/0; e2e lembretes-clientes 54/0; datas-cotacao 149/0; conta-teste-sem-envio 14/0; checkin-v2 122/0 (teste atualizado: calendário para trás + folha da 114 — `c3b3ca3c`); mig 115 2× no Docker.
 - Commits: `8a084df6`, `c3b3ca3c` (+ este). Plano: `Documentos/Analises/Lembretes_2026-11-23/Pronto_para_deploy.md`; prints em `telas/`. Primeira hora em produção: 0 e-mails/SMS (`lembretes_cliente_desde`).
 - O `_teste_local/site` foi devolvido pelo coordenador (23/11).
+
+## 24/11 — E-mail ao motorista quando a oficina escreve no chat (branch `email-mensagem-oficina`, mig 116, NÃO deployado)
+
+- Dono 24/11: a maioria dos motoristas não tem o app; quando a oficina escrevia, só aparecia o sino do site. Agora a mensagem da OFICINA (dona ou funcionário ativo) ao motorista (`mensagens.pagador_id` ou `solicitacoes.cliente_id`) também manda e-mail. Motorista → oficina: igual.
+- Um caminho só: `api/avisar-mensagem` (o chat do site e o do app já chamam depois de gravar a mensagem; só o remetente pede, o destino sai da conversa) → `lib/email-mensagem-oficina.ts`. Nunca lança: erro vai ao log, chat e sino seguem iguais.
+- E-mail no idioma de quem recebe (6 idiomas dos e-mails; lv/lt/fi/vazio → en): assunto "<oficina> kirjutas sulle päringu <n> kohta"; nome da oficina, número do pedido e um botão. SEM o texto da mensagem (áudio = o mesmo e-mail), sem preços, "grátis" ou promessas. Identidade da marca (`aplicarIdentidade`).
+- Link: dono do pedido → `bipfix.com/r/<n>?k=<token>&c=1` (link de acesso de uso único, abre o chat do pedido); quem paga o reparo (acidente) → `/r/<n>?c=1&g=1&l=<idioma>` (novo `g=1` em `app/r/[numero]`: chat dele com a oficina aceita, `pagador=1`).
+- Não manda: pedido `cancelada/concluida/expirada/no_show`, sem e-mail ou conta excluída (`.invalid`), perfil desativado, conta de teste (`perfilDeContaTeste`).
+- Anti-spam: no máximo 1 e-mail por conversa (pedido + oficina + quem recebe) a cada 3 h (`HORAS_ENTRE_EMAILS_MENSAGEM`). Mig 116 `emails_mensagem_cliente` (PK das 3 colunas + `ultimo_em`, RLS sem acesso público): INSERT na 1.ª vez, senão UPDATE condicional `ultimo_em < agora - 3 h` — duas mensagens juntas nunca mandam 2 e-mails. Envio que falhou solta a trava.
+- Testes: `scripts/teste-email-mensagem-oficina.ts` 134/0 (decisão, trava com relógio falso, textos nos 6 idiomas, HTML escapado, link curto, marca); `teste-lembretes-clientes` 137/0, `teste-plural-dias` 136/136, `teste-sms-regras` OK; tsc só com os 2 erros antigos do ambiente (`sharp`, `web-push` não instalados nesta máquina).
+- PENDENTE: aplicar a 116 no Docker local e e2e com banco (EMAIL_PASTA_TESTE) — oficina escreve 2× (1 e-mail), motorista escreve (0), pedido cancelado (0); deploy só com OK do dono (116 antes do build).
