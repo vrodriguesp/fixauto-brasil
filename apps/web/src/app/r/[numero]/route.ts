@@ -5,6 +5,8 @@ import { TOKEN_ACESSO } from '@/lib/link-acesso';
 import { TOKEN_LEMBRETE, pausaPorToken } from '@/lib/lembrar-clientes';
 import { limitarPorIp } from '@/lib/rate-limit';
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // Link curto do SMS (dono 04/11): bipfix.com/r/100133 -> pagina dos orcamentos
 // do pedido no idioma do cliente. Fica fora do middleware de idioma (matcher).
 // So redireciona: a pagina de destino exige o login do proprio cliente.
@@ -41,13 +43,22 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
   if (oficina) return NextResponse.redirect(`${urlNoIdioma(oficina, `/oficina/enviar-orcamento/${sol.id}`)}?n=${numero}`, 302);
   // ?l=<idioma>: e-mail de orcamento para quem nao e o dono do pedido (outro motorista do acidente)
   const idioma = req.nextUrl.searchParams.get('l') || ((sol as any).cliente?.idioma ?? 'et');
-  if (k && TOKEN_ACESSO.test(k)) return NextResponse.redirect(`${urlNoIdioma(idioma, '/ver-pedido')}?k=${k}${req.nextUrl.searchParams.get('c') ? '&c=1' : ''}`, 302);
+  // &of=<oficina>: e-mail "a oficina te escreveu" (24/11) -> o chat com a oficina que escreveu (so um uuid; a pagina
+  // do chat exige o login e a RLS so mostra a conversa de quem participa). Links antigos sem "of": iguais a antes.
+  const ofParam = req.nextUrl.searchParams.get('of') || '';
+  const of = UUID.test(ofParam) ? ofParam.toLowerCase() : '';
+  if (k && TOKEN_ACESSO.test(k)) return NextResponse.redirect(`${urlNoIdioma(idioma, '/ver-pedido')}?k=${k}${req.nextUrl.searchParams.get('c') ? `&c=1${of ? `&of=${of}` : ''}` : ''}`, 302);
   // ?c=1: botao "conversar com a oficina" do e-mail de agendamento -> chat com a oficina escolhida
-  // &g=1: e-mail "a oficina te escreveu" (24/11) a quem paga o reparo (acidente) -> o chat DELE com a oficina aceita
+  // &g=1: e-mail "a oficina te escreveu" (24/11) a quem paga o reparo (acidente) -> o chat DELE com a oficina
   if (req.nextUrl.searchParams.get('c')) {
-    const { data: orc } = await supabaseAdmin.from('orcamentos').select('oficina_id').eq('solicitacao_id', sol.id).eq('status', 'aceito').maybeSingle();
-    const pagador = req.nextUrl.searchParams.get('g') === '1' && orc?.oficina_id ? '&pagador=1' : '';
-    return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${orc?.oficina_id ? `?oficina=${orc.oficina_id}${pagador}` : ''}`), 302);
+    let oficinaChat = of;
+    if (!oficinaChat) {
+      // limit(1): dois orcamentos aceitos (dado estranho) nao derrubam o maybeSingle
+      const { data: orc } = await supabaseAdmin.from('orcamentos').select('oficina_id').eq('solicitacao_id', sol.id).eq('status', 'aceito').limit(1).maybeSingle();
+      oficinaChat = orc?.oficina_id || '';
+    }
+    const pagador = req.nextUrl.searchParams.get('g') === '1' && oficinaChat ? '&pagador=1' : '';
+    return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${oficinaChat ? `?oficina=${oficinaChat}${pagador}` : ''}`), 302);
   }
   return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/orcamentos/${sol.id}`), 302);
 }

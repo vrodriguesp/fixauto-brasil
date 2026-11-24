@@ -8,6 +8,9 @@ import { TEXTOS_EMAIL_MENSAGEM } from './email-mensagem-oficina-textos';
 /** no maximo 1 e-mail por conversa (pedido + oficina + quem recebe) a cada X horas (trava na tabela da 116) */
 export const HORAS_ENTRE_EMAILS_MENSAGEM = 3;
 
+/** a rota avisar-mensagem espera o e-mail no maximo isto (o envio segue sozinho depois, se ainda estiver em curso) */
+export const PRAZO_EMAIL_MENSAGEM_MS = 8000;
+
 /** pedido fechado: nada de e-mail (a conversa pode continuar no site, mas ninguem e chamado por e-mail) */
 export const STATUS_PEDIDO_FECHADO = ['cancelada', 'concluida', 'expirada', 'no_show'] as const;
 
@@ -55,8 +58,29 @@ export function podeMandarDeNovo(ultimoEm: string | null | undefined, agora: num
   return !Number.isFinite(t) || t < Date.parse(limiteDaTrava(agora));
 }
 
+/** consulta do link de acesso do dono do pedido: abre o chat com a oficina que escreveu (app/r -> ver-pedido -> chat) */
+export function consultaChatOficina(oficinaId: string): string {
+  return `c=1&of=${encodeURIComponent(oficinaId)}`;
+}
+
+/** link de quem paga o reparo (acidente; sem link de acesso): bipfix.com/r/<n>?c=1&g=1&of=<oficina>&l=<idioma> */
+export function linkPagadorMensagem(site: string, numero: string | number, oficinaId: string, idioma: string): string {
+  return `${site}/r/${encodeURIComponent(String(numero))}?c=1&g=1&of=${encodeURIComponent(oficinaId)}&l=${encodeURIComponent(idioma)}`;
+}
+
+/** nao deixa um envio travado (Resend sem resposta) segurar a resposta da rota: espera no maximo `ms` */
+export async function comPrazo<T>(promessa: Promise<T>, ms: number): Promise<T | 'prazo'> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const prazo = new Promise<'prazo'>((resolve) => { timer = setTimeout(() => resolve('prazo'), ms); });
+  try {
+    return await Promise.race([promessa, prazo]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 // nome da oficina no assunto: texto puro, uma linha, curto
-const nomeLimpo = (s: string | null | undefined) => String(s || '').replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, 80) || 'BipFix';
+const nomeLimpo = (s: string | null | undefined) => String(s || '').replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, 80).trim() || 'BipFix';
 
 export function montarEmailMensagemOficina(p: {
   idioma: string | null | undefined; nome: string | null | undefined; oficina: string | null | undefined;

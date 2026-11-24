@@ -28,7 +28,8 @@ export default async function VerPedidoPage({ params, searchParams }: {
   return (
     <NextIntlClientProvider locale={locale} messages={messages as any}>
       {/* o=1 / d=1 (link da oficina) so escolhem o esqueleto inicial; o modo vem da API */}
-      <VerPedido token={typeof busca.k === 'string' ? busca.k : ''} chat={busca.c === '1'} oficina={busca.o === '1'} dispensar={busca.d === '1'} />
+      {/* of=<oficina>: e-mail "a oficina te escreveu" (24/11) -> abre o chat com essa oficina */}
+      <VerPedido token={typeof busca.k === 'string' ? busca.k : ''} chat={busca.c === '1'} chatOficina={typeof busca.of === 'string' ? busca.of : ''} oficina={busca.o === '1'} dispensar={busca.d === '1'} />
     </NextIntlClientProvider>
   );
 }

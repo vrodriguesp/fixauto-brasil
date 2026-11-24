@@ -11,6 +11,7 @@ import path from 'node:path';
 import {
   decidirEmailMensagem, podeMandarDeNovo, limiteDaTrava, montarEmailMensagemOficina,
   HORAS_ENTRE_EMAILS_MENSAGEM, STATUS_PEDIDO_FECHADO, type DadosDecisao,
+  consultaChatOficina, linkPagadorMensagem, comPrazo, PRAZO_EMAIL_MENSAGEM_MS,
 } from '../src/lib/email-mensagem-oficina-regras';
 import { TEXTOS_EMAIL_MENSAGEM } from '../src/lib/email-mensagem-oficina-textos';
 import { aplicarIdentidade } from '../src/lib/email-marca';
@@ -115,5 +116,36 @@ confere('pt-BR -> pt', montarEmailMensagemOficina({ idioma: 'pt-BR', nome: '', o
   confere('oficina sem nome -> BipFix', sem.assunto, 'BipFix wrote to you about request 4');
 }
 
-console.log(`\n${oks} ok, ${falhas} falha(s)${pasta ? ` - HTML em ${pasta}` : ''}`);
-if (falhas) process.exit(1);
+// ---- links (Fable #3/#8) ----
+{
+  const OF = '0f1e2d3c-4b5a-4968-8776-655443322110';
+  confere('consulta do dono leva c=1 e a oficina', consultaChatOficina(OF), `c=1&of=${OF}`);
+  const pag = linkPagadorMensagem('https://bipfix.com', 100150, OF, 'et');
+  confere('link de quem paga', pag, `https://bipfix.com/r/100150?c=1&g=1&of=${OF}&l=et`);
+  const SLUG_PT = /\/(cliente|oficina|mensagens|orcamentos|pedido|solicitac)/i;
+  for (const l of ['et', 'ru', 'en', 'it', 'pt', 'pt-PT']) {
+    const x = linkPagadorMensagem('https://bipfix.com', 100150, OF, l);
+    confere(`link de quem paga (${l}) sem /cliente/ nem nome de pagina em portugues`, SLUG_PT.test(x.replace(/\?.*$/, '')) || x.includes('/cliente/'), false);
+    confere(`link de quem paga (${l}) e o link curto /r/<n>`, x.startsWith('https://bipfix.com/r/100150?'), true);
+  }
+  const html = montarEmailMensagemOficina({ idioma: 'en', nome: 'A', oficina: 'X', numero: 100150, link: pag }).html;
+  confere('html leva o of= da oficina (escapado)', html.includes(`&amp;of=${OF}`), true);
+}
+// ---- nome da oficina cortado em 80 ----
+{
+  const longo = 'Oficina '.repeat(20); // 160 caracteres
+  const r = montarEmailMensagemOficina({ idioma: 'en', nome: '', oficina: longo, numero: 5, link: LINK });
+  const nomeNoAssunto = r.assunto.replace(/ wrote to you about request 5$/, '');
+  confere('nome da oficina no assunto com no maximo 80', nomeNoAssunto.length <= 80, true);
+  confere('nome da oficina cortado = 80 primeiros (sem espaco no fim)', nomeNoAssunto, longo.slice(0, 80).trim());
+}
+// ---- prazo do envio (Fable #5) ----
+void (async () => {
+  const lento = new Promise<string>((r) => setTimeout(() => r('fim'), 500));
+  confere('envio lento: devolve "prazo" no tempo', await comPrazo(lento, 20), 'prazo');
+  confere('envio rapido: devolve o resultado', await comPrazo(Promise.resolve('ok'), 1000), 'ok');
+  confere('prazo da rota = 8 s', PRAZO_EMAIL_MENSAGEM_MS, 8000);
+})().then(() => {
+  console.log(`\n${oks} ok, ${falhas} falha(s)${pasta ? ` - HTML em ${pasta}` : ''}`);
+  if (falhas) process.exit(1);
+});

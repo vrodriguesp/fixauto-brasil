@@ -24,7 +24,7 @@ type DadosOficina = {
   aberto: boolean; jaOrcou: boolean; dispensa: { motivo: string } | null;
 };
 
-export default function VerPedido({ token, chat, oficina = false, dispensar = false }: { token: string; chat: boolean; oficina?: boolean; dispensar?: boolean }) {
+export default function VerPedido({ token, chat, chatOficina = '', oficina = false, dispensar = false }: { token: string; chat: boolean; chatOficina?: string; oficina?: boolean; dispensar?: boolean }) {
   const t = useTranslations('verPedido');
   const te = useTranslations('erros');
   const locale = useLocale();
@@ -43,7 +43,9 @@ export default function VerPedido({ token, chat, oficina = false, dispensar = fa
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: token, acao, idioma: locale, ...extra }),
   }).then(async (r) => ({ r, d: await r.json().catch(() => ({})) }), () => ({ r: null as Response | null, d: {} as any }));
 
-  const destino = (id: string) => chat ? `/cliente/mensagens/${id}` : `/cliente/orcamentos/${id}`;
+  // chatOficina (of=<uuid>, e-mail "a oficina te escreveu" 24/11): o chat com a oficina que escreveu; sem ele, igual a antes
+  const ofChat = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(chatOficina) ? chatOficina : '';
+  const destino = (id: string) => chat ? `/cliente/mensagens/${id}${ofChat ? `?oficina=${ofChat}` : ''}` : `/cliente/orcamentos/${id}`;
 
   useEffect(() => {
     if (iniciado.current) return;

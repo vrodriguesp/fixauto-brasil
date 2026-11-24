@@ -6,6 +6,7 @@ import { notifNovaMensagem } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 import { emailMensagemDaOficina } from '@/lib/email-mensagem-oficina';
+import { comPrazo, PRAZO_EMAIL_MENSAGEM_MS } from '@/lib/email-mensagem-oficina-regras';
 
 // Aviso de "nova mensagem" para o outro lado da conversa (chamado pelo chat do
 // app e do site depois de gravar a mensagem). So quem enviou a mensagem pode pedir o aviso
@@ -51,7 +52,11 @@ export async function POST(req: NextRequest) {
       textos: emTodasAsLinguas((l) => { const x = notifNovaMensagem(l); return audio ? { titulo: x.tituloAudio, mensagem: x.mensagemAudio } : { titulo: x.titulo, mensagem: String(msg.texto || '').slice(0, 100) }; }),
     },
   });
-  // nunca lanca (erro vai ao log); o sino acima ja foi gravado
-  if (daOficina) await emailMensagemDaOficina({ mensagemId, remetenteId: userId, daOficina, destinoId: destino });
+  // nunca lanca (erro vai ao log); o sino acima ja foi gravado. Next 14.2 nao tem after(): espera no maximo 8 s
+  // (Resend travado nao segura a resposta; o envio continua em segundo plano no servidor Node)
+  if (daOficina) {
+    const r = await comPrazo(emailMensagemDaOficina({ mensagemId, remetenteId: userId, daOficina, destinoId: destino }), PRAZO_EMAIL_MENSAGEM_MS);
+    if (r === 'prazo') console.warn('[email-mensagem] passou do prazo, segue em segundo plano', { mensagemId });
+  }
   return NextResponse.json({ ok: true });
 }

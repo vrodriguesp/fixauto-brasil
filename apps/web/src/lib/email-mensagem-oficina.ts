@@ -3,7 +3,9 @@ import { enviarEmail } from './email';
 import { linkPedido } from './link-acesso';
 import { perfilDeContaTeste } from './conta-teste-envio';
 import { SITE_URL, idiomaDoSite } from './site-url';
-import { decidirEmailMensagem, limiteDaTrava, montarEmailMensagemOficina, type MotivoSemEmail } from './email-mensagem-oficina-regras';
+import {
+  decidirEmailMensagem, limiteDaTrava, montarEmailMensagemOficina, consultaChatOficina, linkPagadorMensagem, type MotivoSemEmail,
+} from './email-mensagem-oficina-regras';
 
 // E-mail ao MOTORISTA quando a OFICINA escreve no chat do pedido (dono 24/11): a maioria dos motoristas nao tem
 // o app, entao so via o sino do site e nunca sabia que a oficina escreveu. Chamado por api/avisar-mensagem (que o
@@ -75,10 +77,10 @@ export async function emailMensagemDaOficina(p: { mensagemId: string; remetenteI
 
     const idioma = idiomaDoSite(perfil!.idioma);
     // dono do pedido: link de acesso de uso unico (entra na conta com um toque, para quem nao tem senha) que abre
-    // o chat do pedido; quem paga o reparo (acidente): link curto com &g=1 -> chat dele com a oficina aceita
+    // o chat com a oficina que escreveu (of=); quem paga o reparo (acidente): link curto com &g=1 -> o chat dele
     const link = sol!.cliente_id === p.destinoId
-      ? await linkPedido(sol!.numero, p.destinoId, sol!.id, 'c=1')
-      : `${site()}/r/${sol!.numero}?c=1&g=1&l=${encodeURIComponent(idioma)}`;
+      ? await linkPedido(sol!.numero, p.destinoId, sol!.id, consultaChatOficina(msg.oficina_id))
+      : linkPagadorMensagem(site(), sol!.numero, msg.oficina_id, idioma);
     const { assunto, html } = montarEmailMensagemOficina({ idioma: perfil!.idioma, nome: perfil!.nome, oficina: of?.nome_fantasia, numero: sol!.numero, link });
     const ok = await enviarEmail({ para: String(perfil!.email).trim(), assunto, html });
     if (!ok) {
