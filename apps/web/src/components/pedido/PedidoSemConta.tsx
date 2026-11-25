@@ -212,8 +212,13 @@ export default function PedidoSemConta({ servicoInicial = '', tema = '' }: { ser
       const r = JSON.parse(lerRascunho() || 'null');
       if (r && Date.now() - (r.em || 0) < 24 * 3600 * 1000) {
         tinha = true;
-        // rascunho sem tipo (so abriu o formulario antes) nao tira a pre-selecao do link; com tipo, vale o rascunho
-        const manterPre = !!servicoInicial && !r.tipo;
+        // rascunho sem nada da pessoa (so abriu o formulario, tocou num cartao ou chegou por OUTRO link de anuncio
+        // e saiu) nao tira a pre-selecao do link; com texto, item marcado, foto ou passo adiante, vale o rascunho
+        // (revisao 25/11: o proprio link guarda um rascunho com tipo, e o 2o anuncio mostrava o tipo do 1o)
+        const temConteudo = !!(String(r.descricao || '').trim() || (Array.isArray(r.servicos) && r.servicos.length) || r.qtdFotos || r.pendente
+          || (ORDEM.includes(r.etapa) && ORDEM.indexOf(r.etapa) > ORDEM.indexOf('lista')));
+        const manterPre = !!servicoInicial && !temConteudo;
+        // funil: como o 'abriu', um rascunho ja com tipo (visita anterior, ja contada) nao conta de novo
         if (r.tipo) usouPre = false;
         if (!manterPre) setTipo(r.tipo || '');
         setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setFotosPuladas(!!r.fotosPuladas);

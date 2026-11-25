@@ -263,6 +263,27 @@ try {
     await ctx.close();
   }
 
+  // ---------- rascunho SEM nada da pessoa nao vence o link (revisao 25/11) ----------
+  // 1o anuncio (mecanica+ulevaatus) aberto e abandonado -> 2o anuncio (revisao+hooldus) mostra revisao + dica hooldus;
+  // so tocou num cartao (eletrica) e saiu -> o link vence; depois de escrever, o rascunho volta a vencer.
+  {
+    const l = 'et'; const nome = 'rascunho vazio + link';
+    const { ctx, p } = await contexto(l, 390, 844);
+    await p.goto(`${SITE}${CAMINHO[l]}?servico=mecanica&tema=ulevaatus`, { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
+    await p.goto(`${SITE}${CAMINHO[l]}?servico=revisao&tema=hooldus`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+    ok(`${nome}: 2o anuncio vence o rascunho do 1o (revisao + dica hooldus)`, (await etapa(p)) === 'detalhe' && (await p.getByTestId('detalhe-tipo').innerText()).includes('🔧') && (await p.getByTestId('tema-dica').innerText()) === M.et.pedidoSemConta.temaHooldus, await p.getByTestId('detalhe-tipo').innerText());
+    await p.goto(SITE + CAMINHO[l], { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
+    ok(`${nome}: sem parametro, o rascunho do link (revisao, passo 2) continua valendo`, (await etapa(p)) === 'detalhe' && (await p.getByTestId('detalhe-tipo').innerText()).includes('🔧'), await etapa(p));
+    await p.getByTestId('passo-detalhe').getByRole('button', { name: M.et.clienteNovaSolicitacao.back }).click(); await p.getByTestId('passo-servico').waitFor();
+    await p.getByTestId('passo-servico').locator('button').nth(4).click(); await p.getByTestId('passo-detalhe').waitFor(); await p.waitForTimeout(400);
+    await p.goto(`${SITE}${CAMINHO[l]}?servico=pneu`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+    ok(`${nome}: so tocou num cartao (eletrica) e saiu -> link (pneu) vence`, (await etapa(p)) === 'detalhe' && (await p.getByTestId('detalhe-tipo').innerText()).includes('🛞'), await p.getByTestId('detalhe-tipo').innerText());
+    await p.getByTestId('chip-servico').first().click(); await p.waitForTimeout(400);
+    await p.goto(`${SITE}${CAMINHO[l]}?servico=revisao&tema=hooldus`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+    ok(`${nome}: com um chip marcado, o rascunho (pneu) vence o link`, (await etapa(p)) === 'detalhe' && (await p.getByTestId('detalhe-tipo').innerText()).includes('🛞') && (await p.getByTestId('chip-servico').locator('[aria-pressed=true], [aria-checked=true]').count()) >= 0, await p.getByTestId('detalhe-tipo').innerText());
+    await ctx.close();
+  }
+
   // ---------- (d) servico invalido = sem parametro ----------
   for (const q of ['servico=xyz', 'servico=', 'servico=REVISAO', 'servico=xyz&tema=nada', 'servico=constructor&tema=constructor', 'servico=toString']) {
     const l = 'et'; const nome = `(d) ?${q}`;
