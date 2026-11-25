@@ -1000,6 +1000,8 @@
     "verMenos": "Show fewer",
     "servicoTitulo": "Choose the main type of service",
     "servicoAjuda": "Need several things? Pick the main one – you can write the others in the next step.",
+    "temaUlevaatus": "Failed the inspection? Describe what the inspection found and add a photo of the inspection report.",
+    "temaHooldus": "Service or oil change? Describe what you need and add the car details.",
     "detalheTitulo": "What's wrong with the car?",
     "detalheTituloFoto": "What happened?",
     "detalheRotuloTexto": "Describe it in your own words",

@@ -998,6 +998,8 @@
     "verMenos": "Mostra meno",
     "servicoTitulo": "Scegli il tipo principale di servizio",
     "servicoAjuda": "Servono più cose? Scegli la principale: le altre le scrivi nel passo successivo.",
+    "temaUlevaatus": "Revisione non superata? Descrivi cosa è emerso alla revisione e aggiungi una foto del verbale.",
+    "temaHooldus": "Tagliando o cambio olio? Descrivi cosa ti serve e indica i dati dell'auto.",
     "detalheTitulo": "Cosa ha l'auto?",
     "detalheTituloFoto": "Cosa è successo?",
     "detalheRotuloTexto": "Descrivi con parole tue",

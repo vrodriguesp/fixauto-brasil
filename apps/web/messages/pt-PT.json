@@ -997,6 +997,8 @@
     "verMenos": "Ver menos",
     "servicoTitulo": "Escolha o tipo principal de serviço",
     "servicoAjuda": "Precisa de várias coisas? Escolha a principal – as outras escreve no passo seguinte.",
+    "temaUlevaatus": "Chumbou na inspeção? Descreva o que foi detetado na inspeção e adicione uma fotografia da ficha de inspeção.",
+    "temaHooldus": "Revisão ou mudança de óleo? Descreva o que precisa e indique os dados do carro.",
     "detalheTitulo": "O que tem o carro?",
     "detalheTituloFoto": "O que aconteceu?",
     "detalheRotuloTexto": "Descreva por palavras suas",

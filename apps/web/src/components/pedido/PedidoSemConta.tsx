@@ -81,8 +81,15 @@ type FalhaLocal = 'negado' | 'indisponivel' | 'tempo';
 const EVENTO_FALHA_LOCAL: Record<FalhaLocal, string> = { negado: 'local_gps_negado', indisponivel: 'local_gps_indisponivel', tempo: 'local_gps_timeout' };
 const AVISO_FALHA_LOCAL: Record<FalhaLocal, 'localErroNegado' | 'localErroIndisponivel' | 'localErroTempo'> = { negado: 'localErroNegado', indisponivel: 'localErroIndisponivel', tempo: 'localErroTempo' };
 
-export default function PedidoSemConta() {
+// ?tema= do link do anuncio (Google Ads, dono 25/11): dica curta no alto do passo 2 (chave em pedidoSemConta)
+const DICA_TEMA: Record<string, 'temaUlevaatus' | 'temaHooldus'> = { ulevaatus: 'temaUlevaatus', hooldus: 'temaHooldus' };
+
+// servicoInicial: ?servico= valido (ja conferido em pedido/page.tsx) -> abre direto no passo 2 com o
+// tipo escolhido (o Tagasi volta aos cartoes para trocar); sem ele, tudo como antes.
+export default function PedidoSemConta({ servicoInicial = '', tema = '' }: { servicoInicial?: string; tema?: string }) {
   const t = useTranslations('pedidoSemConta');
+  // so as chaves proprias (tema=constructor/__proto__ nao vira dica)
+  const dicaTema = Object.prototype.hasOwnProperty.call(DICA_TEMA, tema) ? DICA_TEMA[tema] : null;
   const tn = useTranslations('clienteNovaSolicitacao');
   const tc = useTranslations('constants');
   const te = useTranslations('erros');
@@ -91,9 +98,9 @@ export default function PedidoSemConta() {
   const routerNext = useRouterNext();
   const { isLoggedIn, loading: carregandoLogin } = useAuth();
 
-  const [etapa, setEtapa] = useState<Etapa>('servico');
+  const [etapa, setEtapa] = useState<Etapa>(servicoInicial ? 'detalhe' : 'servico');
   // servico
-  const [tipo, setTipo] = useState('');
+  const [tipo, setTipo] = useState(servicoInicial);
   const [servicos, setServicos] = useState<string[]>([]);
   const [descricao, setDescricao] = useState('');
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>(() => memoria.fotos);
@@ -174,7 +181,9 @@ export default function PedidoSemConta() {
   // a pagina de novo ao voltar (cache vencido); vale entao o guardado no popstate (TopoAoNavegar)
   const estadoDaEntrada = () => { const s = window.history.state; if (s?.pedidoEtapa) return s; const w = window as any; return Date.now() - (w.__bipfixVoltou || 0) < 5000 ? w.__bipfixVoltouEstado : null; };
   useEffect(() => {
-    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) {
+    // pre-selecionado pelo link e ainda sem nada escrito/marcado = tambem e o inicio do pedido
+    const noInicio = etapa === 'servico' || (!!servicoInicial && etapa === 'detalhe' && !descricao.trim() && servicos.length === 0);
+    if (!carregandoLogin && isLoggedIn && noInicio && !pendente) {
       limparRascunho();
       // "voltar" caiu num passo de um pedido ja enviado (cada passo e uma entrada do historico):
       // pula todos os passos de uma vez ate a 1a entrada do pedido. Antes ia ao inicio a partir
@@ -198,11 +207,16 @@ export default function PedidoSemConta() {
   const fotosVoltando = useRef(false); // lendo as fotos do aparelho: nao apagar antes de voltarem
   useEffect(() => {
     let tinha = false;
+    let usouPre = !!servicoInicial; // o link decidiu o passo (sem rascunho com tipo: esse vence, ou e recarga)
     try {
       const r = JSON.parse(lerRascunho() || 'null');
       if (r && Date.now() - (r.em || 0) < 24 * 3600 * 1000) {
         tinha = true;
-        setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setFotosPuladas(!!r.fotosPuladas);
+        // rascunho sem tipo (so abriu o formulario antes) nao tira a pre-selecao do link; com tipo, vale o rascunho
+        const manterPre = !!servicoInicial && !r.tipo;
+        if (r.tipo) usouPre = false;
+        if (!manterPre) setTipo(r.tipo || '');
+        setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setFotosPuladas(!!r.fotosPuladas);
         if (r.carro) setCarro(r.carro);
         setPlaca(r.placa || ''); setEndereco(r.endereco || ''); setCoords(r.coords || null); setPais(r.pais || null);
         setNome(r.nome || ''); setEmail(r.email || ''); setQuerSms(!!r.querSms); setTelefone(r.querSms ? r.telefone || '' : ''); setTermos(!!r.termos);
@@ -210,7 +224,7 @@ export default function PedidoSemConta() {
         // codigo so com o pedido pendente guardado; senao volta ao contato. Rascunho de antes de 19/11
         // (passo 'detalhe' com tudo junto) continua valido: 'detalhe' existe no fluxo novo.
         const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : ORDEM.includes(r.etapa) ? r.etapa : 'servico';
-        if (e !== 'enviado') { etapaRestaurada.current = e; setEtapa(e); }
+        if (e !== 'enviado' && !manterPre) { etapaRestaurada.current = e; setEtapa(e); }
         // a pagina recarregou (nao foi troca de idioma): as fotos voltam do aparelho
         if (r.qtdFotos && !memoria.fotos.length) {
           fotosVoltando.current = true;
@@ -223,6 +237,10 @@ export default function PedidoSemConta() {
     } catch { /* sem armazenamento: comeca do zero */ }
     // entrada do historico que ja e um passo do pedido = voltou a ele, nao abriu de novo
     if (!tinha && !estadoDaEntrada()?.pedidoEtapa) contar('abriu');
+    // chegou com o servico ja escolhido pelo link (anuncio): conta 'servico_prefill' (uma vez por pedido)
+    // em vez de 'servico', que segue sendo "tocou num cartao", e a chegada ao passo 2. Como o 'abriu',
+    // nao conta quando a entrada do historico ja e um passo (voltou a ela depois de enviar, por exemplo).
+    if (usouPre && !estadoDaEntrada()?.pedidoEtapa) { contarUmaVez('servico_prefill'); contarUmaVez('detalhe'); }
     setRascunhoLido(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -298,6 +316,8 @@ export default function PedidoSemConta() {
     setMostrarFaltas(false);
     // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
     if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
+    // passo 2 aberto pelo link (?servico=): contado no efeito do rascunho, que sabe se e chegada nova
+    else if (primeiraEtapa.current && servicoInicial) { /* nada */ }
     else if (CONTAR_AO_ENTRAR[etapa]) contarUmaVez(CONTAR_AO_ENTRAR[etapa]!);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
@@ -376,7 +396,8 @@ export default function PedidoSemConta() {
   // chips: rotulo curto (constants.servicosCurto) dos mais pedidos; os ja marcados ficam sempre a vista
   const rotuloCurto = (v: string) => (tc.has(`servicosCurto.${v}`) ? tc(`servicosCurto.${v}`) : rotuloServico(v));
   const comuns = servicosComuns(tipo);
-  const limiteChips = compacto ? 4 : SERVICOS_COMUNS_MAX;
+  // com a dica do tema (?tema=) 2 chips a menos, para o passo 2 continuar cabendo sem rolar
+  const limiteChips = (compacto ? 4 : SERVICOS_COMUNS_MAX) - (dicaTema ? 2 : 0);
   const chips = comuns.filter((v, i) => i < limiteChips || servicos.includes(v));
   const temLista = lista.length > 0;
   // tipos de dano/vidro: "Mis juhtus?" + "kirjelda kahju"; outro/ei tea: a pergunta generica
@@ -607,6 +628,7 @@ export default function PedidoSemConta() {
         {etapa === 'detalhe' && (
           <div data-testid="passo-detalhe">
             {linhaTipo}
+            {dicaTema && <p className="text-sm text-primary-900 bg-primary-50 border border-primary-200 rounded-md px-3 py-2 mt-1 mb-2" data-testid="tema-dica">{t(dicaTema)}</p>}
             <h2 className="text-lg font-semibold text-gray-900 mb-3">{ehDano ? t('detalheTituloFoto') : t('detalheTitulo')}</h2>
             <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}<Obrig /></label>
             <textarea id="pedido-descricao" className={`input-field pedido-caixa ${temLista ? 'min-h-[104px]' : 'min-h-[140px]'} ${classeErro('pedido-descricao')}`} maxLength={1800} value={descricao} aria-invalid={!!erroDe('pedido-descricao')} aria-required

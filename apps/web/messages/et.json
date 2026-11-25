@@ -1006,6 +1006,8 @@
     "verMenos": "Näita vähem",
     "servicoTitulo": "Vali peamine teenuse liik",
     "servicoAjuda": "Kui vajad mitut asja, vali peamine – teised saad kirjutada järgmises sammus.",
+    "temaUlevaatus": "Ülevaatus ei läinud läbi? Kirjelda, mida ülevaatusel leiti, ja lisa foto ülevaatuse lehest.",
+    "temaHooldus": "Hooldus või õlivahetus? Kirjelda, mida vaja on, ja lisa auto andmed.",
     "detalheTitulo": "Mis autol viga on?",
     "detalheTituloFoto": "Mis juhtus?",
     "detalheRotuloTexto": "Kirjelda oma sõnadega",

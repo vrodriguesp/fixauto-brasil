@@ -26,6 +26,9 @@ const ETAPAS_PEDIDO = [
   // 19/11 (pedido em etapas, Proposta sec. 14): chegou a tela de fotos / tocou "Jatka ilma fotota"
   // (uma vez por pedido). 'detalhe' = chegou ao passo "Mis autol viga on?" (lista ou texto, como antes).
   'fotos', 'fotos_pulou',
+  // 25/11 (link do anuncio com ?servico=): chegou com o tipo ja escolhido (uma vez por pedido). 'servico'
+  // continua sendo so o toque num cartao; quem chega pre-selecionado e depois troca conta os dois.
+  'servico_prefill',
 ];
 const FUNIS: Record<string, string[]> = {
   pedido_site: ETAPAS_PEDIDO,
