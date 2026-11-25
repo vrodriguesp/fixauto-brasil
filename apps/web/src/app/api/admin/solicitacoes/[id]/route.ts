@@ -60,7 +60,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         .order('created_at', { ascending: true }),
       supabaseAdmin
         .from('mensagens')
-        .select('*, remetente:profiles(nome, tipo), oficina:oficinas(nome_fantasia)')
+        .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo), oficina:oficinas(nome_fantasia)')
         .eq('solicitacao_id', params.id)
         .order('oficina_id', { ascending: true })
         .order('pagador_id', { ascending: true, nullsFirst: true })

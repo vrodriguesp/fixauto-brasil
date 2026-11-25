@@ -114,7 +114,7 @@ export default function OficinaAprenderPage() {
         const o = oficina as { recepcao_inicio?: string | null; recepcao_confirmada_em?: string | null };
         if (!o.recepcao_inicio && !o.recepcao_confirmada_em) return false;
         const { count } = await supabase.from('orcamento_disponibilidade')
-          .select('id, orcamento:orcamentos!inner(oficina_id)', { count: 'exact', head: true })
+          .select('id, orcamento:orcamentos!orcamento_disponibilidade_orcamento_id_fkey!inner(oficina_id)', { count: 'exact', head: true })
           .eq('orcamento.oficina_id', oficina.id).not('hora_inicio', 'is', null);
         return (count || 0) > 0;
       },
