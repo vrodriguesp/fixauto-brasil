@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { limitarPorIp } from '@/lib/rate-limit';
+import { CIRILICO, paraLatimEE, ehPoiGeoapify, ehPoiPhoton } from '@/lib/endereco-sugestoes';
 
 // Sugestoes de endereco enquanto a pessoa digita ("Bicoc" -> "Bicocca,
 // Milano"). Photon (komoot, dados OpenStreetMap), feito para autocompletar -
@@ -27,30 +28,11 @@ const LARGO_DEMAIS = new Set(['country', 'state', 'county']);
 const SO_DO_PAIS = new Set(['EE']);
 const BBOX: Record<string, string> = { EE: '21.5,57.4,28.3,59.9' };
 const MAX = 6;
-// O Photon nao conhece os nomes russos dos lugares da Estonia ("Таллинн", "Ласнамяэ" so acham a
-// Russia): no mercado EE o texto em cirilico vira latim no jeito estoniano (я depois de consoante = ä,
-// que o Photon iguala a "a"; Ярве -> Jarve ~ Järve; Йыхви -> Johvi ~ Jõhvi; Кейла -> Keila).
-const CIRILICO = /[а-яё]/i;
-const LATIM: Record<string, string> = {
-  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'jo', ж: 'z', з: 'z', и: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p',
-  р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 's', щ: 's', ъ: '', ы: 'o', ь: '', э: 'e',
-};
-const VOGAL = /[аеёиоуыэюяaeiou]/i;
-function latimEstonia(texto: string): string {
-  let out = '';
-  for (let i = 0; i < texto.length; i++) {
-    const ch = texto[i], min = ch.toLowerCase(), ant = i > 0 ? texto[i - 1].toLowerCase() : '';
-    const inicio = !ant || !/[а-яёa-z]/i.test(ant) || VOGAL.test(ant) || ant === 'ь' || ant === 'ъ';
-    let l: string;
-    if (min === 'я') l = inicio ? 'ja' : 'a';
-    else if (min === 'ю') l = inicio ? 'ju' : 'u';
-    else if (min === 'й') l = ant && VOGAL.test(ant) ? 'i' : 'j';
-    else if (min in LATIM) l = LATIM[min];
-    else { out += ch; continue; }
-    out += ch !== min && l ? l[0].toUpperCase() + l.slice(1) : l;
-  }
-  return out;
-}
+// Cirilico no mercado EE (26/11): o nome em latim vai PRIMEIRO - "Ласнамяэ" com o filtro do pais
+// achava uma igreja da Narva mnt (nome russo no OSM) e nunca o bairro; so caia no latim quando vinha
+// vazio. Nomes conhecidos (linnaosad, cidades) viram a grafia estoniana exata, o resto letra a letra
+// (lib/endereco-sugestoes.ts). O texto original fica como 2a tentativa (rua so em russo no OSM).
+// Pontos de interesse (igreja, loja) saem da lista: o campo pergunta onde esta o carro, nao um lugar.
 
 export interface SugestaoEndereco {
   rotulo: string;
@@ -90,26 +72,28 @@ export async function GET(req: NextRequest) {
       const filtro = soDoPais ? `&filter=countrycode:${pais.toLowerCase()}` : '';
       const buscar = (vies: string, texto = q) => fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(texto)}&limit=${MAX}${filtro}${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
       const vies = centro ? `&bias=proximity:${centro[0].toFixed(3)},${centro[1].toFixed(3)}` : '';
-      let r = await buscar(vies);
+      // Estonia em cirilico: o nome em latim/estoniano primeiro ("Ласнамяэ" -> Lasnamäe); o texto
+      // original so quando o latim nao acha nada
+      const emLatim = soDoPais && CIRILICO.test(q) ? paraLatimEE(q) : q;
+      let r = await buscar(vies, emLatim);
       let d = r.ok ? ((await r.json()) as { features?: { properties: Record<string, any> }[] }) : null;
       const doPais = (f: { properties: Record<string, any> }) => String(f.properties.country_code || '').toUpperCase() === pais;
-      // Estonia com o filtro e nada achado em cirilico: tenta o nome em latim ("Ласнамяэ" -> Lasnamae)
-      if (soDoPais && d && !(d.features || []).length && CIRILICO.test(q)) {
-        const r2 = await buscar(vies, latimEstonia(q));
+      if (emLatim !== q && d && !(d.features || []).length) {
+        const r2 = await buscar(vies, q);
         const d2 = r2.ok ? ((await r2.json()) as { features?: { properties: Record<string, any> }[] }) : null;
         if (d2 && (d2.features || []).length) { r = r2; d = d2; }
       }
       // nome da rua em russo ("Нарвское шоссе 5"): perto de Tallinn so achava a Russia; sem o
       // vies ele acha a Narva mnt - segunda busca so quando nada do pais veio
       if (d && capital && !(d.features || []).some(doPais)) {
-        const r2 = await buscar('');
+        const r2 = await buscar('', emLatim);
         const d2 = r2.ok ? ((await r2.json()) as { features?: { properties: Record<string, any> }[] }) : null;
         if (d2 && (d2.features || []).some(doPais)) { r = r2; d = d2; }
       }
       if (r.ok && d) {
         // o pais do mercado primeiro, sem esconder os outros (oficina perto da fronteira, endereco no exterior)
         // (Estonia: so o pais, conferido de novo aqui alem do filter)
-        const feats = [...(d.features || [])].filter((f) => !LARGO_DEMAIS.has(String(f.properties.result_type || '')) && (!soDoPais || doPais(f)))
+        const feats = [...(d.features || [])].filter((f) => !LARGO_DEMAIS.has(String(f.properties.result_type || '')) && !ehPoiGeoapify(f.properties.result_type) && (!soDoPais || doPais(f)))
           .sort((a, b) => Number(doPais(b)) - Number(doPais(a)));
         const lista: SugestaoEndereco[] = feats.map(({ properties: p }) => ({
           rotulo: p.formatted || [p.street, p.housenumber, p.city].filter(Boolean).join(' '),
@@ -129,7 +113,7 @@ export async function GET(req: NextRequest) {
     }
     // Estonia: retangulo do pais e mais resultados (o que cair fora do pais e descartado abaixo)
     const area = soDoPais && BBOX[pais] ? `&bbox=${BBOX[pais]}` : '';
-    const qPhoton = soDoPais && CIRILICO.test(q) ? latimEstonia(q) : q;
+    const qPhoton = soDoPais && CIRILICO.test(q) ? paraLatimEE(q) : q;
     const res = await fetch(`${PHOTON}?q=${encodeURIComponent(qPhoton)}&limit=${soDoPais ? MAX * 2 : MAX}${perto}${area}`, {
       headers: { 'User-Agent': USER_AGENT },
       // o Photon publico tem levado 4-7 s: com 4 s quase sempre voltava vazio
@@ -141,7 +125,7 @@ export async function GET(req: NextRequest) {
     const lista: SugestaoEndereco[] = [];
     for (const f of dados.features || []) {
       const p = f.properties;
-      if (LARGO_DEMAIS.has(p.type || '')) continue;
+      if (LARGO_DEMAIS.has(p.type || '') || ehPoiPhoton(p.osm_key)) continue;
       if (soDoPais && (p.countrycode || '').toUpperCase() !== pais) continue;
       if (lista.length >= MAX) break;
       const rua = [p.street, p.housenumber].filter(Boolean).join(' ');

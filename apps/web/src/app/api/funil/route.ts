@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { limitarPorIp } from '@/lib/rate-limit';
 import { contarEtapa } from '@/lib/pedido-sem-conta';
+import { ehRobo } from '@/lib/robo';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,8 @@ const FUNIS: Record<string, string[]> = {
 };
 
 export async function POST(req: NextRequest) {
+  // previas de anuncio e outros robos que rodam JavaScript nao contam (26/11; lib/robo.ts)
+  if (ehRobo(req.headers.get('user-agent'))) return NextResponse.json({ ok: true });
   if (!limitarPorIp(req, 'funil', 120, 60 * 60 * 1000)) return NextResponse.json({ ok: true });
   const b = await req.json().catch(() => ({}));
   if (typeof b?.funil === 'string' && FUNIS[b.funil]?.includes(b?.etapa)) await contarEtapa(b.funil, b.etapa);

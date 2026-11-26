@@ -10,7 +10,7 @@ export type { SugestaoEndereco };
 // Campo de endereco com sugestoes enquanto digita (a partir de 3 letras).
 // Continua aceitando texto livre. Teclado: setas + Enter; toque: linhas de 44 px.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required, erroId, soDoPais,
+  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required, erroId, soDoPais, listaEmLinha,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -24,6 +24,10 @@ export default function EnderecoAutocomplete({
   erroId?: string | null;
   /** so lugares do pais do mercado (Estonia): pedido e oficina; o acidente pode ser no estrangeiro */
   soDoPais?: boolean;
+  /** lista no fluxo da pagina (empurra o que vem abaixo) em vez de sobreposta: no pedido em passos a
+   *  lista sobreposta cobria a barra Tagasi/Edasi presa ao pe da tela e o toque no Edasi caia numa
+   *  sugestao (simulacao 26/11). Os outros formularios continuam com a lista sobreposta. */
+  listaEmLinha?: boolean;
 }) {
   const auto = useId();
   const locale = useLocale();
@@ -96,7 +100,7 @@ export default function EnderecoAutocomplete({
         <span className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" aria-hidden />
       )}
       {aberto && sugestoes.length > 0 && (
-        <ul id={listaId} role="listbox" className="absolute z-30 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-72 overflow-auto">
+        <ul id={listaId} role="listbox" data-testid="endereco-sugestoes" className={`${listaEmLinha ? 'relative max-h-56' : 'absolute z-30 max-h-72'} left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-auto`}>
           {sugestoes.map((s, i) => (
             <li
               key={s.rotulo}
