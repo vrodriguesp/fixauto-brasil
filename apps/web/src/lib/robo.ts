@@ -6,7 +6,7 @@
 // de duvida conta (uma pessoa a menos no funil e pior que um robo a mais). /api/visita tem a sua.
 // "bot" so como palavra/sufixo de robo (Googlebot/2.1, bingbot/2.0, "bot;", "bot)"): o telefone CUBOT KINGKONG
 // e uma pessoa (revisao Fable 26/11)
-const ROBO = /bot|bot[\/;)]|bot\.html|crawl|spider|slurp|headless|lighthouse|pagespeed|facebookexternalhit|google-ads|adsbot|mediapartners|curl\/|wget\/|python|go-http|java\/|playwright|puppeteer|selenium|phantom/i;
+const ROBO = /\bbot\b|bot[\/;)]|bot\.html|crawl|spider|slurp|headless|lighthouse|pagespeed|facebookexternalhit|google-ads|adsbot|mediapartners|curl\/|wget\/|python|go-http|java\/|playwright|puppeteer|selenium|phantom/i;
 const SO_GOOGLE = /^google$/i; // previa do Google Ads: User-Agent exatamente "Google"
 
 export function ehRobo(userAgent: string | null | undefined): boolean {
