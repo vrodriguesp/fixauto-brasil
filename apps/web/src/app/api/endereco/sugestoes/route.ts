@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { limitarPorIp } from '@/lib/rate-limit';
-import { CIRILICO, paraLatimEE, ehPoiGeoapify, ehPoiPhoton } from '@/lib/endereco-sugestoes';
+import { ordemBuscaEE, ehPoiGeoapify, ehPoiPhoton } from '@/lib/endereco-sugestoes';
 
 // Sugestoes de endereco enquanto a pessoa digita ("Bicoc" -> "Bicocca,
 // Milano"). Photon (komoot, dados OpenStreetMap), feito para autocompletar -
@@ -31,7 +31,9 @@ const MAX = 6;
 // Cirilico no mercado EE (26/11): o nome em latim vai PRIMEIRO - "Ласнамяэ" com o filtro do pais
 // achava uma igreja da Narva mnt (nome russo no OSM) e nunca o bairro; so caia no latim quando vinha
 // vazio. Nomes conhecidos (linnaosad, cidades) viram a grafia estoniana exata, o resto letra a letra
-// (lib/endereco-sugestoes.ts). O texto original fica como 2a tentativa (rua so em russo no OSM).
+// (lib/endereco-sugestoes.ts). O texto original fica como 2a tentativa. Excecao (revisao Fable 26/11):
+// rua escrita em russo ("Нарвское шоссе 5", "улица Паэ") vai no original PRIMEIRO - o OSM acha pelo
+// name:ru e a transliteracao so traria lixo ("Sooserva 5"); o autocomplete nunca volta vazio.
 // Pontos de interesse (igreja, loja) saem da lista: o campo pergunta onde esta o carro, nao um lugar.
 
 export interface SugestaoEndereco {
@@ -72,14 +74,14 @@ export async function GET(req: NextRequest) {
       const filtro = soDoPais ? `&filter=countrycode:${pais.toLowerCase()}` : '';
       const buscar = (vies: string, texto = q) => fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(texto)}&limit=${MAX}${filtro}${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
       const vies = centro ? `&bias=proximity:${centro[0].toFixed(3)},${centro[1].toFixed(3)}` : '';
-      // Estonia em cirilico: o nome em latim/estoniano primeiro ("Ласнамяэ" -> Lasnamäe); o texto
-      // original so quando o latim nao acha nada
-      const emLatim = soDoPais && CIRILICO.test(q) ? paraLatimEE(q) : q;
+      // Estonia em cirilico: o nome em latim/estoniano primeiro ("Ласнамяэ" -> Lasnamäe) e o original
+      // so quando o latim nao acha nada; rua em russo ("Нарвское шоссе 5") e ao contrario (lib)
+      const [emLatim, segunda] = soDoPais ? ordemBuscaEE(q) : [q, null];
       let r = await buscar(vies, emLatim);
       let d = r.ok ? ((await r.json()) as { features?: { properties: Record<string, any> }[] }) : null;
       const doPais = (f: { properties: Record<string, any> }) => String(f.properties.country_code || '').toUpperCase() === pais;
-      if (emLatim !== q && d && !(d.features || []).length) {
-        const r2 = await buscar(vies, q);
+      if (segunda && d && !(d.features || []).length) {
+        const r2 = await buscar(vies, segunda);
         const d2 = r2.ok ? ((await r2.json()) as { features?: { properties: Record<string, any> }[] }) : null;
         if (d2 && (d2.features || []).length) { r = r2; d = d2; }
       }
@@ -113,7 +115,7 @@ export async function GET(req: NextRequest) {
     }
     // Estonia: retangulo do pais e mais resultados (o que cair fora do pais e descartado abaixo)
     const area = soDoPais && BBOX[pais] ? `&bbox=${BBOX[pais]}` : '';
-    const qPhoton = soDoPais && CIRILICO.test(q) ? paraLatimEE(q) : q;
+    const qPhoton = soDoPais ? ordemBuscaEE(q)[0] : q;
     const res = await fetch(`${PHOTON}?q=${encodeURIComponent(qPhoton)}&limit=${soDoPais ? MAX * 2 : MAX}${perto}${area}`, {
       headers: { 'User-Agent': USER_AGENT },
       // o Photon publico tem levado 4-7 s: com 4 s quase sempre voltava vazio

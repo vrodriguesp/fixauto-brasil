@@ -3,7 +3,7 @@
 // (lib/robo.ts).
 //
 //   npx tsx scripts/teste-endereco-robos.ts
-import { paraLatimEE, latimEstonia, ehPoiGeoapify, ehPoiPhoton, CIRILICO } from '../src/lib/endereco-sugestoes';
+import { paraLatimEE, latimEstonia, ehPoiGeoapify, ehPoiPhoton, CIRILICO, ruaEmRusso, ordemBuscaEE } from '../src/lib/endereco-sugestoes';
 import { ehRobo } from '../src/lib/robo';
 
 let falhas = 0, oks = 0;
@@ -34,6 +34,20 @@ igual('Tartu mnt 50 fica igual', paraLatimEE('Tartu mnt 50'), 'Tartu mnt 50');
 ok('CIRILICO reconhece cirilico e nao latim', CIRILICO.test('Ласнамяэ') && !CIRILICO.test('Lasnamäe'));
 ok('resultado nunca tem cirilico', !['Ласнамяэ', 'Нарвское шоссе 5', 'Таллинн, Ыйсмяэ тее 1', 'щёлково'].some((q) => CIRILICO.test(paraLatimEE(q))));
 
+// rua em russo: original primeiro (OSM name:ru), latim como 2a; bairro/cidade/nome estoniano em cirilico: latim primeiro
+for (const q of ['Нарвское шоссе 5', 'Петербургское шоссе', 'улица Паэ', 'Таллинн, ул. Паэ 10', 'проспект Пярну 20']) {
+  ok(`rua em russo: ${q}`, ruaEmRusso(q));
+  const [a, b] = ordemBuscaEE(q);
+  ok(`ordem ${q}: original primeiro, latim depois`, a === q && !!b && !CIRILICO.test(b));
+}
+for (const q of ['Ласнамяэ', 'Мустамяэ', 'Петербури теэ 50', 'Нарва мнт 7', 'Тарту', 'Ыйсмяэ тее 1']) {
+  ok(`nao e rua em russo: ${q}`, !ruaEmRusso(q));
+  const [a, b] = ordemBuscaEE(q);
+  ok(`ordem ${q}: latim primeiro, original depois`, !CIRILICO.test(a) && b === q);
+}
+igual('ordem Ласнамяэ -> Lasnamäe em 1o', ordemBuscaEE('Ласнамяэ')[0], 'Lasnamäe');
+igual('latim nao muda a ordem', JSON.stringify(ordemBuscaEE('Pae 10')), JSON.stringify(['Pae 10', null]));
+
 // pontos de interesse fora; bairro, rua, cidade, casa ficam
 ok('Geoapify: amenity e POI', ehPoiGeoapify('amenity'));
 ok('Geoapify: suburb/street/city/building/postcode nao sao POI', !['suburb', 'street', 'city', 'building', 'postcode', 'district', 'locality', undefined].some(ehPoiGeoapify));
@@ -48,6 +62,8 @@ const ROBOS = [
   'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
   'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
   'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+  'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
+  'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36 (compatible; PetalBot;+https://webmaster.petalsearch.com/site/petalbot)',
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36 Chrome-Lighthouse',
   'curl/8.18.0',
@@ -62,6 +78,8 @@ const PESSOAS = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
   'Mozilla/5.0 (Linux; arm_64; Android 16; SM-S926B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 YaBrowser/25.8.0.0 Mobile Safari/537.36',
+  'Mozilla/5.0 (Linux; Android 13; CUBOT KINGKONG 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Mobile Safari/537.36', // telefone Cubot
+  'Mozilla/5.0 (Linux; Android 14; CUBOT NOTE 50 Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/158.0.0.0 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/500.0.0.0;]', // Cubot no app do Facebook
   'node', 'undici', // scripts e2e do projeto chamam /api/funil pelo Node: continuam contando
 ];
 for (const ua of ROBOS) ok(`robo: ${ua.slice(0, 50) || '(vazio)'}`, ehRobo(ua));

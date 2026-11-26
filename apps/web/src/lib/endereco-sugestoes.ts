@@ -50,6 +50,20 @@ export const LUGARES_RU_ET: Record<string, string> = {
 };
 const PALAVRA_RU = /[а-яё][а-яё-]*/gi;
 
+// Rua escrita em russo de verdade ("Нарвское шоссе", "улица Паэ"): o OSM resolve pelo name:ru, e a
+// transliteracao letra a letra ("Narvskoe sosse") so traz lixo - nesse caso o original vai primeiro.
+// "теэ/тее", "мнт", "пуйестеэ" sao palavras estonianas em cirilico: letra a letra funciona, latim primeiro.
+const RUA_RU = /шоссе|улиц|(^|[^а-яё])ул\.|проспект|бульвар|переул|площад|набережн/i;
+export const ruaEmRusso = (q: string) => CIRILICO.test(q) && RUA_RU.test(q);
+
+/** Ordem das buscas no mercado EE: [primeira, segunda?]. Rua em russo: original primeiro, latim depois;
+ *  o resto (bairros, cidades, nomes estonianos em cirilico): latim primeiro, original depois. */
+export function ordemBuscaEE(q: string): [string, string | null] {
+  if (!CIRILICO.test(q)) return [q, null];
+  const latim = paraLatimEE(q);
+  return ruaEmRusso(q) ? [q, latim] : [latim, q];
+}
+
 /** Texto da busca para o mercado EE: cirilico -> nome estoniano conhecido, ou latim letra a letra. */
 export function paraLatimEE(q: string): string {
   if (!CIRILICO.test(q)) return q;
