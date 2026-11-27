@@ -11,6 +11,7 @@ import { formatCurrency } from '@/lib/utils';
 import { notifNovoOrcamento, chatNovoOrcamentoRecebido } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { avisarRevisaoOrcamento } from '@/lib/avisar-revisao-orcamento';
 
 
 export async function POST(req: NextRequest) {
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { orcamentoId } = await req.json();
+    const { orcamentoId, revisao, eraRecusado } = await req.json();
     // reenvio limitado (auditoria M-12): por orcamento e por oficina
     if (!dentroDoLimite(`notificar-orc:${orcamentoId}`, 3, 60 * 60 * 1000) || !dentroDoLimite(`notificar-orc-u:${callerId}`, 40, 60 * 60 * 1000)) {
       return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
@@ -28,6 +29,13 @@ export async function POST(req: NextRequest) {
 
     if (!orcamentoId) {
       return NextResponse.json({ error: 'Missing orcamentoId' }, { status: 400 });
+    }
+    // orcamento ALTERADO pelo app (revisao Fable S3): sino/push "revisado" (ou "novo" depois de recusado) + resumo no
+    // chat, como o site faz no navegador; sem e-mail/SMS. O fluxo abaixo (1a vez) nao muda.
+    if (revisao === true) {
+      const r = await avisarRevisaoOrcamento(String(orcamentoId), callerId, eraRecusado === true);
+      if (!r.ok) return NextResponse.json({ error: r.error }, { status: r.status });
+      return NextResponse.json({ success: true, revisao: true, avisoId: r.avisoId });
     }
 
     // Get orcamento with solicitacao and client info

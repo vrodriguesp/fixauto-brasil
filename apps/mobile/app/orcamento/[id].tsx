@@ -164,11 +164,15 @@ export default function OrcamentoScreen() {
     }
     setEnviando(false);
     if (erro || !orcId) {
-      setErroEnvio(/DIA_FECHADO/.test(erro?.message || '') ? t('oficina.erroDiaFechadoEnvio') : t('oficina.erroEnvioOrcamento'));
+      // codigo do erro junto (revisao Fable): o suporte entende o que o banco recusou
+      setErroEnvio(/DIA_FECHADO/.test(erro?.message || '') ? t('oficina.erroDiaFechadoEnvio') : `${t('oficina.erroEnvioOrcamento')} (${erro?.code || erro?.message || '?'})`);
       return;
     }
     // aviso ao motorista (sino + e-mail + SMS) e comissao recalculada: no servidor, como no site; nao bloqueiam
-    apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify({ orcamentoId: orcId }) }).catch(() => {});
+    // 1a vez: sino + e-mail + SMS; alteracao: sino "revisado" (ou "novo" depois de recusado) + resumo no chat, como o
+    // site (lib/avisar-revisao-orcamento.ts). Falha aqui nao desfaz o orcamento gravado.
+    const alteracao = !!meu && meu.status !== 'aceito';
+    apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify(alteracao ? { orcamentoId: orcId, revisao: true, eraRecusado: meu.status === 'recusado' } : { orcamentoId: orcId }) }).catch(() => {});
     if (!funcionario) apiFetch('/api/recalcular-comissao', { method: 'POST', body: JSON.stringify({ oficinaId: oficina.id }) }).catch(() => {});
     setEnviado(true);
     setTimeout(() => router.replace({ pathname: '/(oficina)', params: { aba: 'respondidos' } } as any), 1800);
@@ -186,7 +190,9 @@ export default function OrcamentoScreen() {
     );
   }
   // sem o que fazer aqui: pedido fechado, carro ja na oficina com orcamento aceito, ou mecanico (so a dona/admin orca)
-  const bloqueado = ['concluida', 'cancelada', 'expirada'].includes(sol.status) ? 'fechado' : meu?.status === 'aceito' ? 'aceito' : funcionario?.cargo === 'mecanico' ? 'mecanico' : null;
+  // equipe (qualquer cargo): a RLS so deixa a conta da dona gravar orcamento (orcamentos_insert) - avisa antes de
+  // preencher, nao depois (revisao Fable S4)
+  const bloqueado = ['concluida', 'cancelada', 'expirada'].includes(sol.status) ? 'fechado' : meu?.status === 'aceito' ? 'aceito' : funcionario ? 'equipe' : null;
   if (bloqueado) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 p-6">
