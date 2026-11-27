@@ -18,3 +18,22 @@ export function canalDoAviso(tipo: string): Canal {
 }
 
 export const prioridadeDoCanal = (c: Canal): 'high' | 'default' => (c === 'avisos' ? 'default' : 'high');
+
+// A partir de que versao o app criou os canais 'pedidos'/'mensagens' e trata o badge (migracao 118). Um push com
+// channelId que o aparelho nao tem NAO aparece (docs da Expo): token sem versao (app 1.0.0) ou mais antigo
+// recebe como sempre - canal 'avisos', prioridade alta, sem badge.
+export const VERSAO_CANAIS = '1.1.0';
+export function suportaCanaisNovos(versaoApp: string | null | undefined): boolean {
+  if (!versaoApp) return false;
+  const a = String(versaoApp).split('.').map((x) => parseInt(x, 10) || 0);
+  const b = VERSAO_CANAIS.split('.').map(Number);
+  for (let i = 0; i < 3; i++) { if ((a[i] || 0) !== b[i]) return (a[i] || 0) > b[i]; }
+  return true;
+}
+
+/** campos do push por token: canais/prioridade/badge novos so para quem os tem; o resto igual a antes */
+export function entregaDoPush(tipo: string, versaoApp: string | null | undefined, naoLidos: number): { channelId: Canal; priority: 'high' | 'default'; badge?: number } {
+  if (!suportaCanaisNovos(versaoApp)) return { channelId: 'avisos', priority: 'high' };
+  const canal = canalDoAviso(tipo);
+  return { channelId: canal, priority: prioridadeDoCanal(canal), badge: Math.max(1, naoLidos || 0) };
+}

@@ -1,6 +1,6 @@
 import { supabaseAdmin } from './supabase-admin';
 import { perfilDeContaTeste } from './conta-teste-envio';
-import { canalDoAviso, prioridadeDoCanal } from './push-canal';
+import { entregaDoPush } from './push-canal';
 
 // Push no celular (app fechado) pelo servico da Expo, que entrega pelo FCM
 // (Android) e APNs (iPhone). Chamado pela rota /api/push/notificacao, que o
@@ -21,22 +21,20 @@ export async function enviarPushDoAviso(avisoId: string): Promise<{ enviados: nu
     console.log('[push] conta de teste - nao enviado');
     return { enviados: 0, removidos: 0 };
   }
-  const { data: tokens } = await supabaseAdmin.from('push_tokens').select('token').eq('profile_id', aviso.profile_id);
-  const lista = (tokens || []).map((t: any) => t.token as string).filter(Boolean);
+  const { data: tokens } = await supabaseAdmin.from('push_tokens').select('token, versao_app').eq('profile_id', aviso.profile_id);
+  const lista = ((tokens || []) as { token: string; versao_app: string | null }[]).filter((t) => t.token);
   if (!lista.length) return { enviados: 0, removidos: 0 };
 
-  // 27/11 (app da oficina): canal do Android e prioridade por tipo (push-canal.ts, espelho do app) e o numero
-  // no icone do iPhone = avisos nao lidos da conta (o app zera quando a pessoa le)
-  const canal = canalDoAviso(aviso.tipo);
+  // 27/11 (app da oficina): canal do Android e prioridade por tipo (push-canal.ts, espelho do app) e o numero no
+  // icone = avisos nao lidos da conta - SO para o token que declarou versao >= 1.1.0 (migracao 118); o app 1.0.0
+  // so tem o canal 'avisos' e recebe exatamente como antes (revisao Fable S1/S5)
   const { count: naoLidos } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', aviso.profile_id).eq('lida', false);
-  const mensagens = lista.map((to) => ({
+  const mensagens = lista.map(({ token: to, versao_app }) => ({
     to,
     title: aviso.titulo,
     body: aviso.mensagem || undefined,
     sound: 'default',
-    priority: prioridadeDoCanal(canal),
-    channelId: canal,
-    badge: Math.max(1, naoLidos || 0),
+    ...entregaDoPush(aviso.tipo, versao_app, naoLidos || 0),
     // o app abre a tela certa com os mesmos dados do aviso no app (lib/avisos.tsx)
     data: { ...(aviso.dados || {}), tipo: aviso.tipo, notificacao_id: aviso.id },
   }));

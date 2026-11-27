@@ -84,7 +84,8 @@ async function registrar(): Promise<void> {
     if (!pid) return;
     const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId: pid });
     if (!token) return;
-    const { error } = await supabase.rpc('registrar_push_token', { p_token: token, p_plataforma: Platform.OS });
+    // versao do app no token (migracao 118): o servidor so usa os canais novos/badge em quem os tem
+    const { error } = await supabase.rpc('registrar_push_token', { p_token: token, p_plataforma: Platform.OS, p_versao: Constants.expoConfig?.version ?? null });
     if (!error) await AsyncStorage.setItem(CHAVE_TOKEN, token);
   } catch {
     // sem push o app continua igual (avisos dentro do app)
