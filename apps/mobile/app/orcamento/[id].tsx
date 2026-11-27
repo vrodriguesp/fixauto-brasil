@@ -25,7 +25,7 @@ const DIAS_NO_SELETOR = 21;
 export default function OrcamentoScreen() {
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { user, oficina, funcionario } = useAuth();
+  const { oficina, funcionario } = useAuth();
   const [sol, setSol] = useState<any | null | undefined>(undefined);
   const [horario, setHorario] = useState<ContextoOficina | null>(null);
   const [comissao, setComissao] = useState<{ taxa?: number; tipo?: string; valorFixo?: number } | null>(null);
@@ -353,7 +353,6 @@ export default function OrcamentoScreen() {
         className="bg-primary-600 rounded-xl min-h-[52px] items-center justify-center" style={{ opacity: enviando ? 0.6 : 1 }}>
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{meu ? t('oficina.atualizarOrcamento') : t('oficina.enviarOrcamento')} · {formatCurrency(total, moeda, i18n.language)}</Text>}
       </Pressable>
-      {user ? null : null}
     </ScrollView>
   );
 }

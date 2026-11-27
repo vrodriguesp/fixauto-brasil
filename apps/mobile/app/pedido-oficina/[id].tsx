@@ -26,7 +26,7 @@ const ABERTO = ['aberta', 'em_orcamento'];
 export default function PedidoOficinaScreen() {
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { user, oficina, funcionario } = useAuth();
+  const { oficina, funcionario } = useAuth();
   const { chegou } = useAvisos();
   const [sol, setSol] = useState<any | null | undefined>(undefined);
   const [fotos, setFotos] = useState<{ id: string; url: string; origem?: string | null }[]>([]);
@@ -247,7 +247,6 @@ export default function PedidoOficinaScreen() {
           </Pressable>
         ) : null}
       </View>
-      {user ? null : null}
     </ScrollView>
   );
 }
