@@ -5,8 +5,10 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import i18n from '../i18n';
 import { supabase } from './supabase';
-import { destinoDoAviso } from './destino-aviso';
+import { destinoDoAviso, type Papel } from './destino-aviso';
+import { CANAIS, type Canal } from './canal-aviso';
 
 // Push com o app fechado (OK do dono 31/10). O servidor manda pelo servico da
 // Expo (FCM no Android, APNs no iPhone) cada aviso novo de `notificacoes`
@@ -14,7 +16,8 @@ import { destinoDoAviso } from './destino-aviso';
 // na primeira abertura), token salvo na conta, token removido ao sair e o
 // toque no aviso abre a tela certa (mesmo destino do aviso dentro do app).
 const CHAVE_TOKEN = 'bipfix_push_token';
-const CANAL = 'avisos';
+// quem esta logado (motorista ou oficina): o toque no aviso abre a tela do papel certo (27/11)
+let papelAtual: Papel = 'cliente';
 
 // com o app aberto o aviso ja aparece no alto da tela (lib/avisos.tsx): o
 // sistema nao mostra outro por cima, so guarda na central de notificacoes
@@ -30,14 +33,31 @@ Notifications.setNotificationHandler({
 const projectId = (): string | undefined =>
   (Constants.expoConfig?.extra as any)?.eas?.projectId ?? (Constants as any).easConfig?.projectId;
 
-async function prepararCanal() {
+// Canais do Android por importancia (27/11; lib/canal-aviso.ts, espelho do servidor): 'pedidos' e
+// 'mensagens' interrompem (heads-up + som); 'avisos' (lembretes, datas, etapas, pecas) e normal. Nome na
+// lingua do app. Obs.: o Android nao deixa o app baixar a importancia de um canal ja criado - em aparelho
+// antigo o canal 'avisos' continua alto ate a pessoa mexer nas configuracoes; instalacao nova ja vem certa.
+const IMPORTANCIA: Record<Canal, Notifications.AndroidImportance> = {
+  pedidos: Notifications.AndroidImportance.HIGH,
+  mensagens: Notifications.AndroidImportance.HIGH,
+  avisos: Notifications.AndroidImportance.DEFAULT,
+};
+async function prepararCanais() {
   if (Platform.OS !== 'android') return;
-  await Notifications.setNotificationChannelAsync(CANAL, {
-    name: 'BipFix',
-    importance: Notifications.AndroidImportance.HIGH,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: '#0284c7',
-  });
+  for (const c of CANAIS) {
+    await Notifications.setNotificationChannelAsync(c, {
+      name: i18n.t(`push.canal_${c}`),
+      importance: IMPORTANCIA[c],
+      vibrationPattern: c === 'avisos' ? undefined : [0, 250, 250, 250],
+      lightColor: '#0284c7',
+    });
+  }
+}
+
+/** Numero no icone do app = avisos nao lidos (lib/avisos.tsx chama a cada mudanca). Nunca lanca. */
+export function atualizarBadge(n: number) {
+  if (Platform.OS === 'web') return;
+  Notifications.setBadgeCountAsync(Math.max(0, n)).catch(() => {});
 }
 
 // No iPhone, getExpoPushTokenAsync dispara o addPushTokenListener; se o listener chamasse
@@ -56,7 +76,7 @@ async function registrar(): Promise<void> {
   // emulador/Expo Go nao recebem push de verdade
   if (!Device.isDevice) return;
   try {
-    await prepararCanal();
+    await prepararCanais();
     let perm = await Notifications.getPermissionsAsync();
     if (perm.status !== 'granted' && perm.canAskAgain) perm = await Notifications.requestPermissionsAsync();
     if (perm.status !== 'granted') return;
@@ -84,13 +104,14 @@ function abrirDoPush(resp: Notifications.NotificationResponse | null) {
   const d = (resp?.notification.request.content.data || {}) as Record<string, string>;
   if (!d.tipo) return;
   if (d.notificacao_id) supabase.from('notificacoes').update({ lida: true }).eq('id', d.notificacao_id).then(() => {});
-  const para = destinoDoAviso({ tipo: d.tipo, dados: d });
+  const para = destinoDoAviso({ tipo: d.tipo, dados: d }, papelAtual);
   if (para) router.push(para as any);
 }
 
-/** No layout raiz: registra ao entrar e abre a tela do aviso tocado. */
-export function usePush(userId: string | null | undefined) {
+/** No layout raiz: registra ao entrar e abre a tela do aviso tocado (conforme o papel de quem entrou). */
+export function usePush(userId: string | null | undefined, papel: Papel | null | undefined) {
   const tratada = useRef<string | null>(null);
+  useEffect(() => { papelAtual = papel || 'cliente'; }, [papel]);
   useEffect(() => {
     if (!userId) return;
     registrarPush();

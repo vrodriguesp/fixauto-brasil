@@ -1,5 +1,6 @@
 import { supabaseAdmin } from './supabase-admin';
 import { perfilDeContaTeste } from './conta-teste-envio';
+import { canalDoAviso, prioridadeDoCanal } from './push-canal';
 
 // Push no celular (app fechado) pelo servico da Expo, que entrega pelo FCM
 // (Android) e APNs (iPhone). Chamado pela rota /api/push/notificacao, que o
@@ -24,13 +25,18 @@ export async function enviarPushDoAviso(avisoId: string): Promise<{ enviados: nu
   const lista = (tokens || []).map((t: any) => t.token as string).filter(Boolean);
   if (!lista.length) return { enviados: 0, removidos: 0 };
 
+  // 27/11 (app da oficina): canal do Android e prioridade por tipo (push-canal.ts, espelho do app) e o numero
+  // no icone do iPhone = avisos nao lidos da conta (o app zera quando a pessoa le)
+  const canal = canalDoAviso(aviso.tipo);
+  const { count: naoLidos } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', aviso.profile_id).eq('lida', false);
   const mensagens = lista.map((to) => ({
     to,
     title: aviso.titulo,
     body: aviso.mensagem || undefined,
     sound: 'default',
-    priority: 'high',
-    channelId: 'avisos',
+    priority: prioridadeDoCanal(canal),
+    channelId: canal,
+    badge: Math.max(1, naoLidos || 0),
     // o app abre a tela certa com os mesmos dados do aviso no app (lib/avisos.tsx)
     data: { ...(aviso.dados || {}), tipo: aviso.tipo, notificacao_id: aviso.id },
   }));

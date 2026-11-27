@@ -8,6 +8,7 @@ import { supabase } from './supabase';
 import { naLinguaDoApp } from './aviso-lingua';
 import { useAuth } from './auth-context';
 import { destinoDoAviso } from './destino-aviso';
+import { atualizarBadge } from './push';
 import { TextoTraduzido } from './traducao';
 import { semQuebra } from './turnos';
 
@@ -38,7 +39,7 @@ export const useAvisos = () => useContext(AvisosCtx);
 // contam nas abas e ficam na tela inicial ate serem abertos. (Aviso com o app
 // fechado - push - exige o app instalado como versao propria, nao o Expo Go.)
 export function AvisosProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, oficina, papel } = useAuth();
   const insets = useSafeAreaInsets();
   const [naoLidos, setNaoLidos] = useState<Aviso[]>([]);
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState(0);
@@ -49,6 +50,16 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
 
   const atualizar = useCallback(async () => {
     if (!user) { setNaoLidos([]); setMensagensNaoLidas(0); return; }
+    // oficina (27/11): as mensagens nao lidas sao as das conversas da oficina (mesma conta do site)
+    if (papel === 'oficina') {
+      const [{ data: avisos }, { count }] = await Promise.all([
+        supabase.from('notificacoes').select('*').eq('profile_id', user.id).eq('lida', false).order('created_at', { ascending: false }).limit(30),
+        oficina ? supabase.from('mensagens').select('id', { count: 'exact', head: true }).eq('oficina_id', oficina.id).eq('lida', false).neq('remetente_id', user.id) : Promise.resolve({ count: 0 } as any),
+      ]);
+      setNaoLidos(((avisos as Aviso[]) || []).map(naLinguaDoApp));
+      setMensagensNaoLidas(count || 0);
+      return;
+    }
     const [{ data: avisos }, { data: sols }] = await Promise.all([
       supabase.from('notificacoes').select('*').eq('profile_id', user.id).eq('lida', false).order('created_at', { ascending: false }).limit(30),
       supabase.from('solicitacoes').select('id').eq('cliente_id', user.id),
@@ -63,7 +74,10 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       supabase.from('mensagens').select('id', { count: 'exact', head: true }).eq('pagador_id', user.id).eq('lida', false).neq('remetente_id', user.id),
     ]);
     setMensagensNaoLidas((c1 || 0) + (c2 || 0));
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.id, papel, oficina?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // numero no icone do app = avisos nao lidos (boas praticas das lojas: zera quando a pessoa le)
+  useEffect(() => { atualizarBadge(user ? naoLidos.length : 0); }, [naoLidos.length, user?.id]);
 
   const mostrar = useCallback((a: Aviso) => {
     setBanner(a);
@@ -83,9 +97,9 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     setBanner(null);
     setNaoLidos((l) => l.filter((x) => x.id !== a.id));
     supabase.from('notificacoes').update({ lida: true }).eq('id', a.id).then(() => {});
-    const para = destinoDoAviso(a);
+    const para = destinoDoAviso(a, papel || 'cliente');
     if (para) router.push(para as any);
-  }, []);
+  }, [papel]);
 
   // Tempo real. Com o app em segundo plano o iOS corta a conexao: o que chega
   // nesse intervalo nao vira aviso e os numeros das abas ficavam velhos ate
