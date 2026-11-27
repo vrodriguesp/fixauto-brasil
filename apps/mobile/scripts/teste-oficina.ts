@@ -9,6 +9,7 @@ import { conflitoHorario, erroValidade, validadeSugerida, somarDias, maiorData }
 import { destinoDoLinkCurto } from '../lib/link-curto';
 import { lerValor } from '../lib/valor';
 import { mesmaTela } from '../lib/mesma-tela';
+import { cacheOficinaVale } from '../lib/cache-perfil';
 import localePt from '../i18n/locales/pt.json';
 import localePtPT from '../i18n/locales/pt-PT.json';
 import localeEn from '../i18n/locales/en.json';
@@ -134,7 +135,9 @@ ok('parametro vazio nao conta', destinoDoLinkCurto({ numero: '1', s: '' }).tipo 
 ok('params nulos -> app', destinoDoLinkCurto(null).tipo === 'app');
 
 // 8. valores digitados (M7): formatos aceitos; letras, negativo e vazio = invalido
-const casosValor: [string, number | null][] = [['50', 50], ['50,5', 50.5], ['50.5', 50.5], ['1 234,56', 1234.56], ['1\u202f234,56', 1234.56], ['1.234,56', 1234.56], ['1,234.56', 1234.56], ['1.234', 1234], ['1,234', 1234], ['1 234', 1234], ['0', 0], ['99,90', 99.9], ['abc', null], ['12abc', null], ['-10', null], ['', null], ['  ', null], ['1.2.3,4', 123.4]];
+const casosValor: [string, number | null][] = [['50', 50], ['50,5', 50.5], ['50.5', 50.5], ['1 234,56', 1234.56], ['1\u202f234,56', 1234.56], ['1.234,56', 1234.56], ['1,234.56', 1234.56], ['1.234', 1234], ['1,234', 1234], ['1 234', 1234], ['0', 0], ['99,90', 99.9], ['abc', null], ['12abc', null], ['-10', null], ['', null], ['  ', null],
+  // revisao 28/11: milhar repetido, grupos errados, separador sem digito, mais de 2 decimais
+  ['1.000.000', 1000000], ['1,234,567', 1234567], ['12.345,67', 12345.67], ['1.5.0', null], ['1.2.3,4', null], ['1.23.456', null], ['0.500', 0.5], ['0,50', 0.5], [',', null], ['.', null], ['5,', null], [',5', null], ['1,2345', null], ['1.234.5', null], ['10.000', 10000], ['100.000,00', 100000]];
 for (const [txt, esperado] of casosValor) ok('lerValor(' + JSON.stringify(txt) + ') = ' + esperado, lerValor(txt) === esperado, lerValor(txt));
 
 // 9. aviso da tela ja aberta nao empilha (A1)
@@ -164,6 +167,12 @@ for (const l of Object.keys(LOCALES)) {
   ok('locale ' + l + ' sem ICU', ruins.length === 0, ruins);
   ok('locale ' + l + ' tem statusSolicitacao.expirada e prazoDias_um', !!j.constants.statusSolicitacao.expirada && !!j.oficina.prazoDias_um);
 }
+
+// 12. cache da oficina so vale para a conta que o gravou (revisao 28/11)
+ok('cache da dona vale', cacheOficinaVale({ oficina: { profile_id: 'u1' }, funcionario: null }, 'u1'));
+ok('cache da equipe vale', cacheOficinaVale({ oficina: { profile_id: 'dona' }, funcionario: { profile_id: 'u2' } }, 'u2'));
+ok('cache de outra conta nao vale', !cacheOficinaVale({ oficina: { profile_id: 'dona' }, funcionario: null }, 'u3'));
+ok('cache vazio nao vale', !cacheOficinaVale(null, 'u1') && !cacheOficinaVale({ oficina: null }, 'u1'));
 
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntudo certo');
 process.exit(falhas ? 1 : 0);
