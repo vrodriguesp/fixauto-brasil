@@ -7,8 +7,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // assinatura do app na Play Store). Sem eles responde 404 e o link abre o site.
 const APP_ID = 'com.bipfix.cliente';
 // Caminhos que o app sabe tratar: confirmacao de e-mail em qualquer versao
-// (/ee/et/confirmar-email) e no formato antigo de um nivel (/et/confirmar-email)
-const CAMINHOS = ['/*/*/confirmar-email*', '/*/confirmar-email*'];
+// (/ee/et/confirmar-email) e no formato antigo de um nivel (/et/confirmar-email) e, desde 27/11 (app da
+// oficina, versao 1.1.0), o link curto do SMS/e-mail /r/<numero> (app/r/[numero].tsx: oficina -> orcamento,
+// motorista -> pedido). Quem nao tem o app continua caindo no site.
+const CAMINHOS = ['/*/*/confirmar-email*', '/*/confirmar-email*', '/r/*'];
 
 export async function GET(req: NextRequest) {
   const qual = req.nextUrl.searchParams.get('f');
