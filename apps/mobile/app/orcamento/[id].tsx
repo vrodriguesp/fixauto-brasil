@@ -29,7 +29,9 @@ const DIAS_NO_SELETOR = 21;
 export default function OrcamentoScreen() {
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { oficina, funcionario } = useAuth();
+  const { user, oficina, funcionario } = useAuth();
+  const logado = useRef(!!user);
+  logado.current = !!user;
   const [sol, setSol] = useState<any | null | undefined>(undefined);
   const [horario, setHorario] = useState<ContextoOficina | null>(null);
   const [comissao, setComissao] = useState<{ taxa?: number; tipo?: string; valorFixo?: number } | null>(null);
@@ -57,7 +59,8 @@ export default function OrcamentoScreen() {
   const retratoRef = useRef('');
   useEffect(() => {
     const sub = (navigation as any).addListener('beforeRemove', (e: any) => {
-      if (saiuSemPerguntar.current || inicial.current === 'carregando' || retratoRef.current === inicial.current) return;
+      // sessao encerrada (redirecionamento forcado para o login): nunca segura
+      if (!logado.current || saiuSemPerguntar.current || inicial.current === 'carregando' || retratoRef.current === inicial.current) return;
       e.preventDefault();
       confirmar(t('oficina.descartarTitulo'), t('oficina.descartarTexto'), [
         { text: t('common.cancelar'), style: 'cancel' },
@@ -219,7 +222,7 @@ export default function OrcamentoScreen() {
     let avisou = true; let codigo = '';
     try {
       const r = await apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify(alteracao ? { orcamentoId: orcId, revisao: true, eraRecusado: meu.status === 'recusado' } : { orcamentoId: orcId }) });
-      if (r?.limitado) codigo = 'MUITAS_TENTATIVAS';
+      if (r?.limitado) { avisou = false; codigo = 'MUITAS_TENTATIVAS'; }
     } catch (e2: any) { avisou = false; codigo = e2?.codigo || String(e2?.status || e2?.message || '?'); }
     if (!funcionario) apiFetch('/api/recalcular-comissao', { method: 'POST', body: JSON.stringify({ oficinaId: oficina.id }) }).catch(() => {});
     saiuSemPerguntar.current = true;

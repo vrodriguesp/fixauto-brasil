@@ -106,6 +106,20 @@ if (orc) {
   const d2 = r2.ok ? (await supabaseAdmin.from('notificacoes').select('dados').eq('id', r2.avisoId).single()).data : null;
   ok('novo depois de recusado: aviso "novo", sem revisao', r2.ok && (d2?.dados as any)?.revisao === false, d2);
   if (r2.ok) await supabaseAdmin.from('notificacoes').delete().eq('id', r2.avisoId);
+  // limite de revisoes (10/h por orcamento, depois do dono): a 11a revisao de verdade vem { limitado } e nao grava
+  const { LIMITE_REVISOES_HORA } = await import('../src/lib/avisar-revisao-orcamento');
+  const { data: orcAntes } = await supabaseAdmin.from('orcamentos').select('revisao_numero').eq('id', orc.id).single();
+  const { count: avisosAntes } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', clienteId).eq('dados->>orcamento_id', orc.id);
+  let ultimo: any = null;
+  for (let i = 1; i <= LIMITE_REVISOES_HORA + 1; i++) {
+    await supabaseAdmin.from('orcamentos').update({ revisao_numero: 100 + i }).eq('id', orc.id);
+    ultimo = await avisarRevisaoOrcamento(orc.id, of.profile_id, false);
+  }
+  const { count: avisosDepois } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', clienteId).eq('dados->>orcamento_id', orc.id);
+  ok('11a revisao na hora: limitado, sem aviso novo (ja gastou as 2 do teste acima)', ultimo?.ok && ultimo.limitado === true && (avisosDepois || 0) - (avisosAntes || 0) < LIMITE_REVISOES_HORA + 1, [ultimo, avisosAntes, avisosDepois]);
+  await supabaseAdmin.from('orcamentos').update({ revisao_numero: orcAntes!.revisao_numero }).eq('id', orc.id);
+  await supabaseAdmin.from('notificacoes').delete().eq('profile_id', clienteId).eq('dados->>orcamento_id', orc.id).gt('created_at', new Date(Date.now() - 60000).toISOString());
+  await supabaseAdmin.from('mensagens').delete().eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id).gt('created_at', new Date(Date.now() - 60000).toISOString()).like('texto', '%📋%');
   await supabaseAdmin.from('push_tokens').delete().eq('token', tokenCliente);
 } else ok('revisao: ha um orcamento da oficina de teste para testar', false);
 

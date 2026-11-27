@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     if (revisao === true) {
       const r = await avisarRevisaoOrcamento(String(orcamentoId), callerId, eraRecusado === true);
       if (!r.ok) return NextResponse.json({ error: r.error, codigo: r.codigo }, { status: r.status });
-      return NextResponse.json({ success: true, revisao: true, avisoId: r.avisoId, semMudanca: r.semMudanca === true });
+      return NextResponse.json({ success: true, revisao: true, avisoId: r.avisoId, semMudanca: r.semMudanca === true, limitado: r.limitado === true });
     }
 
     // Get orcamento with solicitacao and client info

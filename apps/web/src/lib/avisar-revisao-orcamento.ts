@@ -3,6 +3,11 @@ import { currencyForCountry } from './currency';
 import { formatCurrency, cleanDescricao } from './utils';
 import { notifNovoOrcamento, notifOrcamentoRevisado, chatOrcamentoRevisado } from './notif-i18n';
 import { emTodasAsLinguas } from './notif-textos';
+import { dentroDoLimite } from './rate-limit';
+
+// revisoes por orcamento por hora (revisao 28/11): sem limite uma oficina podia "subir revisao_numero + POST" em laco e
+// inundar o motorista de push/sino/chat; 10/h e folga de sobra para corrigir um orcamento
+export const LIMITE_REVISOES_HORA = 10;
 
 // Orcamento ALTERADO pela oficina (revisao de enviado/visto/vencido, ou orcamento novo depois de recusado):
 // o que o site faz no navegador em hooks/use-orcamentos.ts (update) - aviso `novo_orcamento` no sino/push do
@@ -13,7 +18,7 @@ import { emTodasAsLinguas } from './notif-textos';
 // pedido em que ainda cabe alterar o orcamento: aberto, ou aceito/em andamento SO com este orcamento (M13, caso 284 da auditoria)
 const ABERTO = ['aberta', 'em_orcamento', 'no_show'];
 
-export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: string, eraRecusado: boolean): Promise<{ ok: true; avisoId: string; semMudanca?: boolean } | { ok: false; status: number; error: string; codigo?: string }> {
+export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: string, eraRecusado: boolean): Promise<{ ok: true; avisoId: string; semMudanca?: boolean; limitado?: boolean } | { ok: false; status: number; error: string; codigo?: string }> {
   const { data: orc } = await supabaseAdmin.from('orcamentos')
     .select('id, status, valor_total, prazo_dias, observacoes, revisao_numero, revisado_em, solicitacao_id, oficina:oficinas(id, nome_fantasia, profile_id, pais, profile:profiles(idioma)), solicitacao:solicitacoes(id, cliente_id, status)')
     .eq('id', orcamentoId).maybeSingle();
@@ -25,6 +30,8 @@ export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: stri
     return { ok: false, status: 409, error: 'Pedido encerrado para esta oficina', codigo: 'SERVICO_ENCERRADO' };
   }
   const clienteId = (orc as any).solicitacao.cliente_id as string;
+  // limite contado so DEPOIS do dono e do estado do pedido (403/409 nao gastam); estourado = grava nada e avisa o app
+  if (!dentroDoLimite(`notificar-orc-rev:${orc.id}`, LIMITE_REVISOES_HORA, 60 * 60 * 1000)) return { ok: true, avisoId: '', limitado: true };
   // mesma revisao ja avisada (valor e numero da revisao iguais ao ultimo aviso): nao repete sino nem chat (A3-c)
   const { data: ultimo } = await supabaseAdmin.from('notificacoes').select('id, dados').eq('profile_id', clienteId).eq('tipo', 'novo_orcamento')
     .eq('dados->>orcamento_id', orc.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
