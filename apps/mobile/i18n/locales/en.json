@@ -1027,6 +1027,7 @@
     "erroValidade_antes": "The validity must be at least the last check-in day.",
     "faltam": "Missing",
     "bloqueado_fechado": "This request is closed. The quote can no longer be changed.",
+    "bloqueado_equipe": "Only the workshop owner's account can send quotes in the app (staff accounts do not have this permission). Ask the owner to quote.",
     "bloqueado_mecanico": "Only the workshop owner or an administrator can send quotes.",
     "bloqueado_aceito": "To propose a revision of this accepted quote, use bipfix.com.",
     "diaSemana_1": "Mon",

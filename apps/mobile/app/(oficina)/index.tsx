@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, FlatList, Pressable, RefreshControl, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +28,7 @@ const COR = {
 export default function PedidosOficinaScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
-  const { user, oficina } = useAuth();
+  const { oficina, funcionario } = useAuth();
   const { naoLidos, chegou } = useAvisos();
   const { aba: abaParam } = useLocalSearchParams<{ aba?: string }>();
   const [aba, setAba] = useState<Aba>(ABAS.includes(abaParam as Aba) ? (abaParam as Aba) : 'responder');
@@ -42,7 +42,8 @@ export default function PedidosOficinaScreen() {
   useEffect(() => { const i = setInterval(() => setAgora(Date.now()), MIN); return () => clearInterval(i); }, []);
 
   const carregar = useCallback(async () => {
-    if (!oficina) return;
+    // sem oficina (cache do perfil sem o da oficina): nao fica "carregando" para sempre
+    if (!oficina) { setLoading(false); return; }
     const [{ data: sols }, { data: v }, { data: d }, { data: ag }] = await Promise.all([
       // mesma consulta do site (use-solicitacoes): a RLS ja limita ao que a oficina pode ver; cancelados fora
       supabase.from('solicitacoes')
@@ -62,15 +63,14 @@ export default function PedidosOficinaScreen() {
   useFocusEffect(useCallback(() => { carregar(); }, [carregar]));
   // aviso novo (pedido, aceite, mensagem) ou mudanca nos pedidos/orcamentos: recarrega
   useEffect(() => { if (chegou) carregar(); }, [chegou]); // eslint-disable-line react-hooks/exhaustive-deps
-  // nome do canal unico por inscricao: o supabase-js devolve o MESMO canal para o mesmo nome e, se o efeito
-  // roda de novo antes de o anterior sair (hot reload, troca de conta), dava "cannot add callbacks after
-  // subscribe()" (teste no emulador 27/11)
-  const inscricao = useRef(0);
+  // nome do canal unico por inscricao (Date.now, nao um contador por tela: a tela remontada recomecava em 1 e
+  // reaproveitava o canal anterior): o supabase-js devolve o MESMO canal para o mesmo nome e dava "cannot add
+  // callbacks after subscribe()" (teste no emulador 27/11)
   useEffect(() => {
     if (!oficina) return;
     let espera: ReturnType<typeof setTimeout> | null = null;
     const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(carregar, 600); };
-    const canal = supabase.channel(`pedidos-oficina-app-${oficina.id}-${++inscricao.current}`)
+    const canal = supabase.channel(`pedidos-oficina-app-${oficina.id}-${Date.now()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'solicitacoes' }, recarregar)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orcamentos' }, recarregar)
       .subscribe();
@@ -187,7 +187,7 @@ export default function PedidosOficinaScreen() {
                 {convidada ? <Text className="mt-2 self-start rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-900">📨 {t('oficina.convidada')}</Text> : null}
                 {est ? <Text className={`mt-2 text-sm font-medium ${est.cor}`}>{est.txt}</Text> : null}
               </Pressable>
-              {aba === 'responder' ? (
+              {aba === 'responder' && !funcionario ? (
                 <Pressable onPress={() => router.push(`/orcamento/${s.id}`)} accessibilityRole="button" testID="fazer-orcamento"
                   className="mt-3 bg-primary-600 rounded-xl min-h-[48px] items-center justify-center">
                   <Text className="text-white font-semibold text-base">{t('oficina.fazerOrcamento')} ›</Text>

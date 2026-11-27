@@ -1027,6 +1027,7 @@
     "erroValidade_antes": "A validade tem de ser pelo menos o último dia de check-in.",
     "faltam": "Falta",
     "bloqueado_fechado": "Este pedido está encerrado. O orçamento já não pode ser alterado.",
+    "bloqueado_equipe": "Só a conta do dono da oficina envia orçamentos pela app (a equipa não tem essa permissão). Peça ao dono para orçar.",
     "bloqueado_mecanico": "Só o dono ou um administrador da oficina envia orçamentos.",
     "bloqueado_aceito": "Para propor uma revisão deste orçamento aceite, use o site bipfix.com.",
     "diaSemana_1": "segunda",

@@ -104,7 +104,8 @@ export default function PedidoOficinaScreen() {
     : slot ? t('oficina.chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: formatarJanela(janelaDoSlot(slot)) }) : '';
   const abrirConversa = () => router.push({ pathname: '/conversa/[id]', params: { id: sol.id, oficina: oficina!.id } });
   // botao principal: orcar (sem orcamento) / alterar (enviado, recusado, vencido) / revisao do aceito = site (v2)
-  const podeOrcar = !fechado && (!meu || !aceito) && !emAndamento;
+  // equipe nao orca (a RLS so deixa a conta da dona): sem o botao (revisao Fable S4)
+  const podeOrcar = !fechado && (!meu || !aceito) && !emAndamento && !funcionario;
 
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}

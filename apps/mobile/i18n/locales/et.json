@@ -1027,6 +1027,7 @@
     "erroValidade_antes": "Kehtivus peab olema vähemalt viimane vastuvõtupäev.",
     "faltam": "Puudu",
     "bloqueado_fechado": "See päring on lõpetatud. Pakkumist ei saa enam muuta.",
+    "bloqueado_equipe": "Pakkumisi saab rakenduses saata ainult töökoja omaniku konto (meeskonna kontodel seda õigust pole). Palu omanikul pakkumine teha.",
     "bloqueado_mecanico": "Pakkumisi saab saata ainult töökoja omanik või administraator.",
     "bloqueado_aceito": "Vastuvõetud pakkumise muutmise ettepaneku tegemiseks kasuta veebi bipfix.com.",
     "diaSemana_1": "E",

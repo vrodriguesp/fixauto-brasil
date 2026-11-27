@@ -1027,6 +1027,7 @@
     "erroValidade_antes": "La validità deve arrivare almeno all'ultimo giorno di check-in.",
     "faltam": "Manca",
     "bloqueado_fechado": "Questa richiesta è chiusa. Il preventivo non può più essere modificato.",
+    "bloqueado_equipe": "Solo l'account del titolare dell'officina può inviare preventivi nell'app (gli account del personale non hanno questo permesso). Chiedi al titolare di fare il preventivo.",
     "bloqueado_mecanico": "Solo il titolare o un amministratore dell'officina può inviare preventivi.",
     "bloqueado_aceito": "Per proporre una revisione di questo preventivo accettato usa bipfix.com.",
     "diaSemana_1": "lun",
