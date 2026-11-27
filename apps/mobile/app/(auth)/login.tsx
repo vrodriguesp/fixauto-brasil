@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth-context';
 import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
-import { pegarDestino } from '../../lib/destino-pendente';
+import { verDestino } from '../../lib/destino-pendente';
 
 // Tela de entrada: marca, atalho de acidente SEM conta (quem acabou de bater
 // nao deve parar num cadastro), login e idioma.
@@ -32,6 +32,9 @@ export default function LoginScreen() {
     setErro(null);
     setNaoConfirmado(false);
     setLoading(true);
+    // lido ANTES do login: ao entrar, o layout (auth) redireciona (e consome o destino) antes de esta funcao
+    // continuar; os dois vao para o mesmo lugar (teste 27/11: sem isto este replace para as abas vencia)
+    const destino = verDestino();
     const { error } = await signIn(email.trim(), senha);
     setLoading(false);
     if (error) {
@@ -55,7 +58,6 @@ export default function LoginScreen() {
     }
     // link do SMS/e-mail aberto antes de entrar (lib/destino-pendente): segue para ele; senao as abas
     // ((tabs) manda a oficina para as abas dela)
-    const destino = pegarDestino();
     router.replace((destino || '/(tabs)') as any);
   };
 

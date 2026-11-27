@@ -18,6 +18,11 @@ import { centrarCampoAoDigitar } from '../lib/centrar-campo-web';
 // erros de JavaScript do aparelho chegam ao monitoramento do admin
 instalarCapturaDeErros();
 
+// Link aberto com o app fechado (bipfix.com/r/<numero>, toque no aviso): as abas ficam POR BAIXO da tela aberta,
+// entao ha o botao de voltar e o Android "voltar" nao fecha o app (teste 27/11: o formulario do orcamento abria
+// sem saida). (tabs) manda a oficina para as abas dela.
+export const unstable_settings = { anchor: '(tabs)' };
+
 restaurarIdioma();
 
 // tela que quebra ao desenhar: em vez de tela branca, aviso com "tentar de novo"; o erro vai ao monitoramento

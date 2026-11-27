@@ -7,6 +7,7 @@ import RolagemTeclado from '../../components/RolagemTeclado';
 import { useAuth } from '../../lib/auth-context';
 import { API_BASE_URL } from '../../lib/api';
 import { mensagemErro, ErroApi } from '../../lib/erro';
+import { verDestino } from '../../lib/destino-pendente';
 
 // "Receber um codigo por e-mail" (dono 12/11): mesmas rotas do site
 // (/api/conta/codigo-login e /confirmar). Entra em contas com ou sem senha; a
@@ -63,13 +64,15 @@ export default function CodigoLoginScreen() {
         if (d.codigo === 'CODIGO_TENTATIVAS' || d.codigo === 'CODIGO_EXPIRADO') { setId(null); setCodigo(''); setErro(t('auth.codigoVencido')); return; }
         throw new ErroApi(res.status, d.codigo);
       }
+      const destino = verDestino();
       const { error } = await signInComToken(d.tokenHash);
       if (error) {
         setErro(error === 'tipo_nao_suportado' ? t('auth.tipoNaoSuportado') : error === 'conta_desativada' ? t('auth.contaDesativada') : t('common.erroGenerico'));
         return;
       }
-      // o layout de (auth) ja manda para as abas; as abas mostram "crie a sua senha" se faltar
-      router.replace('/(tabs)');
+      // o layout de (auth) ja manda para as abas (ou para o link aberto antes de entrar); as abas mostram
+      // "crie a sua senha" se faltar
+      router.replace((destino || '/(tabs)') as any);
     } catch (e) {
       setErro(mensagemErro(e));
     } finally {

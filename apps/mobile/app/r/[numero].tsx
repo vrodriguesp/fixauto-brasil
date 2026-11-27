@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { guardarDestino } from '../../lib/destino-pendente';
+import LoginScreen from '../(auth)/login';
 
 // Link curto do SMS/e-mail bipfix.com/r/<numero> (apps/web/src/app/r/[numero]/route.ts) aberto pelo app
 // (App Links / Universal Links, 27/11). Oficina -> formulario do orcamento; motorista -> o pedido dele.
-// Sem login: guarda o destino, pede login e segue (o link nunca "morre"). Pedido que a conta nao pode ver
-// (RLS) -> explica e abre a lista.
+// Sem login: a tela de login aparece AQUI mesmo (nao navega para o grupo (auth): o redirecionamento de la
+// para as abas vencia o do link - teste 27/11) e, ao entrar, o login volta a este endereco (destino-pendente)
+// com a conta ja carregada. O link nunca "morre". Pedido que a conta nao pode ver (RLS) -> explica e abre a lista.
 export default function LinkCurtoScreen() {
   const { t } = useTranslation();
   const { numero } = useLocalSearchParams<{ numero: string }>();
@@ -28,7 +30,7 @@ export default function LinkCurtoScreen() {
 
   if (!loading && !user) {
     if (n) guardarDestino(`/r/${n}`);
-    return <Redirect href="/(auth)/login" />;
+    return <LoginScreen />;
   }
   if (erro || !n) {
     return (

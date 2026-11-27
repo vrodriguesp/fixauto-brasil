@@ -202,7 +202,7 @@ export default function OrcamentoScreen() {
       <Stack.Screen options={{ title: meu ? t('oficina.modificarOrcamento') : t('oficina.orcamentoTitulo') }} />
       {/* resumo do pedido */}
       <Pressable onPress={() => router.push(`/pedido-oficina/${sol.id}`)} accessibilityRole="button" className="bg-white rounded-xl border border-gray-200 p-3 mb-4">
-        <Text className="font-semibold text-gray-900">{rotuloTipoOficina(t, sol.tipo, sol.descricao)}{v?.fipe_marca ? ` · ${v.fipe_marca} ${v.fipe_modelo || ''}`.trim() : ''}{v?.fipe_ano ? ` ${v.fipe_ano}` : ''}</Text>
+        <Text className="font-semibold text-gray-900">{[rotuloTipoOficina(t, sol.tipo, sol.descricao), v?.fipe_marca ? [v.fipe_marca, v.fipe_modelo, v.fipe_ano].filter(Boolean).join(' ') : ''].filter(Boolean).join(' · ')}</Text>
         <TextoTraduzido texto={limparDescricao(sol.descricao)} className="text-sm text-gray-600 mt-1" numberOfLines={3} />
         <Text className="text-xs text-primary-700 mt-1">{t('oficina.verPedido')} ›</Text>
       </Pressable>
@@ -247,7 +247,8 @@ export default function OrcamentoScreen() {
       <Pressable onPress={addItem} accessibilityRole="button" className="self-start py-2 px-1 mb-3"><Text className="text-primary-700 font-medium">{t('oficina.adicionarItem')}</Text></Pressable>
       <View className="bg-white rounded-xl border border-gray-200 p-3 mb-5">
         <View className="flex-row justify-between"><Text className="text-gray-700 font-semibold">{t('oficina.total')}</Text><Text className="text-xl font-bold text-gray-900" testID="total">{formatCurrency(total, moeda, i18n.language)}</Text></View>
-        <Text className="text-xs text-gray-500 mt-1">{pct > 0 ? t('oficina.comissaoInfo', { pct: String(pct).replace('.', ',') }) : t('oficina.semComissaoOrcamento')}</Text>
+        {/* comissao: so com valor; "sem comissao" so quando o servidor disse que a taxa e zero (como o site) */}
+        {total > 0 ? <Text className="text-xs text-gray-500 mt-1">{pct > 0 ? t('oficina.comissaoInfo', { pct: String(pct).replace('.', ',') }) : comissao ? t('oficina.semComissaoOrcamento') : ''}</Text> : null}
       </View>
 
       {/* prazo e garantia */}

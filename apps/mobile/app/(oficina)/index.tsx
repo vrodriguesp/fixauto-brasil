@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, FlatList, Pressable, RefreshControl, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -62,11 +62,15 @@ export default function PedidosOficinaScreen() {
   useFocusEffect(useCallback(() => { carregar(); }, [carregar]));
   // aviso novo (pedido, aceite, mensagem) ou mudanca nos pedidos/orcamentos: recarrega
   useEffect(() => { if (chegou) carregar(); }, [chegou]); // eslint-disable-line react-hooks/exhaustive-deps
+  // nome do canal unico por inscricao: o supabase-js devolve o MESMO canal para o mesmo nome e, se o efeito
+  // roda de novo antes de o anterior sair (hot reload, troca de conta), dava "cannot add callbacks after
+  // subscribe()" (teste no emulador 27/11)
+  const inscricao = useRef(0);
   useEffect(() => {
     if (!oficina) return;
     let espera: ReturnType<typeof setTimeout> | null = null;
     const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(carregar, 600); };
-    const canal = supabase.channel(`pedidos-oficina-app-${oficina.id}`)
+    const canal = supabase.channel(`pedidos-oficina-app-${oficina.id}-${++inscricao.current}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'solicitacoes' }, recarregar)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orcamentos' }, recarregar)
       .subscribe();
