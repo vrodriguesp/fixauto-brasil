@@ -1042,6 +1042,7 @@
     "excluirContaAjuda": "Não quer mais usar o BipFix?",
     "semRede": "Sem ligação à internet. A mostrar o que foi carregado por último.",
     "semRedeCurto": "Sem ligação à internet.",
+    "erroCarregar": "Não foi possível carregar os pedidos ({codigo}). Tente de novo; se continuar, avise a BipFix.",
     "tentarDeNovo": "Tentar de novo",
     "bloqueado_mecanico": "Só o dono ou um administrador da oficina envia orçamentos.",
     "bloqueado_aceito": "Para propor uma revisão deste orçamento aceite, use o site bipfix.com.",

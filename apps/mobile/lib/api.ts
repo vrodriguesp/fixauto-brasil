@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import i18n from '../i18n';
 import { ErroApi } from './erro';
+import { limparCachePerfil } from './cache-perfil';
 
 // O app fala com as MESMAS rotas de API do site (apps/web/src/app/api) -
 // nao existe um backend separado pro app. Rotas que usam a service_role key
@@ -35,6 +36,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
       // 401 porque o banco do site esta fora NAO deslogam (teste 28/11: gateway parado 1 min deslogava a oficina
       // pelo sinal de presenca)
       await supabase.auth.signOut({ scope: 'local' });
+      limparCachePerfil();
     }
   }
   const json = await res.json().catch(() => ({}));

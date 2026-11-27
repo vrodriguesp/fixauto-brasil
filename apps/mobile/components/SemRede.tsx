@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 
 // Sem rede (auditoria 27/11, A4/M6): faixa no alto da lista (a lista anterior continua) e tela inteira quando
 // ainda nao ha nada carregado. Sempre com "tentar de novo".
-export function FaixaSemRede({ aoTentar }: { aoTentar: () => void }) {
+export function FaixaSemRede({ aoTentar, texto }: { aoTentar: () => void; /** outro texto (erro do servidor) */ texto?: string }) {
   const { t } = useTranslation();
   return (
     <View className="mx-4 mb-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 flex-row items-center gap-2" accessibilityRole="alert" testID="faixa-sem-rede">
       <Ionicons name="cloud-offline-outline" size={20} color="#92400e" />
-      <Text className="flex-1 text-sm text-amber-900">{t('oficina.semRede')}</Text>
+      <Text className="flex-1 text-sm text-amber-900">{texto || t('oficina.semRede')}</Text>
       <Pressable onPress={aoTentar} accessibilityRole="button" className="px-3 py-2 rounded-lg bg-amber-200"><Text className="text-sm font-semibold text-amber-900">{t('oficina.tentarDeNovo')}</Text></Pressable>
     </View>
   );

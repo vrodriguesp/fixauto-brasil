@@ -1042,6 +1042,7 @@
     "excluirContaAjuda": "Non vuoi più usare BipFix?",
     "semRede": "Nessuna connessione a internet. Mostriamo gli ultimi dati caricati.",
     "semRedeCurto": "Nessuna connessione a internet.",
+    "erroCarregar": "Impossibile caricare le richieste ({codigo}). Riprova; se continua, avvisa BipFix.",
     "tentarDeNovo": "Riprova",
     "bloqueado_mecanico": "Solo il titolare o un amministratore dell'officina può inviare preventivi.",
     "bloqueado_aceito": "Per proporre una revisione di questo preventivo accettato usa bipfix.com.",

@@ -40,6 +40,7 @@ export default function PedidosOficinaScreen() {
   const [agendas, setAgendas] = useState<Map<string, { inicio: string; ate: string | null }>>(new Map());
   const [loading, setLoading] = useState(true);
   const [semRede, setSemRede] = useState(false);
+  const [erroServidor, setErroServidor] = useState<string | null>(null);
   // enquanto sem rede, tenta de novo a cada 8 s (a rede voltando, a lista volta sozinha)
   useEffect(() => { if (!semRede) return; const i = setInterval(() => { carregar(); }, 8000); return () => clearInterval(i); }, [semRede]); // eslint-disable-line react-hooks/exhaustive-deps
   const [agora, setAgora] = useState(() => Date.now());
@@ -58,7 +59,17 @@ export default function PedidosOficinaScreen() {
       supabase.from('agenda').select('solicitacao_id, data_inicio, checkin_ate').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null),
     ]);
     // sem rede: a lista anterior fica, com faixa "sem conexao" e tentativa automatica (A4); nunca "nenhum pedido"
-    if (eSols) { setSemRede(true); setLoading(false); return; }
+    if (eSols) {
+      // erro do SERVIDOR (codigo PostgREST, ex. PGRST201/42501) nao e falta de rede: faixa generica com o codigo, sem
+      // tentar em laco; sem codigo (fetch falhou / prazo) = sem conexao (revisao 28/11)
+      const servidor = !!eSols.code && !/fetch|network|abort/i.test(eSols.message || '');
+      if (servidor) console.warn('[pedidos] erro do servidor', eSols.code, eSols.message);
+      setErroServidor(servidor ? eSols.code : null);
+      setSemRede(!servidor);
+      setLoading(false);
+      return;
+    }
+    setErroServidor(null);
     setSemRede(false);
     setPedidos((sols as PedidoCaixa[]) || []);
     setVistos(new Set(((v || []) as any[]).map((x) => x.solicitacao_id)));
@@ -137,6 +148,7 @@ export default function PedidosOficinaScreen() {
         <Text accessibilityRole="alert" className="mx-4 mb-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('oficina.cadastroEmAnalise')}</Text>
       ) : null}
       {semRede ? <FaixaSemRede aoTentar={carregar} /> : null}
+      {erroServidor ? <FaixaSemRede aoTentar={carregar} texto={t('oficina.erroCarregar', { codigo: erroServidor })} /> : null}
       <View className="mx-4 mb-3 flex-row rounded-xl bg-gray-200 p-1" accessibilityRole="tablist">
         {ABAS.map((a) => (
           <Pressable key={a} onPress={() => setAba(a)} accessibilityRole="tab" accessibilityState={{ selected: aba === a }} testID={`aba-${a}`}

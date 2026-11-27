@@ -1042,6 +1042,7 @@
     "excluirContaAjuda": "Ei soovi BipFixi enam kasutada?",
     "semRede": "Internetiühendus puudub. Näitame viimati laaditut.",
     "semRedeCurto": "Internetiühendus puudub.",
+    "erroCarregar": "Päringute laadimine ebaõnnestus ({codigo}). Proovi uuesti; kui viga püsib, teata BipFixile.",
     "tentarDeNovo": "Proovi uuesti",
     "bloqueado_mecanico": "Pakkumisi saab saata ainult töökoja omanik või administraator.",
     "bloqueado_aceito": "Vastuvõetud pakkumise muutmise ettepaneku tegemiseks kasuta veebi bipfix.com.",

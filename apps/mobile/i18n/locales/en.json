@@ -1042,6 +1042,7 @@
     "excluirContaAjuda": "No longer want to use BipFix?",
     "semRede": "No internet connection. Showing what was last loaded.",
     "semRedeCurto": "No internet connection.",
+    "erroCarregar": "Could not load the requests ({codigo}). Try again; if it persists, tell BipFix.",
     "tentarDeNovo": "Try again",
     "bloqueado_mecanico": "Only the workshop owner or an administrator can send quotes.",
     "bloqueado_aceito": "To propose a revision of this accepted quote, use bipfix.com.",

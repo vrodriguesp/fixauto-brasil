@@ -65,6 +65,7 @@ const NOVAS = {
   excluirContaAjuda: { pt: 'Não quer mais usar o BipFix?', 'pt-PT': 'Não quer mais usar o BipFix?', en: 'No longer want to use BipFix?', et: 'Ei soovi BipFixi enam kasutada?', it: 'Non vuoi più usare BipFix?', ru: 'Больше не хотите пользоваться BipFix?' },
   semRede: { pt: 'Sem conexão com a internet. Mostrando o que foi carregado por último.', 'pt-PT': 'Sem ligação à internet. A mostrar o que foi carregado por último.', en: 'No internet connection. Showing what was last loaded.', et: 'Internetiühendus puudub. Näitame viimati laaditut.', it: 'Nessuna connessione a internet. Mostriamo gli ultimi dati caricati.', ru: 'Нет подключения к интернету. Показаны последние загруженные данные.' },
   semRedeCurto: { pt: 'Sem conexão com a internet.', 'pt-PT': 'Sem ligação à internet.', en: 'No internet connection.', et: 'Internetiühendus puudub.', it: 'Nessuna connessione a internet.', ru: 'Нет подключения к интернету.' },
+  erroCarregar: { pt: 'Não foi possível carregar os pedidos ({codigo}). Tente de novo; se continuar, avise a BipFix.', 'pt-PT': 'Não foi possível carregar os pedidos ({codigo}). Tente de novo; se continuar, avise a BipFix.', en: 'Could not load the requests ({codigo}). Try again; if it persists, tell BipFix.', et: 'Päringute laadimine ebaõnnestus ({codigo}). Proovi uuesti; kui viga püsib, teata BipFixile.', it: 'Impossibile caricare le richieste ({codigo}). Riprova; se continua, avvisa BipFix.', ru: 'Не удалось загрузить заявки ({codigo}). Попробуйте снова; если повторится, сообщите BipFix.' },
   tentarDeNovo: { pt: 'Tentar de novo', 'pt-PT': 'Tentar de novo', en: 'Try again', et: 'Proovi uuesti', it: 'Riprova', ru: 'Повторить' },
   bloqueado_mecanico: { pt: 'Só o dono ou um administrador da oficina envia orçamentos.', 'pt-PT': 'Só o dono ou um administrador da oficina envia orçamentos.', en: 'Only the workshop owner or an administrator can send quotes.', et: 'Pakkumisi saab saata ainult töökoja omanik või administraator.', it: "Solo il titolare o un amministratore dell'officina può inviare preventivi.", ru: 'Отправлять предложения может только владелец или администратор автосервиса.' },
 };
@@ -101,7 +102,7 @@ for (const l of IDIOMAS) {
   app.auth.tipoNaoSuportado = AUTH.tipoNaoSuportado[l];
   app.constants.tiposOcorrencia = siteBase.constants.tiposOcorrencia;
   // pedido vencido (072): o selo mostrava "expirada" cru (M4)
-  app.constants.statusSolicitacao.expirada = { pt: 'Vencido', 'pt-PT': 'Expirado', en: 'Expired', et: 'Aegunud', it: 'Scaduta', ru: 'Истёк' }[l];
+  app.constants.statusSolicitacao.expirada = { pt: 'Vencido', 'pt-PT': 'Expirado', en: 'Expired', et: 'Aegunud', it: 'Scaduta', ru: 'Истекла' }[l];
   fs.writeFileSync(arq, JSON.stringify(app, null, 2) + '\n');
   console.log(l, Object.keys(of).length, 'chaves em oficina');
 }

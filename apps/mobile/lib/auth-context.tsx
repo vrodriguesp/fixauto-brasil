@@ -8,6 +8,7 @@ import i18n from '../i18n';
 import { API_BASE_URL } from './api';
 import { idiomaEscolhido } from './idiomas';
 import { removerPush } from './push';
+import { CHAVE_PERFIL, CHAVE_OFICINA, limparCachePerfil, cacheOficinaVale } from './cache-perfil';
 
 // quem esta no app: motorista (cliente) ou oficina (dono ou funcionario da equipe)
 export type Papel = 'cliente' | 'oficina';
@@ -53,13 +54,10 @@ const AuthContext = createContext<AuthContextType>({
 const ERRO_TIPO_NAO_SUPORTADO = 'tipo_nao_suportado';
 // conta de oficina sem oficina (nem dona nem funcionario ativo): nao ha o que mostrar
 const ERRO_SEM_OFICINA = 'sem_oficina';
-// ultimo perfil valido: abre o app sem rede (no local do acidente) sem cair no login
-const CHAVE_PERFIL = 'bipfix_perfil_cache';
+// ultimo perfil valido (CHAVE_PERFIL) e oficina + funcionario (CHAVE_OFICINA): abrem o app sem rede (lib/cache-perfil.ts)
 // falha de rede do GoTrue (status 0 / "Network request failed" / fetch): nao e credencial errada
 const ehErroDeRede = (e: { status?: number; code?: string; message?: string; name?: string }) =>
   e.status === 0 || /network|fetch|timeout|ECONN/i.test(e.message || '') || /Retryable|Fetch/i.test(e.name || '');
-// oficina + funcionario da conta, para abrir sem rede do mesmo jeito
-const CHAVE_OFICINA = 'bipfix_oficina_cache';
 type CacheOficina = { oficina: Oficina | null; funcionario: Funcionario | null };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -94,7 +92,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (cache.tipo === 'oficina') {
           const g = await AsyncStorage.getItem(CHAVE_OFICINA).catch(() => null);
           const co = g ? JSON.parse(g) as CacheOficina : null;
-          setOficina(co?.oficina ?? null); setFuncionario(co?.funcionario ?? null);
+          // so a oficina desta conta (revisao 28/11)
+          if (!cacheOficinaVale(co, userId)) { setUser(null); return { profile: null, error: 'perfil_nao_encontrado' }; }
+          setOficina(co!.oficina); setFuncionario(co!.funcionario);
         }
         setUser(cache);
         return { profile: cache, error: null };
@@ -104,12 +104,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     if (profile.ativo === false) {
       await supabase.auth.signOut({ scope: 'local' });
-      AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
+      limparCachePerfil();
       setUser(null);
       return { profile: null, error: 'conta_desativada' };
     }
     if (profile.tipo !== 'cliente' && profile.tipo !== 'oficina') {
       await supabase.auth.signOut({ scope: 'local' });
+      limparCachePerfil();
       setUser(null);
       return { profile: null, error: ERRO_TIPO_NAO_SUPORTADO };
     }
@@ -132,11 +133,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!ofi && (e1 || e2)) {
         const g = await AsyncStorage.getItem(CHAVE_OFICINA).catch(() => null);
         const co = g ? JSON.parse(g) as CacheOficina : null;
-        if (!co?.oficina) { setUser(null); return { profile: null, error: 'perfil_nao_encontrado' }; }
-        ofi = co.oficina; func = co.funcionario;
+        if (!cacheOficinaVale(co, userId)) { setUser(null); return { profile: null, error: 'perfil_nao_encontrado' }; }
+        ofi = co!.oficina; func = co!.funcionario;
       }
       if (!ofi) {
         await supabase.auth.signOut({ scope: 'local' });
+        limparCachePerfil();
         setUser(null);
         return { profile: null, error: ERRO_SEM_OFICINA };
       }
@@ -245,8 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // este aparelho para de receber o push desta conta (antes de perder o login)
     await removerPush();
     await supabase.auth.signOut({ scope: 'local' });
-    AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
-    AsyncStorage.removeItem(CHAVE_OFICINA).catch(() => {});
+    limparCachePerfil();
     setUser(null); setOficina(null); setFuncionario(null);
     setAuthUser(null);
   };

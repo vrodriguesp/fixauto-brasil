@@ -92,14 +92,15 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
   }, [papel]);
 
   const mostrar = useCallback((a: Aviso) => {
-    if (jaAberta(a)) return;
+    // a pessoa ja esta nessa tela: sem banner e o aviso ja conta como lido (revisao 28/11)
+    if (jaAberta(a)) { supabase.from('notificacoes').update({ lida: true }).eq('id', a.id).then(() => atualizar()); return; }
     setBanner(a);
     Animated.timing(opacidade, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     if (tmr.current) clearTimeout(tmr.current);
     tmr.current = setTimeout(() => {
       Animated.timing(opacidade, { toValue: 0, duration: 250, useNativeDriver: true }).start(() => setBanner(null));
     }, 5000);
-  }, [opacidade, jaAberta]);
+  }, [opacidade, jaAberta, atualizar]);
 
   const fechar = useCallback(() => {
     if (tmr.current) clearTimeout(tmr.current);
