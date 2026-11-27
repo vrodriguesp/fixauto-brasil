@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
-import { guardarDestino } from '../../lib/destino-pendente';
+import { guardarDestino, pegarDestino } from '../../lib/destino-pendente';
 import LoginScreen from '../(auth)/login';
 
 // Link curto do SMS/e-mail bipfix.com/r/<numero> (apps/web/src/app/r/[numero]/route.ts) aberto pelo app
@@ -40,6 +40,7 @@ export default function LinkCurtoScreen() {
     (async () => {
       const { data } = await supabase.from('solicitacoes').select('id').eq('numero', Number(n)).maybeSingle();
       if (!data?.id) { setErro(true); return; }
+      pegarDestino(); // consumido: um login seguinte no mesmo processo nao reabre este link (M2)
       router.replace((papel === 'oficina' ? `/orcamento/${data.id}` : `/solicitacao/${data.id}`) as any);
     })();
   }, [loading, user?.id, papel, n, decisao.tipo]); // eslint-disable-line react-hooks/exhaustive-deps

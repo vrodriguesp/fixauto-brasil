@@ -7,7 +7,7 @@ import RolagemTeclado from '../../components/RolagemTeclado';
 import { useAuth } from '../../lib/auth-context';
 import { API_BASE_URL } from '../../lib/api';
 import { mensagemErro, ErroApi } from '../../lib/erro';
-import { verDestino } from '../../lib/destino-pendente';
+import { verDestino, pegarDestino } from '../../lib/destino-pendente';
 
 // "Receber um codigo por e-mail" (dono 12/11): mesmas rotas do site
 // (/api/conta/codigo-login e /confirmar). Entra em contas com ou sem senha; a
@@ -73,6 +73,7 @@ export default function CodigoLoginScreen() {
       // o layout de (auth) ja manda para as abas (ou para o link aberto antes de entrar); as abas mostram
       // "crie a sua senha" se faltar
       router.replace((destino || '/(tabs)') as any);
+      pegarDestino();
     } catch (e) {
       setErro(mensagemErro(e));
     } finally {

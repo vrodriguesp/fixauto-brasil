@@ -10,7 +10,7 @@ export const ABAS: Aba[] = ['responder', 'respondidos', 'encerrados'];
 export type Estado = 'aceito' | 'visto' | 'enviado' | 'entregue' | 'recusado' | 'expirado' | 'perdido' | 'dispensado';
 
 export type OficinaCaixa = { id: string; latitude: number | null; longitude: number | null; raio_atendimento_km?: number | null; especialidades?: readonly string[] | null; pais?: string | null };
-export type OrcamentoCaixa = { id?: string; oficina_id: string; status: string; created_at?: string; validade?: string | null; valor_total?: number | null; recusado_motivo?: string | null; disponibilidade?: any[] | null; disponibilidade_escolhida_id?: string | null };
+export type OrcamentoCaixa = { id?: string; oficina_id: string; status: string; created_at?: string; validade?: string | null; valor_total?: number | null; recusado_motivo?: string | null; recusado_no_aceite?: boolean | null; disponibilidade?: any[] | null; disponibilidade_escolhida_id?: string | null };
 export type PedidoCaixa = {
   id: string; status: string; tipo: string; latitude: number | null; longitude: number | null; created_at: string;
   urgencia?: string | null; emergencia_id?: string | null; descricao?: string | null;
@@ -54,6 +54,9 @@ export function agruparPedidos(lista: PedidoCaixa[], oficina: OficinaCaixa, disp
     const vencido = meu.status === 'expirado' || (!!meu.validade && meu.validade < hojeYmd && ['enviado', 'visualizado'].includes(meu.status));
     if (meu.status === 'aceito' && s.status !== 'concluida') g.respondidos.push({ s, meu, estado: 'aceito' });
     else if (meu.status === 'aceito') g.encerrados.push({ s, meu, estado: 'entregue' });
+    // recusado porque o cliente escolheu OUTRA oficina (recusado_no_aceite, aceitar-orcamento.ts): "outra oficina", nao
+    // "cliente recusou" (M11, auditoria 27/11)
+    else if (meu.status === 'recusado' && (meu.recusado_no_aceite || (s.orcamentos || []).some((o) => o.oficina_id !== oficina.id && o.status === 'aceito'))) g.encerrados.push({ s, meu, estado: 'perdido' });
     else if (meu.status === 'recusado') g.encerrados.push({ s, meu, estado: 'recusado' });
     else if (vencido) g.encerrados.push({ s, meu, estado: 'expirado' });
     else if (!aberto) g.encerrados.push({ s, meu, estado: 'perdido' });

@@ -10,6 +10,7 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
 import { confirmar, avisar } from '../../lib/confirmar';
+import { abrirNoSite, urlPerfilNoSite } from '../../lib/links-site';
 import { API_BASE_URL } from '../../lib/api';
 
 // Perfil da oficina no app (27/11): quem esta logado, a oficina, idioma e sair. Os dados da oficina
@@ -30,9 +31,9 @@ export default function PerfilOficinaScreen() {
   const [excluindo, setExcluindo] = useState(false);
   const handleExcluir = () => {
     if (excluindo) return;
-    confirmar(t('perfil.excluirConta'), `${t('perfil.excluirContaTexto')}
+    confirmar(t('perfil.excluirConta'), `${t('oficina.excluirContaTexto')}
 
-${t('perfil.excluirContaDetalhes')}
+${t('oficina.excluirContaDetalhes')}
 
 ${t('perfil.excluirContaConfirmar')}`, [
       { text: t('common.cancelar'), style: 'cancel' },
@@ -105,19 +106,23 @@ ${t('perfil.excluirContaConfirmar')}`, [
         </View>
       )}
 
-      <Text className="text-sm text-gray-600 mb-6">{t('oficina.dadosNoSite')}</Text>
+      <Text className="text-sm text-gray-600 mb-2">{t('oficina.dadosNoSite')}</Text>
+      <Pressable onPress={() => abrirNoSite(urlPerfilNoSite(i18n.language))} accessibilityRole="button" testID="abrir-no-site-perfil" className="self-start border border-primary-600 rounded-lg px-4 py-2 mb-6"><Text className="text-primary-700 font-semibold">{t('oficina.abrirNoSite')}</Text></Pressable>
 
       <Pressable onPress={handleSair} accessibilityRole="button" className="border border-red-300 rounded-lg py-4 items-center" testID="perfil-sair">
         <Text className="text-red-600 font-semibold">{t('perfil.sair')}</Text>
       </Pressable>
 
-      <Pressable onPress={handleExcluir} disabled={excluindo} accessibilityRole="button" accessibilityState={{ disabled: excluindo }} className="py-4 items-center mt-4" style={{ opacity: excluindo ? 0.5 : 1 }} testID="perfil-excluir">
-        <Text className="text-gray-500 underline">{t('perfil.excluirConta')}</Text>
-      </Pressable>
-
       <Text className="text-center text-xs text-gray-400 mt-6">
         BipFix {Constants.expoConfig?.version ?? ''}{!Updates.isEmbeddedLaunch && Updates.updateId ? ` · ${Updates.updateId.slice(0, 8)}` : ''}
       </Text>
+      {/* longe do "Sair" (M12): zona propria, cinza, no fim da tela */}
+      <View className="mt-10 pt-4 border-t border-gray-200 items-center">
+        <Text className="text-xs text-gray-500 mb-1">{t('oficina.excluirContaAjuda')}</Text>
+        <Pressable onPress={handleExcluir} disabled={excluindo} accessibilityRole="button" accessibilityState={{ disabled: excluindo }} className="py-3 px-4" style={{ opacity: excluindo ? 0.5 : 1 }} testID="perfil-excluir">
+          <Text className="text-gray-500 underline">{t('perfil.excluirConta')}</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }

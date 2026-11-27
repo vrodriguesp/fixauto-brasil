@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { formatCurrency, formatDate, currencyForCountry } from '@fixauto/shared';
+import { tDias } from '../../i18n';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { useAvisos } from '../../lib/avisos';
@@ -15,6 +16,8 @@ import { urlAssinada } from '../../lib/midia';
 import { formatarJanela, janelaDoSlot, janelaDaAgenda, semQuebra } from '../../lib/turnos';
 import { fusoDoPais } from '../../lib/fuso';
 import { confirmar } from '../../lib/confirmar';
+import SemRede from '../../components/SemRede';
+import { abrirNoSite, urlPedidoNoSite, urlOrcamentoNoSite } from '../../lib/links-site';
 import { ehAcidente, type Dispensa } from '../../lib/caixa-pedidos';
 
 // motivos de "nao tenho interesse" (migracao 070; mesmos do site, components/oficina/DispensarPedido.tsx)
@@ -35,12 +38,16 @@ export default function PedidoOficinaScreen() {
   const [pedemDatas, setPedemDatas] = useState(false);
   const [agenda, setAgenda] = useState<{ inicio: string; ate: string | null } | null>(null);
   const [puxando, setPuxando] = useState(false);
+  const [semRede, setSemRede] = useState(false);
 
   const carregar = useCallback(async () => {
     if (!id || !oficina) return;
-    const { data } = await supabase.from('solicitacoes')
+    const { data, error } = await supabase.from('solicitacoes')
       .select('*, veiculo:veiculos(*), fotos:solicitacao_fotos(id, foto_url, origem, created_at), convites:pedido_convites(oficina_id, origem), privado:solicitacoes_privado(endereco), orcamentos(*, itens:orcamento_itens(*), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))')
       .eq('id', id).maybeSingle();
+    // erro de leitura (sem rede) nao e "pedido nao encontrado" (M6): mantem a tela e oferece tentar de novo
+    if (error) { setSemRede(true); setPuxando(false); return; }
+    setSemRede(false);
     if (!data) { setSol(null); setPuxando(false); return; }
     const s: any = data;
     // nome/codigo do cliente (resumo por pedido, 102) e telefone so com orcamento aceito (contato_clientes, 086)
@@ -81,6 +88,7 @@ export default function PedidoOficinaScreen() {
   const fmtDiaAg = useMemo(() => new Intl.DateTimeFormat(i18n.language, { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: fuso }), [i18n.language, fuso]);
   const fmtDia = useMemo(() => new Intl.DateTimeFormat(i18n.language, { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: 'UTC' }), [i18n.language]);
 
+  if (sol === undefined && semRede) return <SemRede aoTentar={carregar} />;
   if (sol === undefined) return <View className="flex-1 items-center justify-center bg-white"><ActivityIndicator color="#2563eb" /></View>;
   if (sol === null) {
     return (
@@ -96,7 +104,9 @@ export default function PedidoOficinaScreen() {
   const emAndamento = sol.status === 'em_andamento';
   const liberado = aceito || emAndamento || sol.status === 'concluida';
   const vencido = !!meu && ['enviado', 'visualizado'].includes(meu.status) && orcamentoVencido(meu.validade, oficina?.pais);
-  const fechado = ['concluida', 'cancelada', 'expirada'].includes(sol.status);
+  // perdido = o cliente escolheu outra oficina (ou o carro ja esta la): fechado para mim (M13)
+  const perdido = ['aceita', 'em_andamento'].includes(sol.status) && !aceito;
+  const fechado = ['concluida', 'cancelada', 'expirada'].includes(sol.status) || perdido;
   const convidada = !!oficina && !!sol.convites?.some((c: any) => c.oficina_id === oficina.id && c.origem !== 'tipo_alterado');
   const acidente = ehAcidente(sol);
   const slot = meu?.disponibilidade?.find((d: any) => d.id === meu.disponibilidade_escolhida_id);
@@ -150,6 +160,7 @@ export default function PedidoOficinaScreen() {
         <View className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4" testID="selo-novas-datas">
           <Text className="font-semibold text-amber-900">📅 {t('oficina.novasDatasPedidas')}</Text>
           <Text className="text-sm text-amber-900 mt-1">{t('oficina.novasDatasPedidasTexto')}</Text>
+          <Pressable onPress={() => abrirNoSite(urlPedidoNoSite(i18n.language, sol.id))} accessibilityRole="button" testID="abrir-no-site-datas" className="mt-2 self-start border border-amber-700 rounded-lg px-3 py-2"><Text className="text-amber-900 font-semibold">{t('oficina.abrirNoSite')}</Text></Pressable>
         </View>
       ) : null}
 
@@ -161,9 +172,11 @@ export default function PedidoOficinaScreen() {
             <Text className={`text-xs font-semibold rounded-full px-2 py-0.5 ${vencido ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700'}`}>{vencido ? t('oficina.statusOrcamento.expirado') : t(`oficina.statusOrcamento.${meu.status}`, { defaultValue: meu.status })}</Text>
           </View>
           {meu.status === 'recusado' && meu.recusado_motivo ? <Text className="mt-2 text-sm text-gray-800 bg-gray-50 rounded-lg p-2">{t('oficina.recusaMotivo', { motivo: t(`oficina.recusaMotivos.${meu.recusado_motivo}`, { defaultValue: meu.recusado_motivo }) })}</Text> : null}
-          {vencido ? <Text className="mt-2 text-sm text-red-800 bg-red-50 rounded-lg p-2">{t('oficina.orcamentoVencidoTexto', { data: formatDate(meu.validade, i18n.language) })}</Text> : null}
+          {/* vencido com o pedido ainda aberto: "altere" (botao acima); pedido fechado/vencido: so explica (M4) */}
+          {vencido && !fechado ? <Text className="mt-2 text-sm text-red-800 bg-red-50 rounded-lg p-2">{t('oficina.orcamentoVencidoTexto', { data: formatDate(meu.validade, i18n.language) })}</Text> : null}
+          {fechado && !aceito ? <Text className="mt-2 text-sm text-gray-700 bg-gray-50 rounded-lg p-2" testID="pedido-fechado">{t(perdido ? 'oficina.outraOficina' : 'oficina.bloqueado_fechado')}</Text> : null}
           <Text className="text-2xl font-bold text-gray-900 mt-2">{formatCurrency(Number(meu.valor_total), moeda, i18n.language)}</Text>
-          <Text className="text-sm text-gray-600">{t('oficina.prazoDias', { dias: meu.prazo_dias })} · {t('oficina.validadeAte', { data: formatDate(meu.validade, i18n.language) })}</Text>
+          <Text className="text-sm text-gray-600">{tDias(t, 'oficina.prazoDias', Number(meu.prazo_dias))} · {t('oficina.validadeAte', { data: formatDate(meu.validade, i18n.language) })}</Text>
           {(meu.itens || []).length ? (
             <View className="mt-3 border-t border-gray-100 pt-2">
               {meu.itens.map((it: any) => (
@@ -183,7 +196,12 @@ export default function PedidoOficinaScreen() {
             </View>
           ) : null}
           {limparDescricao(meu.observacoes) ? <Text className="text-sm text-gray-600 mt-3">{limparDescricao(meu.observacoes)}</Text> : null}
-          {aceito && !fechado ? <Text className="text-xs text-gray-500 mt-3">{t('oficina.revisaoNoSite')}</Text> : null}
+          {aceito && !fechado ? (
+            <View className="mt-3">
+              <Text className="text-xs text-gray-500">{t('oficina.revisaoNoSite')}</Text>
+              <Pressable onPress={() => abrirNoSite(urlOrcamentoNoSite(i18n.language, sol.id))} accessibilityRole="button" testID="abrir-no-site-revisao" className="mt-2 self-start border border-primary-600 rounded-lg px-3 py-2"><Text className="text-primary-700 font-semibold">{t('oficina.abrirNoSite')}</Text></Pressable>
+            </View>
+          ) : null}
           {sol.status === 'concluida' && aceito ? <Text className="text-sm text-gray-600 mt-3">{t('oficina.orcamentoFechadoEntregue')}</Text> : null}
         </View>
       ) : null}

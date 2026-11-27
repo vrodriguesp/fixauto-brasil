@@ -7,6 +7,14 @@ import { oficinaVePedido, paraResponder, agruparPedidos, corDaEspera, partesDaEs
 import { validarOrcamento, validadeMinima, itensParaGravar, slotsParaGravar, observacoesComComissao, percentualComissao } from '../lib/orcamento-form';
 import { conflitoHorario, erroValidade, validadeSugerida, somarDias, maiorData } from '../lib/turnos';
 import { destinoDoLinkCurto } from '../lib/link-curto';
+import { lerValor } from '../lib/valor';
+import { mesmaTela } from '../lib/mesma-tela';
+import localePt from '../i18n/locales/pt.json';
+import localePtPT from '../i18n/locales/pt-PT.json';
+import localeEn from '../i18n/locales/en.json';
+import localeEt from '../i18n/locales/et.json';
+import localeIt from '../i18n/locales/it.json';
+import localeRu from '../i18n/locales/ru.json';
 
 let falhas = 0;
 const ok = (nome: string, cond: boolean, extra?: unknown) => { if (!cond) { falhas++; console.log('FALHA', nome, extra ?? ''); } else console.log('ok   ', nome); };
@@ -124,6 +132,38 @@ for (const [nome, p] of variantes) {
 }
 ok('parametro vazio nao conta', destinoDoLinkCurto({ numero: '1', s: '' }).tipo === 'app');
 ok('params nulos -> app', destinoDoLinkCurto(null).tipo === 'app');
+
+// 8. valores digitados (M7): formatos aceitos; letras, negativo e vazio = invalido
+const casosValor: [string, number | null][] = [['50', 50], ['50,5', 50.5], ['50.5', 50.5], ['1 234,56', 1234.56], ['1\u202f234,56', 1234.56], ['1.234,56', 1234.56], ['1,234.56', 1234.56], ['1.234', 1234], ['1,234', 1234], ['1 234', 1234], ['0', 0], ['99,90', 99.9], ['abc', null], ['12abc', null], ['-10', null], ['', null], ['  ', null], ['1.2.3,4', 123.4]];
+for (const [txt, esperado] of casosValor) ok('lerValor(' + JSON.stringify(txt) + ') = ' + esperado, lerValor(txt) === esperado, lerValor(txt));
+
+// 9. aviso da tela ja aberta nao empilha (A1)
+ok('mesma conversa (oficina igual)', mesmaTela('/conversa/' + sol, { id: sol, oficina: of }, '/conversa/' + sol + '?oficina=' + of));
+ok('conversa de outra oficina = outra tela', !mesmaTela('/conversa/' + sol, { id: sol, oficina: of }, '/conversa/' + sol + '?oficina=outra'));
+ok('conversa do pagador = outra tela', !mesmaTela('/conversa/' + sol, { id: sol, oficina: of }, '/conversa/' + sol + '?oficina=' + of + '&pagador=' + pag));
+ok('pedido aberto = mesma tela', mesmaTela('/pedido-oficina/' + sol, { id: sol }, '/pedido-oficina/' + sol));
+ok('outro pedido = outra tela', !mesmaTela('/pedido-oficina/' + sol, { id: sol }, '/pedido-oficina/outro'));
+ok('sem pathname = nao', !mesmaTela(null, {}, '/conversa/' + sol));
+
+// 10. perdeu para outra oficina: "outra oficina", nao "cliente recusou" (M11)
+const gP = agruparPedidos([
+  base({ id: 'perdeu-marcado', status: 'aceita', orcamentos: [{ oficina_id: of, status: 'recusado', recusado_no_aceite: true, created_at: new Date(agora).toISOString(), validade: '2026-12-05' }, { oficina_id: 'outra', status: 'aceito' }] }),
+  base({ id: 'perdeu-sem-marca', status: 'aceita', orcamentos: [{ oficina_id: of, status: 'recusado', created_at: new Date(agora).toISOString(), validade: '2026-12-05' }, { oficina_id: 'outra', status: 'aceito' }] }),
+  base({ id: 'recusou-mesmo', status: 'em_orcamento', orcamentos: [{ oficina_id: of, status: 'recusado', recusado_motivo: 'preco', created_at: new Date(agora).toISOString(), validade: '2026-12-05' }] }),
+], oficina, new Map(), hoje, agora);
+ok('recusado no aceite -> perdido', gP.encerrados.find((x) => x.s.id === 'perdeu-marcado')?.estado === 'perdido');
+ok('recusado com outra aceita -> perdido', gP.encerrados.find((x) => x.s.id === 'perdeu-sem-marca')?.estado === 'perdido');
+ok('recusa do cliente continua recusado', gP.encerrados.find((x) => x.s.id === 'recusou-mesmo')?.estado === 'recusado');
+
+// 11. nenhuma chave de traducao do app com ICU ({x, plural ...}) - o i18next do app nao entende (A2)
+const LOCALES: Record<string, any> = { pt: localePt, 'pt-PT': localePtPT, en: localeEn, et: localeEt, it: localeIt, ru: localeRu };
+for (const l of Object.keys(LOCALES)) {
+  const j = LOCALES[l];
+  const ruins: string[] = [];
+  (function andar(o: any, p: string) { for (const [k, v] of Object.entries(o)) { if (typeof v === 'string') { if (/\{\w+,\s*(plural|select|selectordinal)/.test(v)) ruins.push(p + k); } else andar(v, p + k + '.'); } })(j, '');
+  ok('locale ' + l + ' sem ICU', ruins.length === 0, ruins);
+  ok('locale ' + l + ' tem statusSolicitacao.expirada e prazoDias_um', !!j.constants.statusSolicitacao.expirada && !!j.oficina.prazoDias_um);
+}
 
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntudo certo');
 process.exit(falhas ? 1 : 0);

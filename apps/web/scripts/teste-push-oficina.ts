@@ -89,6 +89,19 @@ if (orc) {
     await supabaseAdmin.from('notificacoes').delete().eq('id', r1.avisoId);
     await supabaseAdmin.from('mensagens').delete().eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id).gt('created_at', new Date(Date.now() - 20000).toISOString()).like('texto', '%📋%');
   }
+  // mesma revisao de novo (nada mudou): nao repete sino nem chat (A3-c)
+  const rRep1 = await avisarRevisaoOrcamento(orc.id, of.profile_id, false);
+  const { count: msgsRep } = await supabaseAdmin.from('mensagens').select('id', { count: 'exact', head: true }).eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id);
+  const rRep2 = await avisarRevisaoOrcamento(orc.id, of.profile_id, false);
+  const { count: msgsRep2 } = await supabaseAdmin.from('mensagens').select('id', { count: 'exact', head: true }).eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id);
+  ok('revisao repetida sem mudanca: semMudanca, mesmo aviso, sem mensagem nova', rRep1.ok && rRep2.ok && (rRep2 as any).semMudanca === true && (rRep2 as any).avisoId === (rRep1 as any).avisoId && msgsRep === msgsRep2, [rRep1, rRep2, msgsRep, msgsRep2]);
+  if (rRep1.ok) { await supabaseAdmin.from('notificacoes').delete().eq('id', rRep1.avisoId); await supabaseAdmin.from('mensagens').delete().eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id).gt('created_at', new Date(Date.now() - 20000).toISOString()).like('texto', '%📋%'); }
+  // pedido fechado para esta oficina (aceito por outra / cancelado): 409, nada avisado (M13, caso 284)
+  const { data: solAntes } = await supabaseAdmin.from('solicitacoes').select('status').eq('id', orc.solicitacao_id).single();
+  await supabaseAdmin.from('solicitacoes').update({ status: 'cancelada' }).eq('id', orc.solicitacao_id);
+  const rFechado = await avisarRevisaoOrcamento(orc.id, of.profile_id, true);
+  await supabaseAdmin.from('solicitacoes').update({ status: solAntes!.status }).eq('id', orc.solicitacao_id);
+  ok('pedido cancelado: 409 SERVICO_ENCERRADO', !rFechado.ok && rFechado.status === 409 && (rFechado as any).codigo === 'SERVICO_ENCERRADO', rFechado);
   const r2 = await avisarRevisaoOrcamento(orc.id, of.profile_id, true);
   const d2 = r2.ok ? (await supabaseAdmin.from('notificacoes').select('dados').eq('id', r2.avisoId).single()).data : null;
   ok('novo depois de recusado: aviso "novo", sem revisao', r2.ok && (d2?.dados as any)?.revisao === false, d2);
