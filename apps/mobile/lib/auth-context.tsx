@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
-import type { Profile } from '@fixauto/shared';
+import type { Profile, Oficina, Funcionario } from '@fixauto/shared';
 import type { User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
 import i18n from '../i18n';
@@ -9,8 +9,16 @@ import { API_BASE_URL } from './api';
 import { idiomaEscolhido } from './idiomas';
 import { removerPush } from './push';
 
+// quem esta no app: motorista (cliente) ou oficina (dono ou funcionario da equipe)
+export type Papel = 'cliente' | 'oficina';
+
 interface AuthContextType {
   user: Profile | null;
+  /** oficina da conta (dona ou funcionario ativo) - so com user.tipo === 'oficina' */
+  oficina: Oficina | null;
+  /** linha de funcionarios quando a conta e da equipe (nao a dona) */
+  funcionario: Funcionario | null;
+  papel: Papel | null;
   authUser: User | null;
   isLoggedIn: boolean;
   loading: boolean;
@@ -25,6 +33,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  oficina: null,
+  funcionario: null,
+  papel: null,
   authUser: null,
   isLoggedIn: false,
   loading: true,
@@ -35,18 +46,24 @@ const AuthContext = createContext<AuthContextType>({
   refreshProfile: async () => {},
 });
 
-// App mobile e so pra clientes (motoristas) - diferente do web, que atende
-// cliente/oficina/loja/admin no mesmo auth-context. Sem essa restricao,
-// alguem com conta de oficina/loja poderia logar no app e nao ter nenhuma
-// tela feita pra esse tipo de conta.
-// codigos estaveis: a tela de login traduz (auth.tipoNaoSuportado, auth.contaDesativada)
+// O app atende motoristas (cliente) e, desde 27/11 (pedido do dono), oficinas: a dona da oficina ou um
+// funcionario ativo da equipe (mesma regra do site, apps/web/src/lib/auth-context.tsx). Loja de pecas e
+// admin continuam so no site: nao ha tela para eles aqui.
+// codigos estaveis: a tela de login traduz (auth.tipoNaoSuportado, auth.contaDesativada, auth.semOficina)
 const ERRO_TIPO_NAO_SUPORTADO = 'tipo_nao_suportado';
+// conta de oficina sem oficina (nem dona nem funcionario ativo): nao ha o que mostrar
+const ERRO_SEM_OFICINA = 'sem_oficina';
 // ultimo perfil valido: abre o app sem rede (no local do acidente) sem cair no login
 const CHAVE_PERFIL = 'bipfix_perfil_cache';
+// oficina + funcionario da conta, para abrir sem rede do mesmo jeito
+const CHAVE_OFICINA = 'bipfix_oficina_cache';
+type CacheOficina = { oficina: Oficina | null; funcionario: Funcionario | null };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [user, setUser] = useState<Profile | null>(null);
+  const [oficina, setOficina] = useState<Oficina | null>(null);
+  const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Unico lugar que decide se uma sessao autenticada vira um `user` valido
@@ -71,6 +88,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const guardado = await AsyncStorage.getItem(CHAVE_PERFIL).catch(() => null);
       const cache = guardado ? JSON.parse(guardado) as Profile : null;
       if (cache && cache.id === userId && !/JSON|0 rows|PGRST116/i.test(error?.message || '')) {
+        if (cache.tipo === 'oficina') {
+          const g = await AsyncStorage.getItem(CHAVE_OFICINA).catch(() => null);
+          const co = g ? JSON.parse(g) as CacheOficina : null;
+          setOficina(co?.oficina ?? null); setFuncionario(co?.funcionario ?? null);
+        }
         setUser(cache);
         return { profile: cache, error: null };
       }
@@ -83,11 +105,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return { profile: null, error: 'conta_desativada' };
     }
-    if (profile.tipo !== 'cliente') {
+    if (profile.tipo !== 'cliente' && profile.tipo !== 'oficina') {
       await supabase.auth.signOut({ scope: 'local' });
       setUser(null);
       return { profile: null, error: ERRO_TIPO_NAO_SUPORTADO };
     }
+
+    // Oficina: a propria (profile_id) ou, se nao e dona, a da equipe (funcionarios ativo) - igual ao site.
+    // Tudo lido ANTES de definir user: as abas da oficina nunca abrem sem saber qual oficina e.
+    let ofi: Oficina | null = null;
+    let func: Funcionario | null = null;
+    if (profile.tipo === 'oficina') {
+      const { data: propria } = await supabase.from('oficinas').select('*').eq('profile_id', userId).maybeSingle();
+      ofi = (propria as Oficina | null) ?? null;
+      if (!ofi) {
+        const { data: f } = await supabase.from('funcionarios').select('*, oficina:oficinas(*)').eq('profile_id', userId).eq('ativo', true).maybeSingle();
+        if (f) { func = f as Funcionario; ofi = ((f as any).oficina as Oficina) ?? null; }
+      }
+      if (!ofi) {
+        await supabase.auth.signOut({ scope: 'local' });
+        setUser(null);
+        return { profile: null, error: ERRO_SEM_OFICINA };
+      }
+    }
+    setOficina(ofi);
+    setFuncionario(func);
+    AsyncStorage.setItem(CHAVE_OFICINA, JSON.stringify({ oficina: ofi, funcionario: func } satisfies CacheOficina)).catch(() => {});
 
     setUser(profile as Profile);
     AsyncStorage.setItem(CHAVE_PERFIL, JSON.stringify(profile)).catch(() => {});
@@ -128,8 +171,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // ~1x/h, que refazia todas as consultas e o canal de avisos - auditoria E10)
       if (session?.user && ['SIGNED_IN', 'INITIAL_SESSION', 'USER_UPDATED'].includes(evento)) {
         fetchProfile(session.user.id).catch(() => {});
-      } else {
-        setUser(null);
+      } else if (!session?.user) {
+        // sem sessao: limpa tudo. A renovacao do token (TOKEN_REFRESHED, com sessao) nao mexe no perfil ja
+        // carregado - antes zerava o user e as abas pulavam para o login por um instante
+        setUser(null); setOficina(null); setFuncionario(null);
       }
     });
 
@@ -186,7 +231,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await removerPush();
     await supabase.auth.signOut({ scope: 'local' });
     AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
-    setUser(null);
+    AsyncStorage.removeItem(CHAVE_OFICINA).catch(() => {});
+    setUser(null); setOficina(null); setFuncionario(null);
     setAuthUser(null);
   };
 
@@ -196,7 +242,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, authUser, isLoggedIn: !!user, loading, signUp, signIn, signInComToken, signOut, refreshProfile }}
+      value={{ user, oficina, funcionario, papel: user ? (user.tipo === 'oficina' ? 'oficina' : 'cliente') : null, authUser, isLoggedIn: !!user, loading, signUp, signIn, signInComToken, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>

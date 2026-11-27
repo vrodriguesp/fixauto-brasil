@@ -37,8 +37,8 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 // push com o app fechado: registra o aparelho da conta e abre a tela do aviso tocado
 function PushDaConta() {
-  const { user } = useAuth();
-  usePush(user?.id);
+  const { user, papel } = useAuth();
+  usePush(user?.id, papel);
   // "online agora" no admin (dono 19/11): sinal por minuto com o app em primeiro plano
   usePresenca(user?.id);
   return null;
@@ -59,6 +59,10 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false, headerBackButtonDisplayMode: 'minimal' }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
+          {/* abas da OFICINA (27/11): Pedidos, Mensagens, Perfil */}
+          <Stack.Screen name="(oficina)" />
+          <Stack.Screen name="pedido-oficina/[id]" options={{ headerShown: true, title: t('oficina.pedidoTitulo') }} />
+          <Stack.Screen name="orcamento/[id]" options={{ headerShown: true, title: t('oficina.orcamentoTitulo') }} />
           {/* Modais com o cabecalho fixo desde a abertura: no iPhone, ligar o
               cabecalho de dentro da tela (Stack.Screen) recria a tela e ela
               recomeca sem parar (novo pedido carregando sem fim, teste 09/10) */}

@@ -211,3 +211,42 @@ export const semQuebra = (s: string) => s.replace(/\u2013/g, '\u2060\u2013\u2060
 /** agenda (depois do aceite): dia no fuso da oficina + janela ("ter, 17 nov · 09:00–11:00") */
 export const textoDaAgenda = (dataInicio: string, checkinAte: string | null | undefined, pais: Pais, intl: string, sep = ' · ') =>
   `${new Date(dataInicio).toLocaleDateString(intl, { weekday: 'short', day: 'numeric', month: 'short', timeZone: fusoDoPais(pais) })}${sep}${formatarJanela(janelaDaAgenda(dataInicio, checkinAte, pais))}`;
+
+// ============================================================================================
+// Formulario do orcamento da OFICINA no app (27/11): espelho das funcoes do site usadas em
+// apps/web/src/app/[locale]/oficina/orcamento/[id]/page.tsx (horarioDoDia, conflitoHorario, maiorData,
+// validadeSugerida, erroValidade, somarDias). Mudar la, mudar aqui (teste: scripts/teste-oficina.ts).
+// ============================================================================================
+export function somarDias(ymd: string, n: number): string {
+  const d = new Date(`${ymd}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10);
+}
+export function horarioDoDia(data: string, horario: HorarioSemana): HorarioDia | undefined {
+  if (!data || !horario) return undefined;
+  return horario[CHAVE_DIA[new Date(`${data}T12:00:00Z`).getUTCDay()]];
+}
+const INICIO_TURNO: Record<Turno, number> = { manha: 8, tarde: 13 };
+/** 'fechado': a oficina nao abre nesse dia (pelo perfil); 'turno': abre, mas fora do periodo; null: certo ou sem horario. */
+export function conflitoHorario(data: string, turno: Turno, horario: HorarioSemana): 'fechado' | 'turno' | null {
+  const h = horarioDoDia(data, horario);
+  if (!h) return null;
+  if (h.aberto === false) return 'fechado';
+  const ini = minutos(h.inicio), fim = minutos(h.fim);
+  if (ini == null || fim == null || fim <= ini) return null;
+  return fim <= INICIO_TURNO[turno] * 60 || ini >= FIM_TURNO[turno] * 60 ? 'turno' : null;
+}
+export const maiorData = (datas: (string | null | undefined)[]) => datas.filter((d): d is string => !!d).sort().at(-1) || '';
+export const VALIDADE_FOLGA_DIAS = 7;
+/** ultima data de check-in valida + 7 dias, nunca num dia fechado (QA D17); sem data valida = '' */
+export function validadeSugerida(ultimaValida: string, horario: HorarioSemana, folga = VALIDADE_FOLGA_DIAS): string {
+  if (!ultimaValida) return '';
+  let d = somarDias(ultimaValida, folga);
+  for (let i = 0; i < 14 && !expedienteDoDia(d, horario); i++) d = somarDias(d, 1);
+  return d;
+}
+export function erroValidade(validade: string, datas: string[], hoje: string): 'vazia' | 'passado' | 'antes' | null {
+  if (!validade) return 'vazia';
+  const m = maiorData(datas);
+  if (m && validade < m) return 'antes';
+  if (validade < hoje) return 'passado';
+  return null;
+}

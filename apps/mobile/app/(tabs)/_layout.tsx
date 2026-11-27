@@ -9,7 +9,7 @@ import { senhaAdiada } from '../../lib/senha-adiada';
 const WEB_ROTULO = Platform.OS === 'web' ? { lineHeight: 14, flexShrink: 0 } : {};
 
 export default function TabsLayout() {
-  const { isLoggedIn, loading, user } = useAuth();
+  const { isLoggedIn, loading, user, papel } = useAuth();
   // numeros nas abas: avisos dos pedidos e mensagens nao lidas
   const { naoLidos, mensagensNaoLidas } = useAvisos();
   const avisosPedidos = naoLidos.filter((a) => a.tipo !== 'nova_mensagem').length;
@@ -24,6 +24,8 @@ export default function TabsLayout() {
   }
 
   if (!isLoggedIn) return <Redirect href="/(auth)/login" />;
+  // oficina (27/11): abas proprias (Pedidos, Mensagens, Perfil)
+  if (papel === 'oficina') return <Redirect href="/(oficina)" />;
   // entrou sem senha (pedido ou codigo por e-mail): tela cheia "crie a sua senha", que pode
   // pular ("agora nao" vale ate o app fechar; volta no proximo login) - dono 12/11
   if (user?.senha_definida === false && !senhaAdiada()) return <Redirect href="/criar-senha" />;

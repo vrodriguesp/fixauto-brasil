@@ -55,7 +55,11 @@ export default function ConversaScreen() {
   const [oficinaId, setOficinaId] = useState<string | null>(oficinaParam || null);
   const [oficinaNome, setOficinaNome] = useState('');
   const [opcoes, setOpcoes] = useState<{ id: string; nome: string }[] | null>(null);
-  const tituloTela = oficinaNome || t('mensagens.titulo');
+  const { user, papel } = useAuth();
+  const souOficina = papel === 'oficina';
+  // oficina: o titulo e o carro / "Cliente · codigo" (nome so depois do aceite, regra 102)
+  const [tituloOficina, setTituloOficina] = useState('');
+  const tituloTela = (souOficina ? tituloOficina : oficinaNome) || t('mensagens.titulo');
   const [versao, setVersao] = useState(0);
   const [puxando, setPuxando] = useState(false);
   // titulo = oficina; o icone abre a pagina publica dela (avaliacoes, endereco)
@@ -63,7 +67,7 @@ export default function ConversaScreen() {
   const naWeb = Platform.OS === 'web';
   const opcoesTela = useMemo(() => (naWeb ? { headerShown: false } : {
     headerShown: true, title: tituloTela,
-    headerRight: () => (oficinaDoTitulo.current ? (
+    headerRight: () => (oficinaDoTitulo.current && !souOficina ? (
       // botao com cara de botao e area de toque >= 44x44 (antes so o icone; dificil de tocar - teste do dono 31/10)
       <Pressable onPress={() => oficinaDoTitulo.current && abrirOficina(oficinaDoTitulo.current, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')}
         hitSlop={{ top: 8, bottom: 8, left: 12, right: 8 }}
@@ -73,12 +77,12 @@ export default function ConversaScreen() {
         <Text className="text-sm font-semibold text-blue-700" numberOfLines={1}>{t('mensagens.verOficinaCurto')}</Text>
       </Pressable>
     ) : null),
-  }), [tituloTela, oficinaId, naWeb]); // eslint-disable-line react-hooks/exhaustive-deps
-  const { user } = useAuth();
+  }), [tituloTela, oficinaId, naWeb, souOficina]); // eslint-disable-line react-hooks/exhaustive-deps
   const { atualizar: atualizarAvisos } = useAvisos();
   // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
-  // particular minha com a oficina (o cliente do pedido nao a ve)
-  const pagadorId = pagador === '1' ? (user?.id ?? null) : null;
+  // particular minha com a oficina (o cliente do pedido nao a ve).
+  // Oficina (27/11): pagador=<uuid> e o outro motorista que paga (lista de conversas da oficina / aviso)
+  const pagadorId = pagador === '1' ? (user?.id ?? null) : (souOficina && pagador && /^[0-9a-f-]{36}$/i.test(pagador) ? pagador : null);
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
   // altura da caixa: 1 linha vazia e cresce com o texto ate ~5 linhas (na web o textarea nascia com 2 linhas)
@@ -111,6 +115,21 @@ export default function ConversaScreen() {
       setLoading(false);
     })();
   }, [id, oficinaId, pagadorId]);
+
+  useEffect(() => {
+    if (!souOficina || !id) return;
+    (async () => {
+      const [{ data: s }, { data: r }] = await Promise.all([
+        supabase.from('solicitacoes').select('numero, veiculo:veiculos(fipe_marca, fipe_modelo, placa)').eq('id', id).maybeSingle(),
+        supabase.rpc('resumo_clientes_pedidos', { p_sols: [id] }),
+      ]);
+      const v = (s as any)?.veiculo;
+      const c = ((r as any[]) || [])[0];
+      const carro = v?.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo || ''}`.trim() : '';
+      const quem = c?.nome || (c?.codigo ? `${t('oficina.cliente')} · ${c.codigo}` : '');
+      setTituloOficina([carro, quem].filter(Boolean).join(' · ') || ((s as any)?.numero ? t('constants.numeroPedido', { n: (s as any).numero }) : ''));
+    })();
+  }, [souOficina, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!oficinaId) return;
@@ -307,7 +326,7 @@ export default function ConversaScreen() {
             <Ionicons name="chevron-back" size={24} color="#111827" />
           </Pressable>
           <Text className="flex-1 text-base font-semibold text-gray-900" numberOfLines={1}>{tituloTela}</Text>
-          {oficinaId ? (
+          {oficinaId && !souOficina ? (
             <Pressable onPress={() => abrirOficina(oficinaId, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')} testID="conversa-ver-oficina"
               className="flex-row items-center gap-1.5 px-3 rounded-full bg-blue-50 border border-blue-200" style={{ minHeight: 40 }}>
               <Ionicons name="storefront-outline" size={18} color="#1d4ed8" />
