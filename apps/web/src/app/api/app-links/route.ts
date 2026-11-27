@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PARAMS_SO_SITE } from '@/lib/link-curto-params';
 
 // Links do site que abrem o app quando ele esta instalado (iOS Universal
 // Links / Android App Links). Servido em /.well-known/... (rewrite no
@@ -17,8 +18,12 @@ export async function GET(req: NextRequest) {
   if (qual === 'aasa') {
     const team = process.env.APPLE_TEAM_ID;
     if (!team) return new NextResponse(null, { status: 404 });
+    // /r/* com as variantes que o site resolve sem login (parar lembretes, acesso por token, chat, novas datas,
+    // "nao tenho interesse") fica FORA do app (exclude) - o app so trata o link puro ou com ?o=; no Android o
+    // filtro nao sabe ler a query e o app abre essas variantes no navegador (app/r/[numero].tsx)
+    const excluidos = PARAMS_SO_SITE.map((p) => ({ '/': '/r/*', '?': { [p]: '?*' }, exclude: true }));
     return NextResponse.json({
-      applinks: { details: [{ appIDs: [`${team}.${APP_ID}`], components: CAMINHOS.map((p) => ({ '/': p })) }] },
+      applinks: { details: [{ appIDs: [`${team}.${APP_ID}`], components: [...excluidos, ...CAMINHOS.map((p) => ({ '/': p }))] }] },
     });
   }
   if (qual === 'assetlinks') {

@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import { SITE_URL } from '../../lib/api';
+import { destinoDoLinkCurto } from '../../lib/link-curto';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -14,24 +17,38 @@ import LoginScreen from '../(auth)/login';
 // com a conta ja carregada. O link nunca "morre". Pedido que a conta nao pode ver (RLS) -> explica e abre a lista.
 export default function LinkCurtoScreen() {
   const { t } = useTranslation();
-  const { numero } = useLocalSearchParams<{ numero: string }>();
+  const params = useLocalSearchParams<{ numero: string } & Record<string, string>>();
+  const numero = params.numero;
   const { user, papel, loading } = useAuth();
   const [erro, setErro] = useState(false);
   const n = String(numero || '').replace(/\D/g, '').slice(0, 12);
+  // variantes do link que o site resolve SEM login (parar lembretes ?s=, acesso ?k=, chat ?c=&g=, novas datas &p=1,
+  // "nao tenho interesse" &d=1...): abrem no navegador, nunca morrem (regra do dono 19/11; revisao Fable S2)
+  const decisao = useMemo(() => destinoDoLinkCurto(params as Record<string, string>), [params]);
+  const abriuNavegador = useRef(false);
+  useEffect(() => {
+    if (decisao.tipo !== 'navegador' || abriuNavegador.current) return;
+    abriuNavegador.current = true;
+    (async () => {
+      await WebBrowser.openBrowserAsync(`${SITE_URL}/r/${n}?${decisao.query}`).catch(() => {});
+      router.replace((user ? (papel === 'oficina' ? '/(oficina)' : '/(tabs)') : '/(auth)/login') as any);
+    })();
+  }, [decisao]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading || !user || !n) return;
+    if (decisao.tipo !== 'app' || loading || !user || !n) return;
     (async () => {
       const { data } = await supabase.from('solicitacoes').select('id').eq('numero', Number(n)).maybeSingle();
       if (!data?.id) { setErro(true); return; }
       router.replace((papel === 'oficina' ? `/orcamento/${data.id}` : `/solicitacao/${data.id}`) as any);
     })();
-  }, [loading, user?.id, papel, n]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loading, user?.id, papel, n, decisao.tipo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!loading && !user) {
-    if (n) guardarDestino(`/r/${n}`);
-    return <LoginScreen />;
-  }
+  // guardado uma vez (nao a cada desenho)
+  const semLogin = decisao.tipo === 'app' && !loading && !user;
+  useEffect(() => { if (semLogin && n) guardarDestino(`/r/${n}`); }, [semLogin, n]);
+  if (decisao.tipo === 'navegador') return <View className="flex-1 items-center justify-center bg-white"><ActivityIndicator color="#2563eb" /></View>;
+  if (semLogin) return <LoginScreen />;
   if (erro || !n) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 p-6">

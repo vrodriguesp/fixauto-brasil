@@ -6,6 +6,7 @@ import { canalDoAviso, prioridadeDoCanal } from '../lib/canal-aviso';
 import { oficinaVePedido, paraResponder, agruparPedidos, corDaEspera, partesDaEspera, type PedidoCaixa, type OficinaCaixa } from '../lib/caixa-pedidos';
 import { validarOrcamento, validadeMinima, itensParaGravar, slotsParaGravar, observacoesComComissao, percentualComissao } from '../lib/orcamento-form';
 import { conflitoHorario, erroValidade, validadeSugerida, somarDias, maiorData } from '../lib/turnos';
+import { destinoDoLinkCurto } from '../lib/link-curto';
 
 let falhas = 0;
 const ok = (nome: string, cond: boolean, extra?: unknown) => { if (!cond) { falhas++; console.log('FALHA', nome, extra ?? ''); } else console.log('ok   ', nome); };
@@ -107,6 +108,22 @@ const slots = slotsParaGravar([{ data: '2026-11-30', hora_inicio: '13:00', hora_
 ok('slot: turno derivado, previsao = data + prazo', slots.length === 1 && slots[0].turno === 'tarde' && slots[0].data_previsao_entrega === '2026-12-03' && slots[0].hora_inicio === '13:00');
 ok('observacoes com prefixo da comissao', observacoesComComissao('  Garantia 90 dias ', 'absorver', 10) === '[COMISSAO:absorver:10]\nGarantia 90 dias' && observacoesComComissao('', 'absorver', 8.5) === '[COMISSAO:absorver:8.5]');
 ok('percentual da comissao: padrao 10%, fixo limitado ao total', percentualComissao(200, null) === 10 && percentualComissao(200, { tipo: 'percentual', taxa: 0.08 }) === 8 && percentualComissao(100, { tipo: 'valor_fixo', valorFixo: 150 }) === 100 && percentualComissao(0, null) === 0);
+
+// 7. link curto /r/<numero>: so o puro e o ?o= ficam no app; as variantes que o site resolve sem login vao ao navegador (S2)
+ok('link puro -> app', destinoDoLinkCurto({ numero: '111595' }).tipo === 'app');
+ok('link ?o=et (e-mail da oficina) -> app', destinoDoLinkCurto({ numero: '111595', o: 'et' }).tipo === 'app');
+const variantes: [string, Record<string, string>][] = [
+  ['?s= parar lembretes', { s: 'abc123', l: 'et' }], ['?k= acesso sem senha', { k: 'tok', o: 'et' }], ['?k=&d=1 nao tenho interesse', { k: 'tok', o: 'et', d: '1' }],
+  ['?c=1 chat', { c: '1' }], ['?c=1&g=1&of= chat do pagador', { c: '1', g: '1', of: '22222222-2222-2222-2222-222222222222' }], ['?o=&p=1 novas datas', { o: 'et', p: '1' }],
+  ['?l= outro motorista', { l: 'ru' }], ['?k= com c', { k: 'tok', c: '1' }],
+];
+for (const [nome, p] of variantes) {
+  const r = destinoDoLinkCurto({ numero: '111595', ...p });
+  const q = r.tipo === 'navegador' ? new URLSearchParams(r.query) : null;
+  ok(nome + ' -> navegador com a mesma query', !!q && !q.has('numero') && Object.keys(p).every((k) => q.get(k) === p[k]), r);
+}
+ok('parametro vazio nao conta', destinoDoLinkCurto({ numero: '1', s: '' }).tipo === 'app');
+ok('params nulos -> app', destinoDoLinkCurto(null).tipo === 'app');
 
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntudo certo');
 process.exit(falhas ? 1 : 0);
