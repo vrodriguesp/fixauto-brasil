@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useLocalSearchParams, router, Stack } from 'expo-router';
+import { useLocalSearchParams, router, Stack, useNavigation } from 'expo-router';
+import { confirmar } from '../../lib/confirmar';
+import SemRede from '../../components/SemRede';
+import { lerValor } from '../../lib/valor';
+import { abrirNoSite, urlOrcamentoNoSite } from '../../lib/links-site';
 import { Ionicons } from '@expo/vector-icons';
-import { formatCurrency, currencyForCountry, parseFlexibleNumber } from '@fixauto/shared';
+import { formatCurrency, currencyForCountry } from '@fixauto/shared';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
@@ -40,8 +44,28 @@ export default function OrcamentoScreen() {
   const [erros, setErros] = useState<ErrosForm | null>(null);
   const [erroEnvio, setErroEnvio] = useState('');
   const [enviando, setEnviando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
+  const [enviado, setEnviado] = useState<false | 'ok' | 'sem_aviso'>(false);
+  const [semRede, setSemRede] = useState(false);
+  const [erroAviso, setErroAviso] = useState('');
+  // o que veio do banco (para saber se a alteracao mudou algo - sem mudanca nao avisa o cliente; A3-c)
+  const inicial = useRef<string>('');
+  const retrato = () => JSON.stringify({ itens: itens.map((i) => [i.descricao.trim(), i.tipo, i.quantidade, i.valor_unitario]), prazoDias, garantia, observacoes: observacoes.trim(), slots, validade });
   const rolagem = useRef<ScrollView>(null);
+  // voltar com algo preenchido pergunta antes de perder (M1); depois de enviar nao pergunta
+  const navigation = useNavigation();
+  const saiuSemPerguntar = useRef(false);
+  const retratoRef = useRef('');
+  useEffect(() => {
+    const sub = (navigation as any).addListener('beforeRemove', (e: any) => {
+      if (saiuSemPerguntar.current || inicial.current === 'carregando' || retratoRef.current === inicial.current) return;
+      e.preventDefault();
+      confirmar(t('oficina.descartarTitulo'), t('oficina.descartarTexto'), [
+        { text: t('common.cancelar'), style: 'cancel' },
+        { text: t('oficina.descartar'), style: 'destructive', onPress: () => { saiuSemPerguntar.current = true; (navigation as any).dispatch(e.data.action); } },
+      ]);
+    });
+    return sub;
+  }, [navigation, t]);
 
   const pais = oficina?.pais ?? null;
   const moeda = currencyForCountry(pais);
@@ -50,14 +74,18 @@ export default function OrcamentoScreen() {
   // pedido + meu orcamento (para alterar) + horario da oficina (dias fechados, faixas) + taxa de comissao
   const carregar = useCallback(async () => {
     if (!id || !oficina) return;
-    const [{ data }, { data: of }] = await Promise.all([
+    const [{ data, error }, { data: of }] = await Promise.all([
       supabase.from('solicitacoes').select('id, numero, status, tipo, descricao, created_at, urgencia, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa), orcamentos(*, itens:orcamento_itens(*), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))').eq('id', id).maybeSingle(),
       supabase.from('oficinas').select('horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim').eq('id', oficina.id).maybeSingle(),
     ]);
+    // erro de leitura (sem rede) nao e "pedido nao encontrado": mantem o que havia e oferece tentar de novo (M6)
+    if (error) { setSemRede(true); if (sol === undefined) setSol(undefined); return; }
+    setSemRede(false);
     setSol(data || null);
     if (of) setHorario({ horario: (of as any).horario_funcionamento, recepcao_inicio: (of as any).recepcao_inicio, recepcao_fim: (of as any).recepcao_fim, almoco_inicio: (of as any).almoco_inicio, almoco_fim: (of as any).almoco_fim });
     // taxa real da oficina (so a dona le; funcionario fica com os 10% padrao, igual ao site)
     apiFetch(`/api/comissao-atual?oficinaId=${oficina.id}`, { method: 'GET' }).then((c) => setComissao(c)).catch(() => {});
+    inicial.current = 'carregando';
     const existente = ((data as any)?.orcamentos || []).find((o: any) => o.oficina_id === oficina.id);
     if (existente && existente.status !== 'aceito') {
       const its: ItemForm[] = (existente.itens || []).map((i: any) => ({ descricao: i.descricao || '', tipo: i.tipo || 'mao_de_obra', quantidade: Number(i.quantidade) || 1, valor_unitario: Number(i.valor_unitario) || 0 }));
@@ -65,6 +93,8 @@ export default function OrcamentoScreen() {
       setPrazoDias(Number(existente.prazo_dias) || PRAZO_PADRAO_DIAS);
       setGarantia(existente.garantia_dias ?? null);
       setObservacoes(limparDescricao(existente.observacoes));
+      // validade gravada volta no formulario (antes a sugestao recomecava e a alteracao sem mudar nada parecia mudanca)
+      if (existente.validade) { setValidade(String(existente.validade).slice(0, 10)); validadeManual.current = true; }
       // datas antigas que ja passaram saem (a validacao recusaria); validade recomeca
       const agora = new Date();
       setSlots((existente.disponibilidade || []).map((d: any) => ({ data: d.data_checkin, ...janelaDoSlot(d) })).map((s: any) => ({ data: s.data, hora_inicio: s.inicio, hora_fim: s.fim })).filter((s: SlotForm) => janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, agora, pais)));
@@ -72,6 +102,9 @@ export default function OrcamentoScreen() {
   }, [id, oficina?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { carregar(); }, [carregar]);
 
+  retratoRef.current = sol ? retrato() : '';
+  // retrato inicial so com a validade ja definida (gravada, ou sugerida no pedido novo)
+  useEffect(() => { if (sol && inicial.current === 'carregando' && (meu || validade)) inicial.current = retrato(); }, [sol, horario, validade]); // eslint-disable-line react-hooks/exhaustive-deps
   const total = totalDosItens(itens);
   const pct = percentualComissao(total, comissao);
   const datasVisiveis = sol?.status !== 'em_andamento';
@@ -96,22 +129,32 @@ export default function OrcamentoScreen() {
   const dataUtc = (ymd: string) => new Date(`${ymd}T12:00:00Z`);
 
   const mudarItem = (i: number, campo: Partial<ItemForm>) => setItens((l) => l.map((it, j) => (j === i ? { ...it, ...campo } : it)));
-  const mudarValor = (i: number, txt: string) => { setValores((l) => l.map((v, j) => (j === i ? txt : v))); mudarItem(i, { valor_unitario: parseFlexibleNumber(txt) || 0 }); };
+  // "1 234,56", "1.234,56", "50,5" valem; letras e negativo nao (lib/valor.ts, M7) - o campo fica vermelho e nao envia
+  const mudarValor = (i: number, txt: string) => { setValores((l) => l.map((v, j) => (j === i ? txt : v))); mudarItem(i, { valor_unitario: lerValor(txt) ?? 0 }); };
+  const valorInvalido = (i: number) => (valores[i] ?? '').trim() !== '' && lerValor(valores[i]) === null;
   const addItem = () => { setItens((l) => [...l, { descricao: '', tipo: 'mao_de_obra', quantidade: 1, valor_unitario: 0 }]); setValores((l) => [...l, '']); };
   const removerItem = (i: number) => { if (itens.length === 1) return; setItens((l) => l.filter((_, j) => j !== i)); setValores((l) => l.filter((_, j) => j !== i)); };
   const addSlot = (data: string, j: { inicio: string; fim: string }) => {
     setDiaEscolhendo(null);
     if (slots.some((s) => s.data === data && s.hora_inicio === j.inicio && s.hora_fim === j.fim) || slots.length >= MAX_DATAS) return;
     setSlots((l) => [...l, { data, hora_inicio: j.inicio, hora_fim: j.fim }].sort((a, b) => (a.data + a.hora_inicio).localeCompare(b.data + b.hora_inicio)));
+    // o erro "falta data" some assim que ha uma data (M17)
+    setErros((e) => (e ? { ...e, semCheckin: false, horarioPassado: false, diaFechado: false, faltas: e.faltas.filter((f) => f !== 'datas') } : e));
   };
+  // o erro de valor some assim que ha valor
+  useEffect(() => { if (erros?.semValor && totalDosItens(itens) > 0 && !valores.some((v) => v.trim() !== '' && lerValor(v) === null)) setErros((e) => (e ? { ...e, semValor: false, faltas: e.faltas.filter((f) => f !== 'valor') } : e)); }, [itens, valores]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const enviar = async () => {
     Keyboard.dismiss();
     if (enviando || !oficina || !sol) return;
     setErroEnvio('');
     const e = validarOrcamento({ itens, slots, validade, horario: horario?.horario, pais, datasVisiveis });
-    setErros(e);
-    if (e.faltas.length) { rolagem.current?.scrollTo({ y: e.faltas[0] === 'valor' ? 0 : 400, animated: true }); return; }
+    // valor invalido num item (letras, negativo): nao envia (M7)
+    const valorRuim = valores.some((v, i) => v.trim() !== '' && lerValor(v) === null);
+    setErros(valorRuim ? { ...e, semValor: true, faltas: e.faltas.includes('valor') ? e.faltas : ['valor', ...e.faltas] } : e);
+    if (e.faltas.length || valorRuim) { rolagem.current?.scrollTo({ y: (e.faltas[0] === 'valor' || valorRuim) ? 0 : 400, animated: true }); return; }
+    // alteracao sem mudar nada: nao grava nem avisa o cliente (A3-c)
+    if (meu && meu.status !== 'aceito' && inicial.current === retrato()) { setErroEnvio(t('oficina.semMudanca')); return; }
     setEnviando(true);
     const nomePadrao = rotuloTipoOficina(t, sol.tipo, sol.descricao);
     const itensPayload = itensParaGravar(itens, nomePadrao);
@@ -172,32 +215,48 @@ export default function OrcamentoScreen() {
     // 1a vez: sino + e-mail + SMS; alteracao: sino "revisado" (ou "novo" depois de recusado) + resumo no chat, como o
     // site (lib/avisar-revisao-orcamento.ts). Falha aqui nao desfaz o orcamento gravado.
     const alteracao = !!meu && meu.status !== 'aceito';
-    apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify(alteracao ? { orcamentoId: orcId, revisao: true, eraRecusado: meu.status === 'recusado' } : { orcamentoId: orcId }) }).catch(() => {});
+    // a resposta e conferida (A3-b): 429/erro = "orcamento gravado, cliente NAO avisado", nunca "cliente avisado"
+    let avisou = true; let codigo = '';
+    try {
+      const r = await apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify(alteracao ? { orcamentoId: orcId, revisao: true, eraRecusado: meu.status === 'recusado' } : { orcamentoId: orcId }) });
+      if (r?.limitado) codigo = 'MUITAS_TENTATIVAS';
+    } catch (e2: any) { avisou = false; codigo = e2?.codigo || String(e2?.status || e2?.message || '?'); }
     if (!funcionario) apiFetch('/api/recalcular-comissao', { method: 'POST', body: JSON.stringify({ oficinaId: oficina.id }) }).catch(() => {});
-    setEnviado(true);
+    saiuSemPerguntar.current = true;
+    if (!avisou) { setErroAviso(codigo); setEnviado('sem_aviso'); return; }
+    setEnviado('ok');
     setTimeout(() => router.replace({ pathname: '/(oficina)', params: { aba: 'respondidos' } } as any), 1800);
   };
 
+  if (sol === undefined && semRede) return <SemRede aoTentar={carregar} />;
   if (sol === undefined) return <View className="flex-1 items-center justify-center bg-white"><ActivityIndicator color="#2563eb" /></View>;
   if (sol === null) return <View className="flex-1 items-center justify-center bg-gray-50 p-6"><Text className="text-gray-700 text-center">{t('oficina.pedidoNaoEncontrado')}</Text></View>;
   if (enviado) {
     return (
-      <View className="flex-1 items-center justify-center bg-white p-6" testID="orcamento-enviado">
-        <Ionicons name="checkmark-circle" size={64} color="#059669" />
+      <View className="flex-1 items-center justify-center bg-white p-6" testID={enviado === 'ok' ? 'orcamento-enviado' : 'orcamento-gravado-sem-aviso'}>
+        <Ionicons name={enviado === 'ok' ? 'checkmark-circle' : 'alert-circle'} size={64} color={enviado === 'ok' ? '#059669' : '#d97706'} />
         <Text className="text-xl font-bold text-gray-900 mt-3">{meu ? t('oficina.orcamentoRevisado') : t('oficina.orcamentoEnviado')}</Text>
-        <Text className="text-gray-600 text-center mt-1">{t('oficina.clienteNotificadoAceite')}</Text>
+        <Text className="text-gray-600 text-center mt-1">{enviado === 'ok' ? t('oficina.clienteNotificadoAceite') : t('oficina.avisoClienteFalhou', { codigo: erroAviso })}</Text>
+        {enviado === 'sem_aviso' ? (
+          <Pressable onPress={() => router.replace({ pathname: '/(oficina)', params: { aba: 'respondidos' } } as any)} accessibilityRole="button" className="mt-5 bg-primary-600 rounded-xl px-6 py-3"><Text className="text-white font-semibold">{t('oficina.verPedidos')}</Text></Pressable>
+        ) : null}
       </View>
     );
   }
   // sem o que fazer aqui: pedido fechado, carro ja na oficina com orcamento aceito, ou mecanico (so a dona/admin orca)
   // equipe (qualquer cargo): a RLS so deixa a conta da dona gravar orcamento (orcamentos_insert) - avisa antes de
   // preencher, nao depois (revisao Fable S4)
-  const bloqueado = ['concluida', 'cancelada', 'expirada'].includes(sol.status) ? 'fechado' : meu?.status === 'aceito' ? 'aceito' : funcionario ? 'equipe' : null;
+  // pedido aceito por OUTRA oficina (a minha perdeu) ou em andamento com outra: fechado para mim, como cancelado/concluido (M13)
+  const perdido = ['aceita', 'em_andamento'].includes(sol.status) && meu?.status !== 'aceito';
+  const bloqueado = ['concluida', 'cancelada', 'expirada'].includes(sol.status) || perdido ? 'fechado' : meu?.status === 'aceito' ? 'aceito' : funcionario ? 'equipe' : null;
   if (bloqueado) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 p-6">
         <Stack.Screen options={{ title: t('oficina.orcamentoTitulo') }} />
         <Text className="text-gray-700 text-center">{t(`oficina.bloqueado_${bloqueado}`)}</Text>
+        {bloqueado === 'aceito' ? (
+          <Pressable onPress={() => abrirNoSite(urlOrcamentoNoSite(i18n.language, sol.id))} accessibilityRole="button" testID="abrir-no-site" className="mt-4 border border-primary-600 rounded-xl px-6 py-3"><Text className="text-primary-700 font-semibold">{t('oficina.abrirNoSite')}</Text></Pressable>
+        ) : null}
         <Pressable onPress={() => router.replace(`/pedido-oficina/${sol.id}`)} accessibilityRole="button" className="mt-4 bg-primary-600 rounded-xl px-6 py-3"><Text className="text-white font-semibold">{t('oficina.verPedido')}</Text></Pressable>
       </View>
     );
@@ -236,7 +295,8 @@ export default function OrcamentoScreen() {
             <View className="flex-[2]">
               <Text className="text-xs text-gray-500 mb-1">{t('oficina.valorUnitario', { moeda })}</Text>
               <TextInput value={valores[i] ?? ''} onChangeText={(x) => mudarValor(i, x)} keyboardType="decimal-pad" placeholder="0" testID={`item-valor-${i}`}
-                className={`border rounded-lg px-3 py-2 text-[16px] ${erros?.semValor ? 'border-red-400' : 'border-gray-300'}`} />
+                className={`border rounded-lg px-3 py-2 text-[16px] ${erros?.semValor || valorInvalido(i) ? 'border-red-400' : 'border-gray-300'}`} />
+              {valorInvalido(i) ? <Text accessibilityRole="alert" className="text-xs text-red-700 mt-1" testID={`item-valor-erro-${i}`}>{t('oficina.valorInvalido')}</Text> : null}
             </View>
             <View className="flex-1">
               <Text className="text-xs text-gray-500 mb-1">{t('oficina.qtd')}</Text>

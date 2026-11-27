@@ -10,14 +10,28 @@ import { emTodasAsLinguas } from './notif-textos';
 // pela rota /api/notificar-orcamento com { revisao: true } (revisao Fable S3): a rota so avisava uma vez por
 // orcamento, entao a revisao feita no app nunca chegava ao motorista. Sem e-mail/SMS (o site tambem nao manda
 // na revisao). Retorna o id do aviso criado.
-export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: string, eraRecusado: boolean): Promise<{ ok: true; avisoId: string } | { ok: false; status: number; error: string }> {
+// pedido em que ainda cabe alterar o orcamento: aberto, ou aceito/em andamento SO com este orcamento (M13, caso 284 da auditoria)
+const ABERTO = ['aberta', 'em_orcamento', 'no_show'];
+
+export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: string, eraRecusado: boolean): Promise<{ ok: true; avisoId: string; semMudanca?: boolean } | { ok: false; status: number; error: string; codigo?: string }> {
   const { data: orc } = await supabaseAdmin.from('orcamentos')
-    .select('id, valor_total, prazo_dias, observacoes, revisao_numero, solicitacao_id, oficina:oficinas(id, nome_fantasia, profile_id, pais, profile:profiles(idioma)), solicitacao:solicitacoes(id, cliente_id)')
+    .select('id, status, valor_total, prazo_dias, observacoes, revisao_numero, revisado_em, solicitacao_id, oficina:oficinas(id, nome_fantasia, profile_id, pais, profile:profiles(idioma)), solicitacao:solicitacoes(id, cliente_id, status)')
     .eq('id', orcamentoId).maybeSingle();
   if (!orc || !(orc as any).solicitacao) return { ok: false, status: 404, error: 'Orçamento não encontrado' };
   const oficina = (orc as any).oficina;
   if (oficina?.profile_id !== callerId) return { ok: false, status: 403, error: 'Acesso negado' };
+  const statusSol = (orc as any).solicitacao.status as string;
+  if (!ABERTO.includes(statusSol) && !(['aceita', 'em_andamento'].includes(statusSol) && orc.status === 'aceito')) {
+    return { ok: false, status: 409, error: 'Pedido encerrado para esta oficina', codigo: 'SERVICO_ENCERRADO' };
+  }
   const clienteId = (orc as any).solicitacao.cliente_id as string;
+  // mesma revisao ja avisada (valor e numero da revisao iguais ao ultimo aviso): nao repete sino nem chat (A3-c)
+  const { data: ultimo } = await supabaseAdmin.from('notificacoes').select('id, dados').eq('profile_id', clienteId).eq('tipo', 'novo_orcamento')
+    .eq('dados->>orcamento_id', orc.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+  const d0 = (ultimo?.dados || {}) as Record<string, unknown>;
+  if (ultimo && d0.revisao_numero != null && Number(d0.revisao_numero) === Number(orc.revisao_numero || 0) && Number(d0.valor_total) === Number(orc.valor_total) && String(d0.revisado_em || '') === String(orc.revisado_em || '')) {
+    return { ok: true, avisoId: ultimo.id, semMudanca: true };
+  }
   const { data: cliente } = await supabaseAdmin.from('profiles').select('idioma').eq('id', clienteId).maybeSingle();
   const moeda = currencyForCountry(oficina.pais);
   const nome = oficina.nome_fantasia || 'Oficina';
@@ -28,7 +42,7 @@ export async function avisarRevisaoOrcamento(orcamentoId: string, callerId: stri
   const n = texto(cliente?.idioma);
   const { data: aviso, error } = await supabaseAdmin.from('notificacoes').insert({
     profile_id: clienteId, tipo: 'novo_orcamento', titulo: n.titulo, mensagem: n.mensagem,
-    dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, revisao: !eraRecusado, textos: emTodasAsLinguas((l) => texto(l)) },
+    dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, revisao: !eraRecusado, revisao_numero: orc.revisao_numero || 0, valor_total: orc.valor_total, revisado_em: orc.revisado_em, textos: emTodasAsLinguas((l) => texto(l)) },
   }).select('id').single();
   if (error || !aviso) return { ok: false, status: 500, error: error?.message || 'Falha ao gravar o aviso' };
   // resumo da revisao no chat (orcamento novo depois de recusado: sem "revisao n", como no site)

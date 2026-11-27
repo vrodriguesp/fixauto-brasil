@@ -22,20 +22,19 @@ export async function POST(req: NextRequest) {
     }
 
     const { orcamentoId, revisao, eraRecusado } = await req.json();
-    // reenvio limitado (auditoria M-12): por orcamento e por oficina
-    if (!dentroDoLimite(`notificar-orc:${orcamentoId}`, 3, 60 * 60 * 1000) || !dentroDoLimite(`notificar-orc-u:${callerId}`, 40, 60 * 60 * 1000)) {
-      return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
-    }
 
     if (!orcamentoId) {
       return NextResponse.json({ error: 'Missing orcamentoId' }, { status: 400 });
     }
     // orcamento ALTERADO pelo app (revisao Fable S3): sino/push "revisado" (ou "novo" depois de recusado) + resumo no
     // chat, como o site faz no navegador; sem e-mail/SMS. O fluxo abaixo (1a vez) nao muda.
+    // O limite (auditoria M-12, 3/h por orcamento e 40/h por conta) so conta DEPOIS de conferir o dono (chamadas
+    // recusadas de outras contas nao gastam) e so limita e-mail/SMS/WhatsApp: sino e resumo no chat saem sempre numa
+    // revisao de verdade, e a resposta diz { limitado: true } para o app contar a verdade (auditoria 27/11, A3)
     if (revisao === true) {
       const r = await avisarRevisaoOrcamento(String(orcamentoId), callerId, eraRecusado === true);
-      if (!r.ok) return NextResponse.json({ error: r.error }, { status: r.status });
-      return NextResponse.json({ success: true, revisao: true, avisoId: r.avisoId });
+      if (!r.ok) return NextResponse.json({ error: r.error, codigo: r.codigo }, { status: r.status });
+      return NextResponse.json({ success: true, revisao: true, avisoId: r.avisoId, semMudanca: r.semMudanca === true });
     }
 
     // Get orcamento with solicitacao and client info
@@ -64,6 +63,7 @@ export async function POST(req: NextRequest) {
     if ((orcamento.oficina as any)?.profile_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
+    const limitado = !dentroDoLimite(`notificar-orc:${orcamentoId}`, 3, 60 * 60 * 1000) || !dentroDoLimite(`notificar-orc-u:${callerId}`, 40, 60 * 60 * 1000);
 
     const cliente = (orcamento.solicitacao as any).cliente;
     const oficinaNome = (orcamento.oficina as any)?.nome_fantasia || 'Oficina';
@@ -89,6 +89,8 @@ export async function POST(req: NextRequest) {
         dados: { solicitacao_id: solId, orcamento_id: orcamentoId, textos: emTodasAsLinguas((l) => notifNovoOrcamento(l, oficinaNome, formatCurrency(orcamento.valor_total, moeda, l))) },
       });
     }
+
+    if (limitado) return NextResponse.json({ success: true, limitado: true, results });
 
     // Send email
     if (cliente?.email) {
