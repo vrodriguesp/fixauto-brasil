@@ -2,13 +2,14 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import i18n from '../i18n';
 import { View, Text, Pressable, Animated, AppState } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, usePathname, useGlobalSearchParams } from 'expo-router';
+import { mesmaTela } from './mesma-tela';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
 import { naLinguaDoApp } from './aviso-lingua';
 import { useAuth } from './auth-context';
 import { destinoDoAviso } from './destino-aviso';
-import { atualizarBadge } from './push';
+import { atualizarBadge, informarTelaAtual } from './push';
 import { TextoTraduzido } from './traducao';
 import { semQuebra } from './turnos';
 
@@ -79,14 +80,26 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
   // numero no icone do app = avisos nao lidos (boas praticas das lojas: zera quando a pessoa le)
   useEffect(() => { atualizarBadge(user ? naoLidos.length : 0); }, [naoLidos.length, user?.id]);
 
+  // tela aberta agora: aviso dela nao vira banner nem empilha outra tela (A1, auditoria 27/11)
+  const pathname = usePathname();
+  const paramsAtuais = useGlobalSearchParams<Record<string, string>>();
+  const telaAtual = useRef({ pathname, params: paramsAtuais });
+  telaAtual.current = { pathname, params: paramsAtuais };
+  informarTelaAtual(pathname, paramsAtuais);
+  const jaAberta = useCallback((a: Aviso) => {
+    const para = destinoDoAviso(a, papel || 'cliente');
+    return !!para && mesmaTela(telaAtual.current.pathname, telaAtual.current.params, para);
+  }, [papel]);
+
   const mostrar = useCallback((a: Aviso) => {
+    if (jaAberta(a)) return;
     setBanner(a);
     Animated.timing(opacidade, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     if (tmr.current) clearTimeout(tmr.current);
     tmr.current = setTimeout(() => {
       Animated.timing(opacidade, { toValue: 0, duration: 250, useNativeDriver: true }).start(() => setBanner(null));
     }, 5000);
-  }, [opacidade]);
+  }, [opacidade, jaAberta]);
 
   const fechar = useCallback(() => {
     if (tmr.current) clearTimeout(tmr.current);
@@ -98,7 +111,8 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     setNaoLidos((l) => l.filter((x) => x.id !== a.id));
     supabase.from('notificacoes').update({ lida: true }).eq('id', a.id).then(() => {});
     const para = destinoDoAviso(a, papel || 'cliente');
-    if (para) router.push(para as any);
+    // ja estou nessa tela: so marca lido (A1)
+    if (para && !mesmaTela(telaAtual.current.pathname, telaAtual.current.params, para)) router.push(para as any);
   }, [papel]);
 
   // Tempo real. Com o app em segundo plano o iOS corta a conexao: o que chega

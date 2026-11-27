@@ -151,7 +151,8 @@ export default function ConversaScreen() {
     fetchMensagens();
 
     const channel = supabase
-      .channel(`msgs-mobile-${id}-${oficinaId}`)
+      // nome unico por instancia da tela: duas conversas abertas (ou a mesma reaberta) nao disputam o canal (A1)
+      .channel(`msgs-mobile-${id}-${oficinaId}-${Date.now()}`)
       // INSERT e UPDATE (transcricao do audio chega depois - auditoria E13)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mensagens', filter: `solicitacao_id=eq.${id}` }, (payload) => {
         if (payload.eventType === 'UPDATE') {

@@ -9,6 +9,11 @@ import i18n from '../i18n';
 import { supabase } from './supabase';
 import { destinoDoAviso, type Papel } from './destino-aviso';
 import { CANAIS, type Canal } from './canal-aviso';
+import { mesmaTela } from './mesma-tela';
+
+// tela aberta agora (lib/avisos.tsx informa): o toque no push nao reabre a tela em que a pessoa ja esta
+let telaAtualDoPush: { pathname: string | null; params: Record<string, string | string[] | undefined> } = { pathname: null, params: {} };
+export const informarTelaAtual = (pathname: string | null, params: Record<string, string | string[] | undefined>) => { telaAtualDoPush = { pathname, params }; };
 
 // Push com o app fechado (OK do dono 31/10). O servidor manda pelo servico da
 // Expo (FCM no Android, APNs no iPhone) cada aviso novo de `notificacoes`
@@ -106,7 +111,8 @@ function abrirDoPush(resp: Notifications.NotificationResponse | null) {
   if (!d.tipo) return;
   if (d.notificacao_id) supabase.from('notificacoes').update({ lida: true }).eq('id', d.notificacao_id).then(() => {});
   const para = destinoDoAviso({ tipo: d.tipo, dados: d }, papelAtual);
-  if (para) router.push(para as any);
+  // push tocado com a tela ja aberta: nao empilha outra (A1); lib/avisos.tsx faz o mesmo para o banner
+  if (para && !mesmaTela(telaAtualDoPush.pathname, telaAtualDoPush.params, para)) router.push(para as any);
 }
 
 /** No layout raiz: registra ao entrar e abre a tela do aviso tocado (conforme o papel de quem entrou). */
