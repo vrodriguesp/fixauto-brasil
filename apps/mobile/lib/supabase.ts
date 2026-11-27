@@ -5,6 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import * as aesjs from 'aes-js';
 import { createClient } from '@supabase/supabase-js';
+import { fetchComPrazo } from './rede';
+// sem prazo: envio de arquivo (storage) e login/renovacao (auth tem a propria logica de repeticao)
+const semPrazo = (u: string) => u.includes('/storage/v1/object') || u.includes('/auth/v1/');
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -58,6 +61,9 @@ export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',
   {
+    // Sem rede o pedido ao banco pode ficar pendurado para sempre (teste 28/11: gateway parado = tela girando sem
+    // fim); prazo de 20 s em toda chamada (as telas mostram 'sem conexao'); envio de arquivo (storage) e o login/renovacao (auth, que tem a propria logica de repeticao) sem prazo.
+    global: { fetch: (url, init) => (typeof url !== 'string' && !(url instanceof URL)) || semPrazo(String(url)) ? fetch(url, init) : fetchComPrazo(String(url), 20000, init) },
     auth: {
       // Versao web do app (so para testes automatizados no navegador): SecureStore
       // nao existe na web, usa o AsyncStorage (localStorage).

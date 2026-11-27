@@ -26,11 +26,14 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     // login recusado pelo servidor (encerrado em outro aparelho, ou o token
     // guardado ficou para tras): renova uma vez e tenta de novo; se nem assim,
     // sai so deste aparelho e a pessoa entra de novo
-    const { data: novo } = await supabase.auth.refreshSession();
+    const { data: novo, error: eRenova } = await supabase.auth.refreshSession();
     if (novo.session?.access_token) {
       headers.set('Authorization', `Bearer ${novo.session.access_token}`);
       res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
-    } else {
+    } else if (eRenova && eRenova.name === 'AuthApiError') {
+      // o servidor de login RECUSOU a renovacao (sessao encerrada de verdade): sai deste aparelho. Falha de rede ou
+      // 401 porque o banco do site esta fora NAO deslogam (teste 28/11: gateway parado 1 min deslogava a oficina
+      // pelo sinal de presenca)
       await supabase.auth.signOut({ scope: 'local' });
     }
   }

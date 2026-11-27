@@ -14,6 +14,7 @@ import { hojeLocal, janelaDoSlot, formatarJanela, janelaDaAgenda, semQuebra } fr
 import { fusoDoPais } from '../../lib/fuso';
 import { agruparPedidos, corDaEspera, partesDaEspera, distanciaDoPedido, ehAcidente, ABAS, type Aba, type ItemCaixa, type Dispensa, type PedidoCaixa } from '../../lib/caixa-pedidos';
 import { rotuloTipoOficina } from '../../lib/rotulo-pedido';
+import { FaixaSemRede } from '../../components/SemRede';
 
 const MIN = 60e3;
 const COR = {
@@ -38,21 +39,27 @@ export default function PedidosOficinaScreen() {
   const [dispensas, setDispensas] = useState<Map<string, Dispensa>>(new Map());
   const [agendas, setAgendas] = useState<Map<string, { inicio: string; ate: string | null }>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [semRede, setSemRede] = useState(false);
+  // enquanto sem rede, tenta de novo a cada 8 s (a rede voltando, a lista volta sozinha)
+  useEffect(() => { if (!semRede) return; const i = setInterval(() => { carregar(); }, 8000); return () => clearInterval(i); }, [semRede]); // eslint-disable-line react-hooks/exhaustive-deps
   const [agora, setAgora] = useState(() => Date.now());
   useEffect(() => { const i = setInterval(() => setAgora(Date.now()), MIN); return () => clearInterval(i); }, []);
 
   const carregar = useCallback(async () => {
     // sem oficina (cache do perfil sem o da oficina): nao fica "carregando" para sempre
     if (!oficina) { setLoading(false); return; }
-    const [{ data: sols }, { data: v }, { data: d }, { data: ag }] = await Promise.all([
+    const [{ data: sols, error: eSols }, { data: v }, { data: d }, { data: ag }] = await Promise.all([
       // mesma consulta do site (use-solicitacoes): a RLS ja limita ao que a oficina pode ver; cancelados fora
       supabase.from('solicitacoes')
-        .select('*, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa), fotos:solicitacao_fotos(id), convites:pedido_convites(oficina_id, origem), orcamentos(id, oficina_id, status, created_at, validade, valor_total, recusado_motivo, disponibilidade_escolhida_id, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, hora_inicio, hora_fim))')
+        .select('*, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa), fotos:solicitacao_fotos(id), convites:pedido_convites(oficina_id, origem), orcamentos(id, oficina_id, status, created_at, validade, valor_total, recusado_motivo, recusado_no_aceite, disponibilidade_escolhida_id, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, hora_inicio, hora_fim))')
         .neq('status', 'cancelada').order('created_at', { ascending: false }).limit(300),
       supabase.from('pedido_vistos').select('solicitacao_id').eq('oficina_id', oficina.id),
       supabase.from('pedido_dispensas').select('solicitacao_id, motivo, comentario, created_at').eq('oficina_id', oficina.id),
       supabase.from('agenda').select('solicitacao_id, data_inicio, checkin_ate').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null),
     ]);
+    // sem rede: a lista anterior fica, com faixa "sem conexao" e tentativa automatica (A4); nunca "nenhum pedido"
+    if (eSols) { setSemRede(true); setLoading(false); return; }
+    setSemRede(false);
     setPedidos((sols as PedidoCaixa[]) || []);
     setVistos(new Set(((v || []) as any[]).map((x) => x.solicitacao_id)));
     setDispensas(new Map(((d || []) as Dispensa[]).map((x) => [x.solicitacao_id, x])));
@@ -129,6 +136,7 @@ export default function PedidosOficinaScreen() {
       {(oficina as any)?.ativa === false ? (
         <Text accessibilityRole="alert" className="mx-4 mb-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('oficina.cadastroEmAnalise')}</Text>
       ) : null}
+      {semRede ? <FaixaSemRede aoTentar={carregar} /> : null}
       <View className="mx-4 mb-3 flex-row rounded-xl bg-gray-200 p-1" accessibilityRole="tablist">
         {ABAS.map((a) => (
           <Pressable key={a} onPress={() => setAba(a)} accessibilityRole="tab" accessibilityState={{ selected: aba === a }} testID={`aba-${a}`}
@@ -145,7 +153,7 @@ export default function PedidosOficinaScreen() {
         keyExtractor={(it) => it.s.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-        ListEmptyComponent={!loading ? (
+        ListEmptyComponent={!loading && !semRede ? (
           <View className="bg-white rounded-2xl border border-gray-200 p-6 items-center mt-2">
             <Text className="text-4xl mb-2">{aba === 'responder' ? '📭' : '🗂️'}</Text>
             <Text className="text-gray-700 text-center">{t(`oficina.vazio_${aba}`)}</Text>

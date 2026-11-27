@@ -55,6 +55,9 @@ const ERRO_TIPO_NAO_SUPORTADO = 'tipo_nao_suportado';
 const ERRO_SEM_OFICINA = 'sem_oficina';
 // ultimo perfil valido: abre o app sem rede (no local do acidente) sem cair no login
 const CHAVE_PERFIL = 'bipfix_perfil_cache';
+// falha de rede do GoTrue (status 0 / "Network request failed" / fetch): nao e credencial errada
+const ehErroDeRede = (e: { status?: number; code?: string; message?: string; name?: string }) =>
+  e.status === 0 || /network|fetch|timeout|ECONN/i.test(e.message || '') || /Retryable|Fetch/i.test(e.name || '');
 // oficina + funcionario da conta, para abrir sem rede do mesmo jeito
 const CHAVE_OFICINA = 'bipfix_oficina_cache';
 type CacheOficina = { oficina: Oficina | null; funcionario: Funcionario | null };
@@ -116,11 +119,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let ofi: Oficina | null = null;
     let func: Funcionario | null = null;
     if (profile.tipo === 'oficina') {
-      const { data: propria } = await supabase.from('oficinas').select('*').eq('profile_id', userId).maybeSingle();
+      const { data: propria, error: e1 } = await supabase.from('oficinas').select('*').eq('profile_id', userId).maybeSingle();
       ofi = (propria as Oficina | null) ?? null;
-      if (!ofi) {
-        const { data: f } = await supabase.from('funcionarios').select('*, oficina:oficinas(*)').eq('profile_id', userId).eq('ativo', true).maybeSingle();
+      let e2: unknown = null;
+      if (!ofi && !e1) {
+        const { data: f, error } = await supabase.from('funcionarios').select('*, oficina:oficinas(*)').eq('profile_id', userId).eq('ativo', true).maybeSingle();
+        e2 = error;
         if (f) { func = f as Funcionario; ofi = ((f as any).oficina as Oficina) ?? null; }
+      }
+      // ERRO de leitura (sem rede, gateway fora) nao e "sem oficina": usa a oficina guardada e NUNCA sai da conta
+      // (teste 28/11: gateway parado por 1 min deslogou a oficina)
+      if (!ofi && (e1 || e2)) {
+        const g = await AsyncStorage.getItem(CHAVE_OFICINA).catch(() => null);
+        const co = g ? JSON.parse(g) as CacheOficina : null;
+        if (!co?.oficina) { setUser(null); return { profile: null, error: 'perfil_nao_encontrado' }; }
+        ofi = co.oficina; func = co.funcionario;
       }
       if (!ofi) {
         await supabase.auth.signOut({ scope: 'local' });
@@ -157,13 +170,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // so termina de carregar depois do perfil: antes a tela de login piscava
     // a cada abertura (user ainda nulo) - auditoria E2
+    // limite de 8 s (como o site): sem rede o perfil vem do cache; se nem isso, a tela de login aparece em vez de
+    // girar para sempre (ENT-7, auditoria 27/11)
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setAuthUser(session.user);
-        await fetchProfile(session.user.id).catch(() => {});
+        await Promise.race([fetchProfile(session.user.id).catch(() => {}), new Promise((r) => setTimeout(r, 8000))]);
       }
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((evento, session) => {
       setAuthUser(session?.user ?? null);
@@ -210,8 +225,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    // codigo estavel, traduzido na tela (email_not_confirmed, invalid_credentials...)
-    if (error) return { error: error.code || 'invalid_credentials' };
+    // codigo estavel, traduzido na tela (email_not_confirmed, invalid_credentials...); sem rede nao e "senha errada" (M15)
+    if (error) return { error: ehErroDeRede(error) ? 'sem_rede' : (error.code || 'invalid_credentials') };
     if (!data.user) return { error: null };
 
     const { error: profileError } = await fetchProfile(data.user.id);

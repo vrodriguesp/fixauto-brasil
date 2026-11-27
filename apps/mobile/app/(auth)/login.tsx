@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth-context';
 import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
-import { verDestino } from '../../lib/destino-pendente';
+import { verDestino, pegarDestino } from '../../lib/destino-pendente';
 
 // Tela de entrada: marca, atalho de acidente SEM conta (quem acabou de bater
 // nao deve parar num cadastro), login e idioma.
@@ -47,6 +47,8 @@ export default function LoginScreen() {
         setErro(t('auth.muitasTentativas'));
       } else if (error === 'tipo_nao_suportado') {
         setErro(t('auth.tipoNaoSuportado'));
+      } else if (error === 'sem_rede') {
+        setErro(t('common.semConexao'));
       } else if (error === 'sem_oficina') {
         setErro(t('auth.semOficina'));
       } else if (error === 'conta_desativada') {
@@ -59,6 +61,7 @@ export default function LoginScreen() {
     // link do SMS/e-mail aberto antes de entrar (lib/destino-pendente): segue para ele; senao as abas
     // ((tabs) manda a oficina para as abas dela)
     router.replace((destino || '/(tabs)') as any);
+    pegarDestino();
   };
 
   const selos = [
