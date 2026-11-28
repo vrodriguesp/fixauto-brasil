@@ -1032,6 +1032,8 @@
     "prazoDias_um": "Tempo di riparazione: 1 giorno",
     "semMudanca": "Nulla è cambiato nel preventivo: il cliente non è stato avvisato di nuovo.",
     "avisoClienteFalhou": "Il preventivo è stato salvato, ma NON siamo riusciti ad avvisare il cliente adesso ({codigo}). Lo vedrà aprendo la richiesta; puoi anche inviare un messaggio.",
+    "avisoLimitadoPrimeiro": "Preventivo inviato. Il cliente vede l'avviso nell'app/campanella, ma e-mail e SMS questa volta non sono stati inviati (limite orario di avvisi).",
+    "avisoLimitadoRevisao": "Modifica salvata e riepilogo inviato in chat, ma il cliente NON ha ricevuto avviso/push questa volta (limite di 10 modifiche all'ora). Se urgente, invia un messaggio.",
     "valorInvalido": "Importo non valido: solo numeri, ad es. 120 o 99,90.",
     "descartarTitulo": "Uscire senza inviare?",
     "descartarTexto": "Quello che hai inserito in questo preventivo andrà perso.",

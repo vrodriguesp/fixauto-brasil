@@ -1032,6 +1032,8 @@
     "prazoDias_um": "Remondi kestus: 1 päev",
     "semMudanca": "Pakkumises ei muutunud midagi: klienti uuesti ei teavitatud.",
     "avisoClienteFalhou": "Pakkumine salvestati, aga klienti EI õnnestunud praegu teavitada ({codigo}). Ta näeb pakkumist päringut avades; soovi korral saada sõnum.",
+    "avisoLimitadoPrimeiro": "Pakkumine saadetud. Klient näeb teadet rakenduses/kellukesel, aga e-kirja ja SMS-i seekord ei saadetud (teadete tunnilimiit).",
+    "avisoLimitadoRevisao": "Muudatus salvestatud ja kokkuvõte vestlusesse saadetud, aga klient EI saanud seekord teadet/pushi (10 muudatust tunnis). Kui kiire, saada sõnum.",
     "valorInvalido": "Vigane summa: ainult numbrid, nt 120 või 99,90.",
     "descartarTitulo": "Lahkud saatmata?",
     "descartarTexto": "Selles pakkumises täidetu läheb kaduma.",

@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
     if (!orcamentoId) {
       return NextResponse.json({ error: 'Missing orcamentoId' }, { status: 400 });
     }
-    // orcamento ALTERADO pelo app (revisao Fable S3): sino/push "revisado" (ou "novo" depois de recusado) + resumo no
-    // chat, como o site faz no navegador; sem e-mail/SMS. O fluxo abaixo (1a vez) nao muda.
-    // O limite (auditoria M-12, 3/h por orcamento e 40/h por conta) so conta DEPOIS de conferir o dono (chamadas
-    // recusadas de outras contas nao gastam) e so limita e-mail/SMS/WhatsApp: sino e resumo no chat saem sempre numa
-    // revisao de verdade, e a resposta diz { limitado: true } para o app contar a verdade (auditoria 27/11, A3)
+    // Orcamento ALTERADO pelo app (revisao Fable S3): sino/push "revisado" (ou "novo" depois de recusado) + resumo no
+    // chat, como o site faz no navegador; sem e-mail/SMS. Limite proprio de 10/h por orcamento (lib), contado so depois
+    // do dono, do estado do pedido e da checagem "mesma revisao"; estourado = resumo no chat sai, sino/push nao, e a
+    // resposta diz { limitado: true }. O fluxo da 1a vez (abaixo) tem o limite de sempre (3/h por orcamento, 40/h por
+    // conta, auditoria M-12), contado depois do dono e que so segura e-mail/SMS/WhatsApp: o sino sai sempre.
     if (revisao === true) {
       const r = await avisarRevisaoOrcamento(String(orcamentoId), callerId, eraRecusado === true);
       if (!r.ok) return NextResponse.json({ error: r.error, codigo: r.codigo }, { status: r.status });

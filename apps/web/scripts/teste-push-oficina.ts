@@ -111,10 +111,16 @@ if (orc) {
   const { data: orcAntes } = await supabaseAdmin.from('orcamentos').select('revisao_numero').eq('id', orc.id).single();
   const { count: avisosAntes } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', clienteId).eq('dados->>orcamento_id', orc.id);
   let ultimo: any = null;
+  let msgsAntesDoLimitado = 0;
   for (let i = 1; i <= LIMITE_REVISOES_HORA + 1; i++) {
     await supabaseAdmin.from('orcamentos').update({ revisao_numero: 100 + i }).eq('id', orc.id);
+    if (i === LIMITE_REVISOES_HORA + 1) msgsAntesDoLimitado = (await supabaseAdmin.from('mensagens').select('id', { count: 'exact', head: true }).eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id)).count || 0;
     ultimo = await avisarRevisaoOrcamento(orc.id, of.profile_id, false);
+    // repetir a MESMA revisao nao gasta o limite (checagem "mesma revisao" vem antes do limite)
+    if (i === 1) { const rep = await avisarRevisaoOrcamento(orc.id, of.profile_id, false); ok('repeticao sem mudanca nao gasta o limite', rep.ok && (rep as any).semMudanca === true); }
   }
+  const msgsDepoisDoLimitado = (await supabaseAdmin.from('mensagens').select('id', { count: 'exact', head: true }).eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', of.id)).count || 0;
+  ok('limitado: o resumo no chat sai mesmo assim (o preco ja mudou)', msgsDepoisDoLimitado === msgsAntesDoLimitado + 1, [msgsAntesDoLimitado, msgsDepoisDoLimitado]);
   const { count: avisosDepois } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('profile_id', clienteId).eq('dados->>orcamento_id', orc.id);
   ok('11a revisao na hora: limitado, sem aviso novo (ja gastou as 2 do teste acima)', ultimo?.ok && ultimo.limitado === true && (avisosDepois || 0) - (avisosAntes || 0) < LIMITE_REVISOES_HORA + 1, [ultimo, avisosAntes, avisosDepois]);
   await supabaseAdmin.from('orcamentos').update({ revisao_numero: orcAntes!.revisao_numero }).eq('id', orc.id);

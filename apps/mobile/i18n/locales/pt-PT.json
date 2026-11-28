@@ -1032,6 +1032,8 @@
     "prazoDias_um": "Prazo do conserto: 1 dia",
     "semMudanca": "Nada mudou no orçamento: o cliente não foi avisado de novo.",
     "avisoClienteFalhou": "O orçamento foi gravado, mas NÃO conseguimos avisar o cliente agora ({codigo}). Ele vê o orçamento ao abrir o pedido; se quiser, envie uma mensagem.",
+    "avisoLimitadoPrimeiro": "Orçamento enviado. O cliente vê o aviso na app/sino, mas o e-mail e o SMS desta vez não foram enviados (limite de avisos por hora).",
+    "avisoLimitadoRevisao": "Alteração gravada e resumo enviado no chat, mas o cliente NÃO recebeu aviso/push desta vez (limite de 10 alterações por hora). Se for urgente, envie uma mensagem.",
     "valorInvalido": "Valor inválido: use só números, por exemplo 120 ou 99,90.",
     "descartarTitulo": "Sair sem enviar?",
     "descartarTexto": "O que preencheu neste orçamento será perdido.",

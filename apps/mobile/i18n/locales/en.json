@@ -1032,6 +1032,8 @@
     "prazoDias_um": "Repair time: 1 day",
     "semMudanca": "Nothing changed in the quote: the client was not notified again.",
     "avisoClienteFalhou": "The quote was saved, but we could NOT notify the client right now ({codigo}). They will see it when they open the request; you can also send a message.",
+    "avisoLimitadoPrimeiro": "Quote sent. The client sees the notice in the app/bell, but the e-mail and SMS were not sent this time (hourly notice limit).",
+    "avisoLimitadoRevisao": "Change saved and the summary posted in the chat, but the client did NOT get a notice/push this time (limit of 10 changes per hour). If urgent, send a message.",
     "valorInvalido": "Invalid amount: digits only, e.g. 120 or 99.90.",
     "descartarTitulo": "Leave without sending?",
     "descartarTexto": "What you filled in this quote will be lost.",
