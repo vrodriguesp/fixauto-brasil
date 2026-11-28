@@ -14,7 +14,11 @@ const APP_ID = 'com.bipfix.cliente';
 const CAMINHOS = ['/*/*/confirmar-email*', '/*/confirmar-email*', '/r/*'];
 
 export async function GET(req: NextRequest) {
-  const qual = req.nextUrl.searchParams.get('f');
+  // No rewrite de /.well-known/... o route handler recebe a URL ORIGINAL (sem o ?f= do destino do
+  // next.config.js) - visto em producao 28/11: /.well-known/* dava 404. Entao decide tambem pelo caminho.
+  const caminho = req.nextUrl.pathname;
+  const qual = req.nextUrl.searchParams.get('f')
+    ?? (caminho.endsWith('/apple-app-site-association') ? 'aasa' : caminho.endsWith('/assetlinks.json') ? 'assetlinks' : null);
   if (qual === 'aasa') {
     const team = process.env.APPLE_TEAM_ID;
     if (!team) return new NextResponse(null, { status: 404 });
