@@ -278,9 +278,11 @@ export default function ClienteDashboard() {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      {/* grid-cols-1 + min-w-0: no Safari a coluna automatica crescia ate a largura do conteudo e a pagina rolava
+          para o lado (teste WebKit 28/11, B1) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Open requests - only abertas/em_orcamento */}
-        <div className="lg:col-span-2 space-y-4 scroll-mt-20" id="pedidos-abertos">
+        <div className="lg:col-span-2 min-w-0 space-y-4 scroll-mt-20" id="pedidos-abertos">
           <h2 className="text-lg font-semibold text-gray-900">{t('openRequestsTitle')}{listaAbertas.length > 1 ? ` (${listaAbertas.length})` : ''}</h2>
           {listaAbertas.length === 0 ? (
             <div className="card text-center py-12">
@@ -338,7 +340,7 @@ export default function ClienteDashboard() {
         </div>
 
         {/* Sidebar - vehicles only */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">{t('myVehiclesTitle')}</h2>

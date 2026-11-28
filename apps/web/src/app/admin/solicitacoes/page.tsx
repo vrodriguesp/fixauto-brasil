@@ -118,13 +118,13 @@ function AdminSolicitacoesContent() {
           placeholder="Buscar por nº do pedido, nº do cliente, descrição ou endereço..."
           className="flex-1 min-w-[220px] bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="appearance-none bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" style={{ color: '#fff', backgroundColor: '#1e293b' }}>
           <option value="">Todos os status</option>
           {Object.entries(STATUS_SOLICITACAO).map(([value, s]) => (
             <option key={value} value={value}>{s.label}</option>
           ))}
         </select>
-        <select value={tipo} onChange={(e) => setTipo(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select value={tipo} onChange={(e) => setTipo(e.target.value)} className="appearance-none bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" style={{ color: '#fff', backgroundColor: '#1e293b' }}>
           <option value="">Todos os tipos</option>
           {TIPOS_SERVICO.map((t) => (
             <option key={t.value} value={t.value}>{t.label}</option>
