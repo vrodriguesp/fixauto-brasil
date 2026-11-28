@@ -268,7 +268,7 @@ export default function ClienteMensagensPage() {
     setMessages((prev) => prev.some((m) => m.id === novaMsg.id) ? prev.filter((m) => m.id !== tempId) : prev.map((m) => m.id === tempId ? { ...m, id: novaMsg.id, enviando: false } : m));
 
     // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
-    if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
+    if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
   };
 
   const handleAudioRecorded = async (blob: Blob, audioDuration: number) => {
@@ -309,7 +309,7 @@ export default function ClienteMensagensPage() {
         ]);
 
         // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
-        if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
+        if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
       }
     } finally {
       setUploadingAudio(false);
