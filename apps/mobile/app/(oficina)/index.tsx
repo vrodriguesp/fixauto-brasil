@@ -148,7 +148,7 @@ export default function PedidosOficinaScreen() {
         <Text accessibilityRole="alert" className="mx-4 mb-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('oficina.cadastroEmAnalise')}</Text>
       ) : null}
       {semRede ? <FaixaSemRede aoTentar={carregar} /> : null}
-      {erroServidor ? <FaixaSemRede aoTentar={carregar} texto={t('oficina.erroCarregar', { codigo: erroServidor })} /> : null}
+      {erroServidor ? <FaixaSemRede aoTentar={carregar} variante="servidor" texto={t('oficina.erroCarregar', { codigo: erroServidor })} /> : null}
       <View className="mx-4 mb-3 flex-row rounded-xl bg-gray-200 p-1" accessibilityRole="tablist">
         {ABAS.map((a) => (
           <Pressable key={a} onPress={() => setAba(a)} accessibilityRole="tab" accessibilityState={{ selected: aba === a }} testID={`aba-${a}`}
@@ -165,7 +165,7 @@ export default function PedidosOficinaScreen() {
         keyExtractor={(it) => it.s.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-        ListEmptyComponent={!loading && !semRede ? (
+        ListEmptyComponent={!loading && !semRede && !erroServidor ? (
           <View className="bg-white rounded-2xl border border-gray-200 p-6 items-center mt-2">
             <Text className="text-4xl mb-2">{aba === 'responder' ? '📭' : '🗂️'}</Text>
             <Text className="text-gray-700 text-center">{t(`oficina.vazio_${aba}`)}</Text>

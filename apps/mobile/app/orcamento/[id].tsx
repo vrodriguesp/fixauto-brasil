@@ -18,8 +18,12 @@ import { hojeLocal, somarDias, faixasDoDia, formatarJanela, janelaAindaVale, exp
 import { validarOrcamento, validadeMinima, itensParaGravar, slotsParaGravar, observacoesComComissao, percentualComissao, totalDosItens, TIPOS_ITEM, type ItemForm, type SlotForm, type ErrosForm } from '../../lib/orcamento-form';
 
 const PRAZO_PADRAO_DIAS = 1;
-const TEMPO_PADRAO_HORAS = 2;
 const GARANTIAS = [0, 30, 90, 180, 365, 730];
+// volta a caixa que ja esta por baixo (anchor (tabs)): replace empilhava uma 2a caixa e o Voltar caia no detalhe (e2e 28/11)
+const irParaCaixa = (aba: string) => {
+  const destino = { pathname: '/(oficina)', params: { aba } } as any;
+  if (typeof (router as any).dismissTo === 'function') (router as any).dismissTo(destino); else router.replace(destino);
+};
 const MAX_DATAS = 5;
 const DIAS_NO_SELETOR = 21;
 
@@ -175,7 +179,7 @@ export default function OrcamentoScreen() {
       }
       if (!erro) {
         const { error: eU } = await supabase.from('orcamentos').update({
-          valor_total: total, prazo_dias: prazoDias, tempo_execucao_horas: meu.tempo_execucao_horas ?? TEMPO_PADRAO_HORAS, observacoes: obs, validade,
+          valor_total: total, prazo_dias: prazoDias, tempo_execucao_horas: meu.tempo_execucao_horas ?? null, observacoes: obs, validade,
           valor_original: meu.valor_original || meu.valor_total, revisao_numero: (meu.revisao_numero || 0) + 1, garantia_dias: garantia,
           revisado_em: new Date().toISOString(), status: 'enviado', disponibilidade_escolhida_id: null,
         }).eq('id', meu.id);
@@ -192,7 +196,8 @@ export default function OrcamentoScreen() {
     } else {
       // novo (use-orcamentos.create): orcamento, itens, horarios; horario recusado pelo banco apaga o orcamento recem-criado
       const { data: orc, error: eC } = await supabase.from('orcamentos').insert({
-        solicitacao_id: sol.id, oficina_id: oficina.id, valor_total: total, prazo_dias: prazoDias, tempo_execucao_horas: TEMPO_PADRAO_HORAS,
+        solicitacao_id: sol.id, oficina_id: oficina.id, valor_total: total, prazo_dias: prazoDias, // o app nao pergunta as horas de trabalho: nao inventa (o site esconde "Teostusaeg" quando e nulo; e2e 28/11)
+        tempo_execucao_horas: null,
         observacoes: obs, validade, garantia_dias: garantia,
       }).select().single();
       if (eC || !orc) erro = eC || { message: 'Failed' };
@@ -222,13 +227,13 @@ export default function OrcamentoScreen() {
     let avisou = true; let codigo = '';
     try {
       const r = await apiFetch('/api/notificar-orcamento', { method: 'POST', body: JSON.stringify(alteracao ? { orcamentoId: orcId, revisao: true, eraRecusado: meu.status === 'recusado' } : { orcamentoId: orcId }) });
-      if (r?.limitado) { avisou = false; codigo = 'MUITAS_TENTATIVAS'; }
+      if (r?.limitado) { avisou = false; codigo = alteracao ? 'LIMITE_REVISAO' : 'LIMITE_PRIMEIRO'; }
     } catch (e2: any) { avisou = false; codigo = e2?.codigo || String(e2?.status || e2?.message || '?'); }
     if (!funcionario) apiFetch('/api/recalcular-comissao', { method: 'POST', body: JSON.stringify({ oficinaId: oficina.id }) }).catch(() => {});
     saiuSemPerguntar.current = true;
     if (!avisou) { setErroAviso(codigo); setEnviado('sem_aviso'); return; }
     setEnviado('ok');
-    setTimeout(() => router.replace({ pathname: '/(oficina)', params: { aba: 'respondidos' } } as any), 1800);
+    setTimeout(() => irParaCaixa('respondidos'), 1800);
   };
 
   if (sol === undefined && semRede) return <SemRede aoTentar={carregar} />;
@@ -239,9 +244,9 @@ export default function OrcamentoScreen() {
       <View className="flex-1 items-center justify-center bg-white p-6" testID={enviado === 'ok' ? 'orcamento-enviado' : 'orcamento-gravado-sem-aviso'}>
         <Ionicons name={enviado === 'ok' ? 'checkmark-circle' : 'alert-circle'} size={64} color={enviado === 'ok' ? '#059669' : '#d97706'} />
         <Text className="text-xl font-bold text-gray-900 mt-3">{meu ? t('oficina.orcamentoRevisado') : t('oficina.orcamentoEnviado')}</Text>
-        <Text className="text-gray-600 text-center mt-1">{enviado === 'ok' ? t('oficina.clienteNotificadoAceite') : t('oficina.avisoClienteFalhou', { codigo: erroAviso })}</Text>
+        <Text className="text-gray-600 text-center mt-1">{enviado === 'ok' ? t('oficina.clienteNotificadoAceite') : erroAviso === 'LIMITE_PRIMEIRO' ? t('oficina.avisoLimitadoPrimeiro') : erroAviso === 'LIMITE_REVISAO' ? t('oficina.avisoLimitadoRevisao') : t('oficina.avisoClienteFalhou', { codigo: erroAviso })}</Text>
         {enviado === 'sem_aviso' ? (
-          <Pressable onPress={() => router.replace({ pathname: '/(oficina)', params: { aba: 'respondidos' } } as any)} accessibilityRole="button" className="mt-5 bg-primary-600 rounded-xl px-6 py-3"><Text className="text-white font-semibold">{t('oficina.verPedidos')}</Text></Pressable>
+          <Pressable onPress={() => irParaCaixa('respondidos')} accessibilityRole="button" className="mt-5 bg-primary-600 rounded-xl px-6 py-3"><Text className="text-white font-semibold">{t('oficina.verPedidos')}</Text></Pressable>
         ) : null}
       </View>
     );

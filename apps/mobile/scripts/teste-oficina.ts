@@ -137,7 +137,9 @@ ok('params nulos -> app', destinoDoLinkCurto(null).tipo === 'app');
 // 8. valores digitados (M7): formatos aceitos; letras, negativo e vazio = invalido
 const casosValor: [string, number | null][] = [['50', 50], ['50,5', 50.5], ['50.5', 50.5], ['1 234,56', 1234.56], ['1\u202f234,56', 1234.56], ['1.234,56', 1234.56], ['1,234.56', 1234.56], ['1.234', 1234], ['1,234', 1234], ['1 234', 1234], ['0', 0], ['99,90', 99.9], ['abc', null], ['12abc', null], ['-10', null], ['', null], ['  ', null],
   // revisao 28/11: milhar repetido, grupos errados, separador sem digito, mais de 2 decimais
-  ['1.000.000', 1000000], ['1,234,567', 1234567], ['12.345,67', 12345.67], ['1.5.0', null], ['1.2.3,4', null], ['1.23.456', null], ['0.500', 0.5], ['0,50', 0.5], [',', null], ['.', null], ['5,', null], [',5', null], ['1,2345', null], ['1.234.5', null], ['10.000', 10000], ['100.000,00', 100000]];
+  ['1.000.000', 1000000], ['1,234,567', null] /* acima do teto */, ['1,000,000', 1000000], ['999.999,99', 999999.99], ['12.345,67', 12345.67], ['1.5.0', null], ['1.2.3,4', null], ['1.23.456', null], ['0.500', 0.5], ['0,50', 0.5], [',', null], ['.', null], ['5,', null], [',5', null], ['1,2345', null], ['1.234.5', null], ['10.000', 10000], ['100.000,00', 100000],
+  // re-revisao 28/11: 4+ decimais, zero a esquerda, teto
+  ['1,0000', null], ['1,2345', null], ['01.000', null], ['007', null], ['0', 0], ['0,5', 0.5], ['1000000', 1000000], ['1.000.000,00', 1000000], ['1000001', null], ['1.000.001', null]];
 for (const [txt, esperado] of casosValor) ok('lerValor(' + JSON.stringify(txt) + ') = ' + esperado, lerValor(txt) === esperado, lerValor(txt));
 
 // 9. aviso da tela ja aberta nao empilha (A1)

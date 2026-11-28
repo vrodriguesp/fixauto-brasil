@@ -2,6 +2,7 @@
 // "99,90", "1 234,56", "1.234,56", "1,234.56", "1.234", "1.000.000", "1,234,567"; recusa letras ("abc", "12abc"),
 // negativo, vazio, separador sem digito (",", "5,"), grupos de milhar errados ("1.5.0", "1.23.456") e mais de 2
 // casas decimais ("1,2345") -> null (a tela marca o campo e nao envia). Espaco (inclusive U+202F/U+00A0) e milhar.
+export const VALOR_MAXIMO = 1_000_000;
 const gruposDeMilharOk = (partes: string[]) => partes.length >= 2 && /^[1-9]\d{0,2}$/.test(partes[0]) && partes.slice(1).every((p) => /^\d{3}$/.test(p));
 
 export function lerValor(texto: string | null | undefined): number | null {
@@ -39,13 +40,15 @@ export function lerValor(texto: string | null | undefined): number | null {
         inteiro = antes;
         decimal = depois;
       }
-      // "0.500" = 0,5: zeros a direita nao contam; sobrando mais de 2 casas ("1,2345") e invalido
-      if (decimal.length > 2) decimal = decimal.replace(/0+$/, '');
+      // "0.500" = 0,5 (3 casas com zero a direita); 4+ casas ("1,0000", "1,2345") e invalido
+      if (decimal.length > 3) return null;
+      if (decimal.length === 3) decimal = decimal.replace(/0+$/, '');
       if (decimal.length > 2) return null;
     }
   }
-  if (!/^\d+$/.test(inteiro) || !/^\d*$/.test(decimal)) return null;
+  // zero a esquerda ("01.000", "007") nao e um valor digitado de verdade; teto de 1 000 000 (re-revisao 28/11)
+  if (!/^\d+$/.test(inteiro) || /^0\d/.test(inteiro) || !/^\d*$/.test(decimal)) return null;
   const n = Number(`${inteiro}.${decimal || '0'}`);
-  if (!Number.isFinite(n) || n < 0) return null;
+  if (!Number.isFinite(n) || n < 0 || n > VALOR_MAXIMO) return null;
   return Math.round(n * 100) / 100;
 }
